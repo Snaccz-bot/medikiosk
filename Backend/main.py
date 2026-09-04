@@ -1,5 +1,5 @@
 """
-MediKiosk — Full Backend with Dynamic Queue Tracker & Wait Timer
+MediKiosk — Full Backend with Strict Case-Sensitive Doctor Auth
 Serves both API and Frontend at http://localhost:8000
 """
 
@@ -168,7 +168,8 @@ class UpdateSummaryRequest(BaseModel):
     clinical_summary: dict
 
 
-# ── 5. STRICT CASE-SENSITIVE DOCTOR AUTH ──────────────────────────────────────
+# ── 5. STRICT CASE-SENSITIVE DOCTOR AUTHENTICATION ────────────────────────────
+# Must match EXACT uppercase / lowercase
 STRICT_DOCTORS = {
     "DOC1": "Present",
     "DOC-101": "1234"
@@ -176,20 +177,20 @@ STRICT_DOCTORS = {
 
 @app.post("/doctor/login")
 def doctor_login(req: DoctorLoginRequest):
-    doc_id = req.doctor_id.strip()
-    pin = req.pin.strip()
+    doc_id = req.doctor_id.strip()  # Strict exact case
+    pin = req.pin.strip()           # Strict exact case
     
     if doc_id in STRICT_DOCTORS and STRICT_DOCTORS[doc_id] == pin:
         return {
             "success": True,
-            "doctor_name": "Dr. Mallard, MD (Ayu)",
-            "role": "Senior Consultant — Kayachikitsa & Orthopedics",
-            "department": "AIIA OPD Consultation Room 2"
+            "doctor_name": "Dr. Rameshwar Sharma, MD (Ayu)",
+            "role": "Senior Consultant",
+            "department": "Kayachikitsa (Internal Medicine) OPD Room 2"
         }
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
-# ── 6. PATIENT KIOSK ROUTES (6 LANGUAGES) ────────────────────────────────────
+# ── 6. PATIENT KIOSK ROUTES (6 REGIONAL LANGUAGES) ───────────────────────────
 LANG_NAMES = {
     "en": "English",
     "hi": "Hindi",
@@ -220,33 +221,14 @@ def start_session(req: StartSessionRequest):
 
 @app.get("/session/{session_id}/status")
 def get_session_status(session_id: str):
-    """Dynamic queue tracker polled by patient waiting room."""
     sessions = db_get_all()
     session = sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    
-    # Calculate how many patients are ahead in queue
-    all_active = [s for s in sessions.values() if s.get("status") in ("intake", "ready") and s.get("created_at")]
-    all_active.sort(key=lambda x: x.get("created_at", ""))
-    
-    pos = 0
-    for idx, s in enumerate(all_active):
-        if s.get("session_id") == session_id:
-            pos = idx
-            break
-            
-    # Estimate ~4 minutes per patient ahead
-    est_seconds = max(180, (pos + 1) * 240)
-
     return {
         "status": session.get("status", "intake"),
         "token": session.get("token"),
-        "room": "OPD ROOM 2",
-        "department": "Kayachikitsa & Panchakarma Wing",
-        "doctor_name": "Dr. Mallard, MD (Ayu)",
-        "patients_ahead": pos,
-        "estimated_seconds": est_seconds
+        "room": "OPD Consultation Room 2"
     }
 
 
@@ -293,7 +275,7 @@ Conversation:
             "ta": "வணக்கம், உங்களுக்கு என்ன உடல்நல பிரச்சனை?",
             "ml": "നമസ്കാരം, എന്താണ് അസുഖം?",
             "gu": "નમસ્તે, તમને શું તકલીફ છે?",
-            "bn": "নমস্কার, আজ কী সমস্যা নিয়ে এসেছেন?"
+            "bn": "নমস্কার, আজ কী समस्या নিয়ে এসেছেন?"
         }
         if msg_count == 0:
             question = fallback_welcome.get(lang_code, "How can we help you today?")
