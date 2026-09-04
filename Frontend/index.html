@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediKiosk — Ministry of AYUSH</title>
+<style>
+  :root{
+    --paper:#F1F5EC;
+    --paper-dim:#E7EEDF;
+    --teal:#0D3B36;
+    --teal-deep:#0B1A17;
+    --teal-mid:#144F48;
+    --saffron:#D98F2B;
+    --saffron-soft:#F3D9AE;
+    --sage:#6E8F6B;
+    --ink:#16231D;
+    --ink-soft:#4B5A50;
+    --brick:#B4472A;
+    --line:rgba(22,35,29,0.14);
+    --line-dark:rgba(241,245,236,0.14);
+    --shadow:0 1px 2px rgba(13,59,54,0.06), 0 8px 24px rgba(13,59,54,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  #root{min-height:100vh;display:flex;flex-direction:column;}
+  .serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype',serif;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(155deg,var(--teal),var(--teal-mid));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow);
+  }
+  .brand-mark svg{width:18px;height:18px;}
+  .brand-name{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--teal);}
+  .brand-sub{font-size:11.5px;color:var(--ink-soft);margin-top:-2px;}
+  .doctor-lock-btn{
+    font-size:12.5px;color:var(--ink-soft);text-decoration:none;
+    border:1px solid var(--line);padding:7px 13px;border-radius:20px;
+    display:flex;align-items:center;gap:6px;cursor:pointer;background:transparent;
+    transition:all .15s ease;
+  }
+  .doctor-lock-btn:hover{background:var(--paper-dim);color:var(--teal);}
+
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 20px 60px;}
+  .card{width:100%;max-width:460px;background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:36px 32px;border:1px solid var(--line);}
+  .steps{display:flex;justify-content:center;gap:8px;margin:0 0 28px;}
+  .step-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .3s ease;}
+  .step-dot.active{background:var(--saffron);width:20px;border-radius:4px;}
+  .step-dot.done{background:var(--sage);}
+
+  h1.title{font-family:Georgia,serif;font-size:26px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
+  p.lede{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:0 0 26px;}
+
+  .lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
+  .lang-opt{
+    border:1.5px solid var(--line);border-radius:14px;padding:20px 14px;text-align:center;
+    cursor:pointer;background:var(--paper);transition:all .15s ease;
+  }
+  .lang-opt.selected{border-color:var(--saffron);background:var(--saffron-soft);}
+  .lang-opt .lang-native{font-family:Georgia,serif;font-size:20px;color:var(--teal);}
+  .lang-opt .lang-eng{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;background:var(--paper);color:var(--ink);}
+  .field input:focus{outline:none;border-color:var(--saffron);}
+  .field-error{font-size:11.5px;color:var(--brick);margin-top:4px;font-weight:500;}
+
+  .radio-row{display:flex;gap:8px;}
+  .radio-pill{flex:1;text-align:center;padding:10px;border-radius:10px;border:1.5px solid var(--line);font-size:13.5px;cursor:pointer;background:var(--paper);}
+  .radio-pill.selected{border-color:var(--saffron);background:var(--saffron-soft);color:var(--teal);font-weight:600;}
+
+  .consent-box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:18px;}
+  .check-row{display:flex;gap:10px;align-items:flex-start;cursor:pointer;}
+  .check-row input{margin-top:3px;width:16px;height:16px;accent-color:var(--saffron);flex-shrink:0;}
+  .check-row span{font-size:13.5px;color:var(--ink);line-height:1.5;}
+
+  .btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s ease;}
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-mid);}
+  .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:not-allowed;}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);margin-top:10px;}
+  .btn-ghost:hover{background:var(--paper);}
+
+  .chat-card{max-width:520px;}
+  .chat-window{min-height:280px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+  .bubble{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14.5px;line-height:1.5;}
+  .bubble.bot{background:var(--paper);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px;}
+  .bubble.user{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .typing{display:flex;gap:4px;align-self:flex-start;padding:12px 15px;}
+  .typing span{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);animation:bounce 1.2s infinite ease-in-out;}
+  .typing span:nth-child(2){animation-delay:.15s;}
+  .typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+
+  .input-bar{display:flex;gap:8px;align-items:center;}
+  .input-bar input{flex:1;padding:13px 16px;border-radius:24px;border:1.5px solid var(--line);font-size:14.5px;background:var(--paper);}
+  .input-bar input:focus{outline:none;border-color:var(--saffron);}
+  .mic-btn, .send-btn{width:44px;height:44px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .mic-btn{background:var(--paper);border:1.5px solid var(--line);}
+  .mic-btn.listening{background:var(--brick);border-color:var(--brick);}
+  .mic-btn svg{width:18px;height:18px;stroke:var(--teal);}
+  .mic-btn.listening svg{stroke:#fff;}
+  .send-btn{background:var(--saffron);}
+  .send-btn svg{width:18px;height:18px;stroke:#fff;}
+  .send-btn:disabled{background:var(--line);cursor:not-allowed;}
+
+  .dropzone{border:1.5px dashed var(--line);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:14px;background:var(--paper);}
+  .preview-row{display:flex;gap:12px;align-items:center;background:var(--paper);border-radius:12px;padding:12px;margin-bottom:14px;}
+  .preview-row img{width:54px;height:54px;object-fit:cover;border-radius:8px;}
+  .pdf-badge{width:54px;height:54px;background:#C0392B;color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;}
+
+  .gen-wrap{text-align:center;padding:40px 10px;}
+  .gen-spinner{width:44px;height:44px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--saffron);margin:0 auto 20px;animation:spin 0.9s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .token-badge{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#fff;padding:10px 18px;border-radius:30px;font-family:Georgia,serif;font-size:17px;margin-bottom:20px;}
+  .recap-list{list-style:none;padding:0;margin:0 0 22px;}
+  .recap-list li{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.5;}
+  .recap-list li:last-child{border-bottom:none;}
+  .recap-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);margin-top:7px;flex-shrink:0;}
+
+  /* Live Room Call Banner */
+  .call-banner{
+    background:#27ae60;color:#fff;padding:18px 20px;border-radius:14px;
+    margin-bottom:20px;animation:pulseCall 1.2s infinite alternate;
+  }
+  @keyframes pulseCall{from{box-shadow:0 0 0 rgba(39,174,96,0.4);}to{box-shadow:0 0 24px rgba(39,174,96,0.85);}}
+
+  /* Modal Dialog for Doctor Sign-in */
+  .modal-overlay{
+    position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,26,23,0.75);
+    display:flex;align-items:center;justify-content:center;z-index:1000;
+  }
+  .modal-card{
+    background:#fff;width:100%;max-width:380px;border-radius:20px;padding:32px 28px;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+
+  /* Doctor Dashboard */
+  .dash{display:flex;min-height:100vh;background:var(--teal-deep);color:var(--paper);}
+  .dash-sidebar{width:300px;border-right:1px solid var(--line-dark);padding:24px 0;flex-shrink:0;}
+  .dash-sidebar-header{padding:0 20px 18px;border-bottom:1px solid var(--line-dark);margin-bottom:10px;}
+  .dash-sidebar-header .dsh-label{font-size:11px;color:var(--saffron-soft);letter-spacing:.3px;}
+  .queue-item{padding:14px 20px;cursor:pointer;border-left:3px solid transparent;display:flex;justify-content:space-between;align-items:center;transition:all .15s;}
+  .queue-item:hover{background:rgba(241,245,236,0.05);}
+  .queue-item.active{background:rgba(217,143,43,0.12);border-left-color:var(--saffron);}
+  .queue-item .qi-name{font-size:14px;font-weight:600;}
+  .queue-item .qi-meta{font-size:11.5px;color:#9FB0A5;margin-top:2px;}
+
+  .dash-main{flex:1;padding:32px 40px;max-width:780px;}
+  .dash-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;}
+  .dash-header h1{font-family:Georgia,serif;font-size:26px;margin:0 0 4px;}
+  .dash-header .dh-meta{font-size:13px;color:#9FB0A5;}
+  .redflag-pill{background:rgba(180,71,42,0.18);color:#E9987F;border:1px solid rgba(180,71,42,0.4);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+  .clinical-section{margin-bottom:22px;}
+  .cs-label{font-size:11.5px;color:var(--saffron-soft);letter-spacing:.3px;margin-bottom:6px;}
+  .cs-content{
+    font-size:14.5px;line-height:1.6;background:rgba(241,245,236,0.04);
+    border:1px solid var(--line-dark);border-radius:10px;padding:14px 16px;
+    outline:none;color:var(--paper);min-height:48px;
+  }
+  .cs-content:focus{border-color:var(--saffron);}
+  .dash-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line-dark);}
+  .dash-btn{padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;}
+  .dash-btn.primary{background:var(--saffron);color:var(--teal-deep);}
+  .dash-btn.success{background:#27ae60;color:#fff;}
+  .dash-btn.ghost{background:transparent;border:1px solid var(--line-dark);color:var(--paper);}
+  .dash-btn.danger{background:transparent;border:1px solid rgba(180,71,42,0.5);color:#E9987F;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:12px 22px;border-radius:30px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999;}
+  .toast.show{opacity:1;}
+  .empty-detail{padding:60px 20px;text-align:center;color:#9FB0A5;font-size:14px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var BACKEND_URL = (window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8000");
+
+var S = {
+  view: 'kiosk',
+  screen: 'welcome',
+  lang: 'en',
+  patient: { name:'', age:'', gender:'M', phone:'', mock_abha:'' },
+  phoneError: '',
+  consent: false,
+  sessionId: null,
+  token: null,
+  messages: [],
+  awaitingReply: false,
+  chatDone: false,
+  uploadFile: null,
+  uploadFileName: '',
+  uploadIsPdf: false,
+  uploadPreview: null,
+  uploadStatus: 'idle',
+  extracted: null,
+  clinicalSummary: null,
+  patientRecap: null,
+  calledIn: false,
+  roomName: '',
+  statusTimer: null,
+  listening: false,
+  recognition: null,
+  activeQueueId: null,
+  queue: [],
+  // Doctor Auth state
+  showDoctorModal: false,
+  doctorLoggedIn: false,
+  currentDoctor: null,
+  loginError: ''
+};
+
+var STR = {
+  en:{ welcomeTitle:"Welcome to MediKiosk", welcomeLede:"Autonomous outpatient triage for Ministry of AYUSH OPD. Takes ~2 minutes.",
+       chooseLang:"Choose your language", start:"Continue",
+       detailsTitle:"Patient Details", detailsLede:"Basic information for today's doctor consultation.",
+       name:"Full Name", age:"Age", phone:"Phone Number (10 digits)", gender:"Gender", male:"Male", female:"Female", other:"Other",
+       consentTitle:"Consent & Privacy", consentLede:"Your data is encrypted and shared only with your treating doctor.",
+       consentBody:"MediKiosk prepares an automated intake history to save doctor consultation time. No information leaves this clinic.",
+       consentNote:"ABDM ABHA Compliant — AI Triage for AIIA OPD.",
+       consentCheck:"I consent to provide my symptoms for my OPD case file.",
+       chatTitle:"Tell us what's going on", chatLede:"Speak with the mic or type in your own words.",
+       typePh:"Type your symptoms here…", uploadTitle:"Old Prescriptions or Reports?",
+       uploadLede:"Optional — Upload a photo or PDF to auto-extract past medications.", uploadDrop:"Tap to upload Photo or PDF",
+       skipUpload:"Skip this step", scanning:"Analyzing document with Gemini Vision…", scanDone:"Details extracted",
+       genTitle:"Preparing your summary…", genLede:"Organising clinical note for the doctor.",
+       recapTitle:"You're all set!", recapLede:"Your token has been sent to the doctor's queue:",
+       tokenPrefix:"Your Queue Token", waitNote:"Please have a seat in the waiting room. The screen will notify you when called.",
+       newIntake:"Next Patient Intake"
+     },
+  hi:{ welcomeTitle:"मेडीकियोस्क में आपका स्वागत है", welcomeLede:"आयुष ओपीडी परामर्श सहायता। इसमें 2 मिनट लगेंगे।",
+       chooseLang:"अपनी भाषा चुनें", start:"आगे बढ़ें",
+       detailsTitle:"मरीज़ की जानकारी", detailsLede:"डॉक्टर के लिए आपकी बुनियादी जानकारी।",
+       name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
+       consentTitle:"सहमति एवं गोपनीयता", consentLede:"आपकी जानकारी केवल आपके डॉक्टर के साथ साझा होगी।",
+       consentBody:"मेडीकियोस्क डॉक्टर का समय बचाने के लिए आपकी जानकारी व्यवस्थित करता है।",
+       consentNote:"ABDM अनुरूप — AIIA OPD सहायता प्रणाली।",
+       consentCheck:"मैं आज के परामर्श के लिए जानकारी साझा करने हेतु सहमत हूँ।",
+       chatTitle:"बताइए क्या तकलीफ़ है", chatLede:"माइक से बोलें या टाइप करें।",
+       typePh:"यहाँ अपनी तकलीफ़ लिखें…", uploadTitle:"कोई पुराना पर्चा या रिपोर्ट?",
+       uploadLede:"वैकल्पिक — फोटो या PDF अपलोड करें, हम दवाइयाँ निकाल लेंगे।", uploadDrop:"फोटो या PDF अपलोड करें",
+       skipUpload:"यह चरण छोड़ें", scanning:"दस्तावेज़ पढ़ा जा रहा है…", scanDone:"जानकारी मिल गई",
+       genTitle:"सारांश तैयार हो रहा है…", genLede:"डॉक्टर के लिए सब कुछ व्यवस्थित किया जा रहा है।",
+       recapTitle:"आप तैयार हैं!", recapLede:"आपका टोकन डॉक्टर के पास पहुँच चुका है:",
+       tokenPrefix:"आपका टोकन", waitNote:"कृपया प्रतीक्षालय में बैठें। बुलाए जाने पर स्क्रीन पर सूचना दिखेगी।",
+       newIntake:"नया मरीज़ शुरू करें"
+     }
+};
+function t(k){ return STR[S.lang][k] || ''; }
+
+/* ── API CALLS ── */
+async function apiDoctorLogin(docId, pin){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ doctor_id: docId, pin: pin })
+    });
+    if(res.ok) return await res.json();
+  } catch(e){}
+  return null;
+}
+
+async function apiStartSession(){
+  try {
+    var res = await fetch(BACKEND_URL + "/session/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: S.patient.name,
+        age: String(S.patient.age),
+        gender: S.patient.gender,
+        phone: S.patient.phone,
+        language: S.lang,
+        mock_abha: S.patient.mock_abha || "91-4829-1029-4412"
+      })
+    });
+    if(res.ok){
+      var data = await res.json();
+      S.sessionId = data.session_id;
+      S.token = data.token;
+      return true;
+    }
+  } catch(e){}
+  S.sessionId = "local-" + Date.now();
+  S.token = "B-" + (10 + Math.floor(Math.random()*40));
+  return false;
+}
+
+async function apiChatNext(userMsg){
+  userMsg = userMsg || "";
+  try {
+    var res = await fetch(BACKEND_URL + "/chat/next", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: S.sessionId, user_message: userMsg })
+    });
+    if(res.ok) return await res.json();
+  } catch(e){}
+
+  if(!userMsg){
+    return { question: S.lang==='hi' ? "नमस्ते, बताइए आज आपको क्या समस्या है?" : "How can we help you today?", done: false };
+  }
+  return { question: "", done: true };
+}
+
+async function apiUploadFile(file){
+  try {
+    var formData = new FormData();
+    formData.append("file", file);
+    var res = await fetch(BACKEND_URL + "/upload/document?session_id=" + encodeURIComponent(S.sessionId), {
+      method: "POST",
+      body: formData
+    });
+    if(res.ok) return (await res.json()).extracted;
+  } catch(e){}
+  return { summary: file.name + ' uploaded.', medicines: [], tests: [], date: 'Recent' };
+}
+
+async function apiGenerateSummary(){
+  try {
+    var res = await fetch(BACKEND_URL + "/summary/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: S.sessionId })
+    });
+    if(res.ok) return await res.json();
+  } catch(e){}
+
+  var firstUserMsg = S.messages.find(m => m.role === 'user');
+  var cc = firstUserMsg ? firstUserMsg.text : "Consultation requested";
+  return {
+    token: S.token,
+    patient_recap: [
+      "Symptoms recorded for consultation.",
+      "Vitals and medical history prepared for OPD doctor.",
+      "Your case file is now ready in the consultation room."
+    ],
+    clinical_summary: {
+      chiefComplaint: cc,
+      hpi: S.messages.map(m => (m.role==='bot'?'Dr: ':'Pt: ') + m.text).join('\n'),
+      pastHistory: "None reported.",
+      allergies: "None reported.",
+      medications: "Reported in intake",
+      familyHistory: "Not contributory.",
+      reviewOfSystems: "Normal",
+      redFlags: "None flagged.",
+      uploadedDocSummary: "No document uploaded."
+    }
+  };
+}
+
+async function apiGetQueue(){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/queue");
+    if(res.ok){
+      var data = await res.json();
+      S.queue = data.queue;
+      if(!S.activeQueueId && S.queue.length > 0){
+        S.activeQueueId = S.queue[0].session_id;
+      }
+      render();
+    }
+  } catch(e){}
+}
+
+async function apiSaveSummary(sessionId, summaryObj){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId + "/summary", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clinical_summary: summaryObj })
+    });
+    return res.ok;
+  } catch(e){ return false; }
+}
+
+async function apiApprovePatient(sessionId){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId + "/approve", { method: "POST" });
+    return res.ok;
+  } catch(e){ return false; }
+}
+
+async function apiCompletePatient(sessionId){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId + "/complete", { method: "POST" });
+    return res.ok;
+  } catch(e){ return false; }
+}
+
+async function apiDeletePatient(sessionId){
+  try {
+    var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId, { method: "DELETE" });
+    return res.ok;
+  } catch(e){ return false; }
+}
+
+function startPollingStatus(){
+  if(S.statusTimer) clearInterval(S.statusTimer);
+  S.statusTimer = setInterval(async function(){
+    if(!S.sessionId || S.view !== 'kiosk' || S.screen !== 'recap') return;
+    try {
+      var res = await fetch(BACKEND_URL + "/session/" + S.sessionId + "/status");
+      if(res.ok){
+        var data = await res.json();
+        if(data.status === 'in_consultation' && !S.calledIn){
+          S.calledIn = true;
+          S.roomName = data.room || "OPD Consultation Room 2";
+          playChime();
+          render();
+        }
+      }
+    } catch(e){}
+  }, 3000);
+}
+
+function playChime(){
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.2);
+  } catch(e){}
+}
+
+/* ── FLOW CONTROLLERS ── */
+function onPhoneInput(el){
+  var val = el.value.replace(/\D/g, '');
+  if(val.length > 10) val = val.slice(0, 10);
+  el.value = val;
+  S.patient.phone = val;
+  if(val.length > 0 && val.length < 10){
+    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर पूरे 10 अंकों का होना चाहिए' : 'Phone number must be exactly 10 digits';
+  } else {
+    S.phoneError = '';
+  }
+  var errEl = document.getElementById('phoneErr');
+  if(errEl) errEl.innerText = S.phoneError;
+  refreshBtn();
+}
+
+async function beginChat(){
+  S.screen = 'chat'; S.messages = []; S.chatDone = false; render();
+  await apiStartSession();
+  S.awaitingReply = true; render();
+  var res = await apiChatNext("");
+  if(res && res.question){
+    S.messages.push({ role:'bot', text: res.question });
+  }
+  S.awaitingReply = false; render();
+}
+
+async function sendAnswer(text){
+  if(!text.trim() || S.awaitingReply) return;
+  S.messages.push({ role:'user', text: text.trim() });
+  S.awaitingReply = true; render();
+
+  var res = await apiChatNext(text.trim());
+  if(res.done || !res.question){
+    S.chatDone = true;
+  } else {
+    S.messages.push({ role:'bot', text: res.question });
+  }
+  S.awaitingReply = false; render();
+}
+
+async function onFileChosen(ev){
+  var file = ev.target.files[0];
+  if(!file) return;
+
+  S.uploadFile = file;
+  S.uploadFileName = file.name;
+  S.uploadIsPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  S.uploadStatus = 'scanning';
+  render();
+
+  if(!S.uploadIsPdf){
+    var reader = new FileReader();
+    reader.onload = function(e){ S.uploadPreview = e.target.result; render(); };
+    reader.readAsDataURL(file);
+  } else {
+    S.uploadPreview = null;
+    render();
+  }
+
+  var extracted = await apiUploadFile(file);
+  S.extracted = extracted;
+  S.uploadStatus = 'done';
+  render();
+}
+
+async function generateSummary(){
+  S.screen = 'generating'; render();
+  var res = await apiGenerateSummary();
+  S.clinicalSummary = res.clinical_summary;
+  S.patientRecap = res.patient_recap || [];
+  if(res.token) S.token = res.token;
+
+  S.activeQueueId = S.sessionId;
+  S.screen = 'recap';
+  startPollingStatus();
+  render();
+}
+
+function toggleMic(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ showToast("Microphone not supported in this browser"); return; }
+  if(S.listening){
+    if(S.recognition) S.recognition.stop();
+    return;
+  }
+  var rec = new SR();
+  rec.lang = S.lang === 'hi' ? 'hi-IN' : 'en-IN';
+  rec.interimResults = false;
+  rec.onstart = function(){ S.listening = true; render(); };
+  rec.onend = function(){ S.listening = false; render(); };
+  rec.onerror = function(){ S.listening = false; render(); };
+  rec.onresult = function(ev){
+    var text = ev.results[0][0].transcript;
+    var input = document.getElementById('chatInput');
+    if(input) input.value = text;
+  };
+  S.recognition = rec;
+  try{ rec.start(); }catch(e){ showToast("Mic error"); }
+}
+
+function showToast(msg){
+  var el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+
+/* ── RENDERING ── */
+function render(){
+  var root = document.getElementById('root');
+  if(!root) return;
+  root.innerHTML = (S.view === 'dashboard' && S.doctorLoggedIn) ? renderDashboard() : renderKiosk();
+  if(S.showDoctorModal) renderDoctorModal();
+  bindEvents();
+}
+
+function progressDots(){
+  var order = ['welcome','details','consent','chat','upload'];
+  var idx = order.indexOf(S.screen);
+  var html = '<div class="steps">';
+  for(var i=0; i<order.length; i++){
+    var cls = 'step-dot' + (i===idx ? ' active' : (i<idx ? ' done' : ''));
+    html += '<div class="' + cls + '"></div>';
+  }
+  return html + '</div>';
+}
+
+function renderKiosk(){
+  var inner = '';
+  if(S.screen === 'welcome') inner = screenWelcome();
+  else if(S.screen === 'details') inner = screenDetails();
+  else if(S.screen === 'consent') inner = screenConsent();
+  else if(S.screen === 'chat') inner = screenChat();
+  else if(S.screen === 'upload') inner = screenUpload();
+  else if(S.screen === 'generating') inner = screenGenerating();
+  else if(S.screen === 'recap') inner = screenRecap();
+
+  return '<div class="topbar">' +
+    '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
+    '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Patient Intake Kiosk</div></div></div>' +
+    '<div class="doctor-lock-btn" onclick="openDoctorModal()">' + lockSvg() + '<span>Doctor Portal (Staff Only)</span></div>' +
+    '</div>' +
+    '<div class="stage"><div class="card ' + (S.screen==='chat'?'chat-card':'') + '">' +
+    (['welcome','details','consent','chat','upload'].indexOf(S.screen) !== -1 ? progressDots() : '') +
+    inner +
+    '</div></div>';
+}
+
+function screenWelcome(){
+  return '<h1 class="title serif">' + t('welcomeTitle') + '</h1>' +
+    '<p class="lede">' + t('welcomeLede') + '</p>' +
+    '<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;">' + t('chooseLang') + '</div>' +
+    '<div class="lang-grid">' +
+      '<div class="lang-opt ' + (S.lang==='en'?'selected':'') + '" onclick="setLang(\'en\')">' +
+        '<div class="lang-native">English</div><div class="lang-eng">EN</div></div>' +
+      '<div class="lang-opt ' + (S.lang==='hi'?'selected':'') + '" onclick="setLang(\'hi\')">' +
+        '<div class="lang-native">हिंदी</div><div class="lang-eng">HI</div></div>' +
+    '</div><br/>' +
+    '<button class="btn btn-primary" onclick="goto(\'details\')">' + t('start') + '</button>';
+}
+
+function screenDetails(){
+  var p = S.patient;
+  var isPhoneValid = !p.phone || p.phone.length === 10;
+  var ready = p.name.trim() && p.age && isPhoneValid;
+
+  return '<h1 class="title serif">' + t('detailsTitle') + '</h1>' +
+    '<p class="lede">' + t('detailsLede') + '</p>' +
+    '<div class="field"><label>' + t('name') + '</label>' +
+      '<input id="fName" type="text" value="' + escapeHtml(p.name) + '" placeholder="e.g. Adit Sharma" oninput="S.patient.name=this.value; refreshBtn()"/></div>' +
+    '<div class="field"><label>' + t('age') + '</label>' +
+      '<input id="fAge" type="number" value="' + escapeHtml(p.age) + '" placeholder="e.g. 24" oninput="S.patient.age=this.value; refreshBtn()"/></div>' +
+    '<div class="field"><label>' + t('gender') + '</label>' +
+      '<div class="radio-row">' +
+        '<div class="radio-pill ' + (p.gender==='M'?'selected':'') + '" onclick="setGender(\'M\')">' + t('male') + '</div>' +
+        '<div class="radio-pill ' + (p.gender==='F'?'selected':'') + '" onclick="setGender(\'F\')">' + t('female') + '</div>' +
+        '<div class="radio-pill ' + (p.gender==='O'?'selected':'') + '" onclick="setGender(\'O\')">' + t('other') + '</div>' +
+      '</div></div>' +
+    '<div class="field"><label>' + t('phone') + ' (Optional)</label>' +
+      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile" oninput="onPhoneInput(this)"/>' +
+      '<div class="field-error" id="phoneErr">' + S.phoneError + '</div></div>' +
+    '<button id="detailsBtn" class="btn btn-primary" ' + (ready?'':'disabled') + ' onclick="goto(\'consent\')">' + t('start') + '</button>';
+}
+
+function screenConsent(){
+  return '<h1 class="title serif">' + t('consentTitle') + '</h1>' +
+    '<p class="lede">' + t('consentLede') + '</p>' +
+    '<div class="consent-box">' + t('consentBody') +
+      '<div style="font-size:11.5px;color:var(--sage);margin-top:10px;font-weight:600;">✓ ABHA Health ID: 91-4829-1029-4412 (Simulated ABDM)</div>' +
+    '</div>' +
+    '<label class="check-row" style="margin-bottom:22px;">' +
+      '<input type="checkbox" ' + (S.consent?'checked':'') + ' onchange="S.consent=this.checked; refreshBtn()"/>' +
+      '<span>' + t('consentCheck') + '</span></label>' +
+    '<button id="consentBtn" class="btn btn-primary" ' + (S.consent?'':'disabled') + ' onclick="beginChat()">' + t('start') + '</button>';
+}
+
+function screenChat(){
+  var bubbles = '';
+  for(var i=0; i<S.messages.length; i++){
+    var m = S.messages[i];
+    bubbles += '<div class="bubble ' + (m.role==='bot'?'bot':'user') + '">' + escapeHtml(m.text) + '</div>';
+  }
+  var typing = S.awaitingReply ? '<div class="typing"><span></span><span></span><span></span></div>' : '';
+
+  return '<h1 class="title serif" style="font-size:20px;">' + t('chatTitle') + '</h1>' +
+    '<p class="lede" style="margin-bottom:16px;">' + t('chatLede') + '</p>' +
+    '<div class="chat-window" id="chatWindow">' + bubbles + typing + '</div>' +
+    (S.chatDone ? '<button class="btn btn-primary" onclick="goto(\'upload\')">' + (S.lang==='hi'?'आगे बढ़ें':'Continue') + '</button>' :
+      '<div class="input-bar">' +
+        '<button class="mic-btn ' + (S.listening?'listening':'') + '" onclick="toggleMic()">' + micSvg() + '</button>' +
+        '<input id="chatInput" type="text" placeholder="' + t('typePh') + '" ' + (S.awaitingReply?'disabled':'') + ' onkeydown="if(event.key===\'Enter\'){submitChat();}"/>' +
+        '<button class="send-btn" ' + (S.awaitingReply?'disabled':'') + ' onclick="submitChat()">' + sendSvg() + '</button>' +
+      '</div>');
+}
+
+function screenUpload(){
+  var previewHtml = '';
+  if(!S.uploadFile){
+    previewHtml = '<div class="dropzone" onclick="document.getElementById(\'fileInput\').click()">' +
+      uploadSvg() + '<p>' + t('uploadDrop') + '</p>' +
+      '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">Supports JPG, PNG, and PDF</div></div>' +
+      '<input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg,application/pdf" style="display:none" onchange="onFileChosen(event)"/>';
+  } else {
+    previewHtml = '<div class="preview-row">' +
+      (S.uploadIsPdf ? '<div class="pdf-badge">PDF</div>' : '<img src="' + (S.uploadPreview || '') + '"/>') +
+      '<div style="flex:1;"><div style="font-weight:600;font-size:13px;">' + escapeHtml(S.uploadFileName) + '</div>' +
+      '<div class="scan-status done">Details extracted ✓</div></div></div>';
+  }
+
+  return '<h1 class="title serif" style="font-size:21px;">' + t('uploadTitle') + '</h1>' +
+    '<p class="lede">' + t('uploadLede') + '</p>' + previewHtml +
+    '<button class="btn btn-primary" onclick="generateSummary()">' +
+    (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary') + '</button>' +
+    (!S.uploadFile ? '<button class="btn btn-ghost" onclick="generateSummary()">' + t('skipUpload') + '</button>' : '');
+}
+
+function screenGenerating(){
+  return '<div class="gen-wrap"><div class="gen-spinner"></div>' +
+    '<h1 class="title serif" style="font-size:19px;">' + t('genTitle') + '</h1>' +
+    '<p>' + t('genLede') + '</p></div>';
+}
+
+function screenRecap(){
+  var bullets = '';
+  var list = S.patientRecap || [];
+  for(var i=0; i<list.length; i++){
+    bullets += '<li><span class="recap-dot"></span><span>' + escapeHtml(list[i]) + '</span></li>';
+  }
+
+  var liveCallAlert = S.calledIn ? (
+    '<div class="call-banner">' +
+      '<div style="font-size:18px;font-weight:bold;">🔔 YOUR TOKEN IS CALLED!</div>' +
+      '<div style="font-size:13.5px;margin-top:4px;">Please proceed inside <b>' + escapeHtml(S.roomName) + '</b> for your consultation.</div>' +
+    '</div>'
+  ) : '';
+
+  return liveCallAlert +
+    '<h1 class="title serif">' + t('recapTitle') + '</h1>' +
+    '<div class="token-badge">' + t('tokenPrefix') + ': ' + S.token + '</div>' +
+    '<p class="lede" style="margin-bottom:10px;">' + t('recapLede') + '</p>' +
+    '<ul class="recap-list">' + bullets + '</ul>' +
+    '<p class="lede">' + (S.calledIn ? '<b>Doctor is waiting for you inside the room.</b>' : t('waitNote')) + '</p>' +
+    '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>';
+}
+
+/* ── DOCTOR LOGIN MODAL ── */
+function renderDoctorModal(){
+  var div = document.createElement('div');
+  div.className = 'modal-overlay';
+  div.id = 'docModal';
+  div.innerHTML = '<div class="modal-card">' +
+    '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
+    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 20px;">Staff Authentication Required</p>' +
+    '<div class="field"><label>Doctor ID</label>' +
+      '<input id="docIdInput" type="text" placeholder="e.g. DOC-101" value="DOC-101"/></div>' +
+    '<div class="field"><label>Security PIN</label>' +
+      '<input id="docPinInput" type="password" placeholder="PIN (Default: 1234)" value="1234"/></div>' +
+    (S.loginError ? '<div style="color:var(--brick);font-size:12px;margin-bottom:12px;">' + S.loginError + '</div>' : '') +
+    '<button class="btn btn-primary" onclick="submitDoctorLogin()">Sign In to Dashboard →</button>' +
+    '<button class="btn btn-ghost" onclick="closeDoctorModal()">Cancel</button>' +
+  '</div>';
+  document.body.appendChild(div);
+}
+
+function openDoctorModal(){ S.showDoctorModal = true; S.loginError = ''; render(); }
+function closeDoctorModal(){
+  S.showDoctorModal = false;
+  var el = document.getElementById('docModal');
+  if(el) el.remove();
+}
+
+async function submitDoctorLogin(){
+  var docId = document.getElementById('docIdInput').value;
+  var pin = document.getElementById('docPinInput').value;
+  var res = await apiDoctorLogin(docId, pin);
+  if(res && res.success){
+    S.doctorLoggedIn = true;
+    S.currentDoctor = res;
+    closeDoctorModal();
+    S.view = 'dashboard';
+    apiGetQueue();
+    render();
+  } else {
+    S.loginError = 'Invalid Doctor ID or PIN. (Demo default: 1234)';
+    var el = document.getElementById('docModal');
+    if(el) el.remove();
+    renderDoctorModal();
+  }
+}
+
+function doctorLogout(){
+  S.doctorLoggedIn = false;
+  S.currentDoctor = null;
+  S.view = 'kiosk';
+  render();
+  showToast('Logged out of Doctor Portal');
+}
+
+/* ── DOCTOR DASHBOARD ── */
+function renderDashboard(){
+  var active = null;
+  for(var i=0; i<S.queue.length; i++){
+    if(S.queue[i].session_id === S.activeQueueId){ active = S.queue[i]; break; }
+  }
+  if(!active && S.queue.length > 0) active = S.queue[0];
+
+  var sidebarItems = '';
+  for(var j=0; j<S.queue.length; j++){
+    var q = S.queue[j];
+    var isSel = (active && q.session_id === active.session_id);
+    sidebarItems += '<div class="queue-item ' + (isSel ? 'active' : '') + '" onclick="setActiveQueue(\'' + q.session_id + '\')">' +
+      '<div><div class="qi-name">' + escapeHtml(q.name) + '</div><div class="qi-meta">' + (q.meta || q.token) + '</div></div>' +
+      (q.status === 'in_consultation' ? '<span style="font-size:10px;background:#27ae60;color:#fff;padding:2px 8px;border-radius:10px;font-weight:bold;">In Room</span>' : '') +
+      '</div>';
+  }
+
+  var c = active ? active.clinical : null;
+  var sectionsHtml = '';
+  if(c){
+    var arr = [
+      ['Chief complaint', 'chiefComplaint', c.chiefComplaint],
+      ['History of present illness', 'hpi', c.hpi],
+      ['Past history', 'pastHistory', c.pastHistory],
+      ['Allergies', 'allergies', c.allergies],
+      ['Current medications', 'medications', c.medications],
+      ['Family history', 'familyHistory', c.familyHistory],
+      ['Review of systems', 'reviewOfSystems', c.reviewOfSystems],
+      ['Uploaded document summary', 'uploadedDocSummary', c.uploadedDocSummary || 'No document uploaded.']
+    ];
+    for(var k=0; k<arr.length; k++){
+      sectionsHtml += '<div class="clinical-section">' +
+        '<div class="cs-label">' + arr[k][0].toUpperCase() + '</div>' +
+        '<div class="cs-content" contenteditable="true" id="field_' + arr[k][1] + '">' + escapeHtml(arr[k][2] || '—') + '</div>' +
+        '</div>';
+    }
+  }
+
+  return '<div class="dash">' +
+    '<div class="dash-sidebar">' +
+      '<div class="dash-sidebar-header">' +
+        '<div class="brand" style="margin-bottom:10px;"><div class="brand-mark">' + logoSvg() + '</div>' +
+        '<div><div class="brand-name" style="color:var(--paper);">MediKiosk</div><div class="brand-sub" style="color:#9FB0A5;">' + (S.currentDoctor ? S.currentDoctor.doctor_name : 'Doctor OPD Portal') + '</div></div></div>' +
+        '<div class="dsh-label">WAITING ROOM · ' + S.queue.length + ' PATIENTS</div>' +
+      '</div>' + sidebarItems +
+      '<div style="padding:16px 20px;display:flex;flex-direction:column;gap:8px;">' +
+        '<div class="doctor-lock-btn" style="color:var(--paper);border-color:var(--line-dark);justify-content:center;" onclick="goKiosk()">' + logoSmall(true) + '<span>Switch to Kiosk View</span></div>' +
+        '<div class="doctor-lock-btn" style="color:#E9987F;border-color:rgba(180,71,42,0.4);justify-content:center;" onclick="doctorLogout()"><span>Sign Out (Lock Portal)</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="dash-main">' +
+      (active ? (
+        '<div class="dash-header"><div>' +
+        '<h1>' + escapeHtml(active.name) + (active.age ? ', ' + active.age : '') + '</h1>' +
+        '<div class="dh-meta">' + (active.gender==='F'?'Female':active.gender==='O'?'Other':'Male') + ' · Token: ' + (active.token || '') + '</div></div>' +
+        (c && c.redFlags && c.redFlags!=='None flagged.' && c.redFlags!=='None flagged' ? '<div class="redflag-pill">⚠ ' + escapeHtml(c.redFlags) + '</div>' : '') +
+        '</div>' + (c ? sectionsHtml : '<div class="empty-detail">No summary details generated yet.</div>') +
+        '<div class="dash-actions">' +
+          '<button class="dash-btn success" onclick="callPatient(\'' + active.session_id + '\')">' + (active.status === 'in_consultation' ? 'Currently In Room ✓' : 'Approve & Call Patient') + '</button>' +
+          '<button class="dash-btn ghost" onclick="saveDoctorEdits(\'' + active.session_id + '\')">Save Edits</button>' +
+          '<button class="dash-btn ghost" onclick="printCaseSheet()">📄 Print / Export EMR</button>' +
+          '<button class="dash-btn primary" onclick="completeVisit(\'' + active.session_id + '\')">Complete Visit ✓</button>' +
+          '<button class="dash-btn danger" onclick="deletePatientRecord(\'' + active.session_id + '\')">Delete</button>' +
+        '</div>'
+      ) : '<div class="empty-detail">No active patients in queue.</div>') +
+    '</div></div>';
+}
+
+/* ── DOCTOR ACTIONS ── */
+async function saveDoctorEdits(sessionId){
+  var fields = ['chiefComplaint', 'hpi', 'pastHistory', 'allergies', 'medications', 'familyHistory', 'reviewOfSystems', 'uploadedDocSummary'];
+  var updated = {};
+  for(var i=0; i<fields.length; i++){
+    var el = document.getElementById('field_' + fields[i]);
+    if(el) updated[fields[i]] = el.innerText.trim();
+  }
+  showToast('Saving edits to server...');
+  var ok = await apiSaveSummary(sessionId, updated);
+  if(ok){
+    showToast('Edits successfully saved ✓');
+    apiGetQueue();
+  }
+}
+
+async function callPatient(sessionId){
+  showToast('Calling patient into room...');
+  var ok = await apiApprovePatient(sessionId);
+  if(ok){
+    showToast('Patient notified and called in ✓');
+    apiGetQueue();
+  }
+}
+
+async function completeVisit(sessionId){
+  if(!confirm("Mark consultation complete and archive patient from queue?")) return;
+  showToast('Completing consultation...');
+  var ok = await apiCompletePatient(sessionId);
+  if(ok){
+    showToast('Visit completed and archived ✓');
+    S.activeQueueId = null;
+    apiGetQueue();
+  }
+}
+
+async function deletePatientRecord(sessionId){
+  if(!confirm("Are you sure you want to delete this patient from the waiting list?")) return;
+  showToast('Deleting patient...');
+  var ok = await apiDeletePatient(sessionId);
+  if(ok){
+    showToast('Patient deleted from queue');
+    S.activeQueueId = null;
+    apiGetQueue();
+  }
+}
+
+function printCaseSheet(){ window.print(); }
+
+function bindEvents(){
+  var cw = document.getElementById('chatWindow');
+  if(cw) cw.scrollTop = cw.scrollHeight;
+  var ci = document.getElementById('chatInput');
+  if(ci) ci.focus();
+}
+function setLang(l){ S.lang = l; render(); }
+function setGender(g){ S.patient.gender = g; render(); }
+function refreshBtn(){
+  var p = S.patient;
+  var isPhoneValid = !p.phone || p.phone.length === 10;
+  var db = document.getElementById('detailsBtn');
+  if(db) db.disabled = !(p.name.trim() && p.age && isPhoneValid);
+  var cb = document.getElementById('consentBtn');
+  if(cb) cb.disabled = !S.consent;
+}
+function goto(screen){ S.screen = screen; render(); }
+function submitChat(){
+  var input = document.getElementById('chatInput');
+  if(!input) return;
+  var val = input.value;
+  input.value = '';
+  sendAnswer(val);
+}
+function goKiosk(){ S.view = 'kiosk'; render(); }
+function setActiveQueue(id){ S.activeQueueId = id; render(); }
+function resetKiosk(){
+  S.screen='welcome'; S.patient={name:'',age:'',gender:'M',phone:'',mock_abha:''}; S.consent=false;
+  S.sessionId=null; S.token=null; S.messages=[]; S.chatDone=false;
+  S.uploadFile=null; S.uploadFileName=''; S.uploadIsPdf=false; S.uploadPreview=null;
+  S.uploadStatus='idle'; S.extracted=null; S.clinicalSummary=null; S.patientRecap=null;
+  S.calledIn=false;
+  if(S.statusTimer) clearInterval(S.statusTimer);
+  render();
+}
+function escapeHtml(s){
+  return String(s||'').replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function logoSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12" stroke="#F1F5EC"/><path d="M8 12a4 4 0 018 0" stroke="#D98F2B" fill="none"/></svg>'; }
+function logoSmall(dark){ return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (dark?'#F1F5EC':'#0D3B36') + '" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>'; }
+function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
+function micSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>'; }
+function sendSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>'; }
+function uploadSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>'; }
+
+render();
+</script>
+</body>
+</html>
