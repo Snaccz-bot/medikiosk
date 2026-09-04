@@ -1,5 +1,5 @@
 """
-MediKiosk — Unified Full-Stack Backend
+MediKiosk — Multilingual Full-Stack Backend (6 AYUSH Languages)
 Serves both API and Frontend at http://localhost:8000
 """
 
@@ -180,7 +180,6 @@ def doctor_login(req: DoctorLoginRequest):
     doc_id = req.doctor_id.strip().upper()
     pin = req.pin.strip()
     
-    # Check DOC1 with Present (handles case-insensitivity as safety)
     if doc_id == "DOC1" and pin.lower() == "present":
         return {
             "success": True,
@@ -198,7 +197,16 @@ def doctor_login(req: DoctorLoginRequest):
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
-# ── 6. PATIENT KIOSK ROUTES ───────────────────────────────────────────────────
+# ── 6. PATIENT KIOSK ROUTES (6 REGIONAL LANGUAGES) ───────────────────────────
+
+LANG_NAMES = {
+    "en": "English",
+    "hi": "Hindi",
+    "ta": "Tamil",
+    "ml": "Malayalam",
+    "gu": "Gujarati",
+    "bn": "Bengali"
+}
 
 @app.post("/session/start")
 def start_session(req: StartSessionRequest):
@@ -250,10 +258,11 @@ def chat_next(req: ChatRequest):
         for m in session["messages"]
     ]) or "(Patient has arrived at kiosk.)"
 
-    lang_inst = "in Hindi" if session["patient"].get("language") == "hi" else "in English"
+    lang_code = session["patient"].get("language", "en")
+    target_lang = LANG_NAMES.get(lang_code, "English")
 
     prompt = f"""You are MediKiosk, an outpatient triage assistant at an Indian hospital OPD.
-Ask ONE short, empathetic medical question (under 18 words) {lang_inst} to build a doctor-ready case history.
+Ask ONE short, empathetic medical question (under 18 words) in {target_lang} to build a doctor-ready case history.
 Do NOT repeat topics the patient already mentioned.
 After 3 to 4 patient answers, return done: true and an empty question.
 
@@ -268,17 +277,26 @@ Conversation:
         question = parsed.get("question", "")
         done = bool(parsed.get("done", False)) or not question
     except Exception:
+        # Multilingual fallback opening
+        fallback_welcome = {
+            "en": "How can we help you today?",
+            "hi": "नमस्ते, बताइए क्या तकलीफ़ है?",
+            "ta": "வணக்கம், உங்களுக்கு என்ன உடல்நல பிரச்சனை?",
+            "ml": "നമസ്കാരം, എന്താണ് അസുഖം?",
+            "gu": "નમસ્તે, તમને શું તકલીફ છે?",
+            "bn": "নমস্কার, আজ কী সমস্যা নিয়ে এসেছেন?"
+        }
         if msg_count == 0:
-            question = "नमस्ते, बताइए क्या तकलीफ़ है?" if session["patient"].get("language") == "hi" else "How can we help you today?"
+            question = fallback_welcome.get(lang_code, "How can we help you today?")
             done = False
         elif msg_count == 1:
-            question = "यह दर्द या तकलीफ़ कब से है, और किस समय ज़्यादा बढ़ती है?" if session["patient"].get("language") == "hi" else "Since when have you had this, and does anything make it worse?"
+            question = "Since when have you had this, and does anything make it worse?"
             done = False
         elif msg_count == 2:
-            question = "क्या आपको कोई सूजन, बुखार या अन्य लक्षण महसूस होते हैं?" if session["patient"].get("language") == "hi" else "Do you have any swelling, morning stiffness, or other symptoms?"
+            question = "Do you have any swelling, morning stiffness, or other symptoms?"
             done = False
         elif msg_count == 3:
-            question = "क्या आप वर्तमान में कोई दवा ले रहे हैं या किसी दवा से एलर्जी है?" if session["patient"].get("language") == "hi" else "Are you currently taking any medications, or do you have any allergies?"
+            question = "Are you currently taking any medications, or do you have any allergies?"
             done = False
         else:
             question = ""
@@ -339,14 +357,16 @@ def generate_summary(req: SummaryRequest):
     transcript = "\n".join([f"{m['role']}: {m['text']}" for m in session["messages"]])
     upload_data = session.get("upload_summary") or {}
     doc_data = json.dumps(upload_data)
-    lang = "Hindi" if session["patient"].get("language") == "hi" else "English"
+    
+    lang_code = session["patient"].get("language", "en")
+    target_lang = LANG_NAMES.get(lang_code, "English")
 
     prompt = f"""You are a clinical summarizer for hospital OPDs.
 Based on the transcript and document data, produce a structured case note in JSON.
 Rules:
-- Write clinical fields in concise medical English.
+- Write clinical fields in concise medical English regardless of conversation language.
 - Flag allergies or urgent issues in 'redFlags'.
-- Write 'patientRecap' as 3 short friendly bullets in {lang}.
+- Write 'patientRecap' as exactly 3 short friendly bullets in {target_lang}.
 
 JSON format:
 {{

@@ -52,23 +52,29 @@
   .doctor-lock-btn:hover{background:var(--paper-dim);color:var(--teal);}
 
   .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 20px 60px;}
-  .card{width:100%;max-width:460px;background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:36px 32px;border:1px solid var(--line);}
+  .card{width:100%;max-width:480px;background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:34px 28px;border:1px solid var(--line);}
   .steps{display:flex;justify-content:center;gap:8px;margin:0 0 28px;}
   .step-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .3s ease;}
   .step-dot.active{background:var(--saffron);width:20px;border-radius:4px;}
   .step-dot.done{background:var(--sage);}
 
   h1.title{font-family:Georgia,serif;font-size:26px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
-  p.lede{font-size:14.5px;color:var(--ink-soft);line-height:1.55;margin:0 0 26px;}
+  p.lede{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0 0 24px;}
 
-  .lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
+  /* 6-Language Touch Grid */
+  .lang-grid-6{
+    display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:12px;
+  }
+  @media(max-width:480px){
+    .lang-grid-6{grid-template-columns:repeat(2, 1fr);}
+  }
   .lang-opt{
-    border:1.5px solid var(--line);border-radius:14px;padding:20px 14px;text-align:center;
+    border:1.5px solid var(--line);border-radius:12px;padding:14px 8px;text-align:center;
     cursor:pointer;background:var(--paper);transition:all .15s ease;
   }
   .lang-opt.selected{border-color:var(--saffron);background:var(--saffron-soft);}
-  .lang-opt .lang-native{font-family:Georgia,serif;font-size:20px;color:var(--teal);}
-  .lang-opt .lang-eng{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+  .lang-opt .lang-native{font-family:Georgia,serif;font-size:17px;color:var(--teal);font-weight:600;}
+  .lang-opt .lang-eng{font-size:11px;color:var(--ink-soft);margin-top:2px;}
 
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
@@ -143,7 +149,7 @@
     display:flex;align-items:center;justify-content:center;z-index:1000;
   }
   .modal-card{
-    background:#fff;width:100%;max-width:400px;border-radius:20px;padding:32px 28px;
+    background:#fff;width:100%;max-width:410px;border-radius:20px;padding:32px 28px;
     box-shadow:var(--shadow);border:1px solid var(--line);
   }
 
@@ -222,6 +228,7 @@ var S = {
   loginError: ''
 };
 
+// 6 Regional AYUSH Language Dictionaries
 var STR = {
   en:{ welcomeTitle:"Welcome to MediKiosk", welcomeLede:"Autonomous outpatient triage for Ministry of AYUSH OPD. Takes ~2 minutes.",
        chooseLang:"Choose your language", start:"Continue",
@@ -254,9 +261,73 @@ var STR = {
        recapTitle:"आप तैयार हैं!", recapLede:"आपका टोकन डॉक्टर के पास पहुँच चुका है:",
        tokenPrefix:"आपका टोकन", waitNote:"कृपया प्रतीक्षालय में बैठें। बुलाए जाने पर स्क्रीन पर सूचना दिखेगी।",
        newIntake:"नया मरीज़ शुरू करें"
+     },
+  ta:{ welcomeTitle:"MediKiosk-க்கு நல்வரவு", welcomeLede:"மருத்துவரை சந்திக்கும் முன் சில தகவல்களை தயார் செய்வோம். இதற்கு 2 நிமிடங்கள் ஆகும்.",
+       chooseLang:"உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்", start:"தொடரவும்",
+       detailsTitle:"நோயாளியின் விவரங்கள்", detailsLede:"இன்றைய ஆலோசனையின் அடிப்படை விவரங்கள்.",
+       name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண் (10 இலக்கங்கள்)", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
+       consentTitle:"ஒப்புதல் & தனியுரிமை", consentLede:"உங்கள் தகவல்கள் உங்கள் மருத்துவரிடம் மட்டுமே பகிரப்படும்.",
+       consentBody:"மருத்துவரின் நேரத்தை சேமிக்க MediKiosk தானியங்கி மருத்துவ குறிப்பை தயார் செய்கிறது.",
+       consentCheck:"மருத்துவ ஆலோசனைக்காக என் விவரங்களை பகிர ஒப்புக்கொள்கிறேன்.",
+       chatTitle:"உங்கள் உடல்நிலையை விவரிக்கவும்", chatLede:"மைக் மூலம் பேசலாம் அல்லது தட்டச்சு செய்யலாம்.",
+       typePh:"உங்கள் அறிகுறிகளை இங்கே தட்டச்சு செய்யவும்…", uploadTitle:"பழைய மருத்துவச் சீட்டு அல்லது அறிக்கை?",
+       uploadLede:"விருப்பமானது — பழைய மருந்துகளை அறிய புகைப்படம் அல்லது PDF பதிவேற்றவும்.", uploadDrop:"புகைப்படம் அல்லது PDF பதிவேற்ற தட்டவும்",
+       skipUpload:"இந்த படிநிலையைத் தவிர்க்கவும்", scanning:"ஆவணம் ஆய்வு செய்யப்படுகிறது…", scanDone:"விவரங்கள் பெறப்பட்டன",
+       genTitle:"சுருக்கம் தயாராகிறது…", genLede:"மருத்துவருக்கான தகவல்கள் ஒழுங்கமைக்கப்படுகின்றன.",
+       recapTitle:"நீங்கள் தயாராகிவிட்டீர்கள்!", recapLede:"உங்கள் டோக்கன் மருத்துவரிடம் அனுப்பப்பட்டது:",
+       tokenPrefix:"உங்கள் டோக்கன்", waitNote:"தயவுசெய்து காத்திருப்பு அறையில் அமரவும். அழைப்பு வரும்போது அறிவிக்கப்படும்.",
+       newIntake:"அடுத்த நோயாளி"
+     },
+  ml:{ welcomeTitle:"മെഡിക്കിയോസ്കിലേക്ക് സ്വാഗതം", welcomeLede:"ഡോക്ടറെ കാണുന്നതിന് മുൻപ് വിവരങ്ങൾ തയ്യാറാക്കാം. ഇതിന് 2 മിനിറ്റ് എടുക്കും.",
+       chooseLang:"ഭാഷ തിരഞ്ഞെടുക്കുക", start:"തുടരുക",
+       detailsTitle:"രോഗിയുടെ വിവരങ്ങൾ", detailsLede:"ഇന്നത്തെ ഒ.പി.ഡി കൺസൾട്ടേഷനായുള്ള പ്രാഥമിക വിവരങ്ങൾ.",
+       name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ (10 അക്കങ്ങൾ)", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
+       consentTitle:"സമ്മതവും സ്വകാര്യതയും", consentLede:"ഈ വിവരങ്ങൾ ചികിത്സിക്കുന്ന ഡോക്ടറുമായി മാത്രമേ പങ്കിടുകയുള്ളൂ.",
+       consentBody:"ഡോക്ടറുടെ സമയം ലാഭിക്കാൻ മെഡിക്കിയോസ്ക് ഓട്ടോമേറ്റഡ് കേസ് ഷീറ്റ് തയ്യാറാക്കുന്നു.",
+       consentCheck:"ഇന്നത്തെ കൺസൾട്ടേഷനായി വിവരങ്ങൾ നൽകാൻ ഞാൻ സമ്മതിക്കുന്നു.",
+       chatTitle:"ബുദ്ധിമുട്ടുകൾ എന്തൊക്കെയാണ്?", chatLede:"മൈക്ക് ഉപയോഗിച്ച് സംസാരിക്കുകയോ ടൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.",
+       typePh:"നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഇവിടെ എഴുതുക…", uploadTitle:"പഴയ കുറിപ്പടിയോ ലാബ് റിപ്പോർട്ടോ ഉണ്ടോ?",
+       uploadLede:"ഓപ്ഷണൽ — മരുന്നുകൾ മനസ്സിലാക്കാൻ ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാം.", uploadDrop:"ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക",
+       skipUpload:"ഈ ഘട്ടം ഒഴിവാക്കുക", scanning:"രേഖ പരിശോധിക്കുന്നു…", scanDone:"വിവരങ്ങൾ ലഭ്യമായി",
+       genTitle:"സംഗ്രഹം തയ്യാറാക്കുന്നു…", genLede:"ഡോക്ടർക്കായി വിവരങ്ങൾ ക്രമീകരിക്കുകയാണ്.",
+       recapTitle:"എല്ലാം തയ്യാറായി!", recapLede:"നിങ്ങളുടെ ടോക്കൺ ഡോക്ടറുടെ ക്യൂവിലേക്ക് ചേർത്തു:",
+       tokenPrefix:"നിങ്ങളുടെ ടോക്കൺ", waitNote:"ദയവായി കാത്തിരിപ്പ് മുറിയിൽ ഇരിക്കുക. വിളിക്കുമ്പോൾ അറിയിപ്പ് ലഭിക്കും.",
+       newIntake:"അടുത്ത രോഗി"
+     },
+  gu:{ welcomeTitle:"મેડિકિઓસ્કમાં આપનું સ્વાગત છે", welcomeLede:"ડોક્ટરને મળતા પહેલા માહિતી તૈયાર કરીએ. લગભગ 2 મિનિટ લાગશે.",
+       chooseLang:"ભાષા પસંદ કરો", start:"આગળ વધો",
+       detailsTitle:"દર્દીની માહિતી", detailsLede:"આજના પરામર્શ માટે જરૂરી માહિતી.",
+       name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર (10 અંક)", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
+       consentTitle:"સંમતિ અને ગોપનીયતા", consentLede:"આ માહિતી ફક્ત આપની સારવાર કરતા ડોક્ટર સાથે જ શેર થશે.",
+       consentBody:"મેડિકિઓસ્ક ડોક્ટરનો સમય બચાવવા આપની કેસ હિસ્ટ્રી તૈયાર કરે છે.",
+       consentCheck:"હું આજના પરામર્શ માટે માહિતી આપવા સંમત છું.",
+       chatTitle:"તમને શું તકલીફ છે?", chatLede:"માઈકથી બોલો અથવા ટાઈપ કરો.",
+       typePh:"તમારી સમસ્યા અહીં લખો…", uploadTitle:"જૂનો પ્રિસ્ક્રિપ્શન અથવા રિપોર્ટ છે?",
+       uploadLede:"વૈકલ્પિક — જૂની દવાઓ જાણવા ફોટો કે PDF અપલોડ કરો.", uploadDrop:"ફોટો અથવા PDF અપલોડ કરવા ટેપ કરો",
+       skipUpload:"આ પગલું છોડો", scanning:"દસ્તાવેજ વંચાઈ રહ્યો છે…", scanDone:"વિગતો મળી ગઈ",
+       genTitle:"સારાંશ તૈયાર થઈ રહ્યો છે…", genLede:"ડોક્ટર માટે વિગતો ગોઠવાઈ રહી છે.",
+       recapTitle:"તમે તૈયાર છો!", recapLede:"તમારો ટોકન ડોક્ટર પાસે પહોંચી ગયો છે:",
+       tokenPrefix:"તમારો ટોકન", waitNote:"કૃપા કરીને પ્રતીક્ષાલયમાં બેસો. વારો આવ્યે સૂચના મળશે.",
+       newIntake:"નવો દર્દી"
+     },
+  bn:{ welcomeTitle:"মেডিকিয়স্কে স্বাগতম", welcomeLede:"ডাক্তারকে দেখানোর আগে তথ্য প্রস্তুত করি। প্রায় ২ মিনিট লাগবে।",
+       chooseLang:"ভাষা নির্বাচন করুন", start:"এগিয়ে যান",
+       detailsTitle:"রোগীর বিবরণ", detailsLede:"আজকের ওপিডি পরামর্শের প্রাথমিক তথ্য।",
+       name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর (১০ সংখ্যা)", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
+       consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"এই তথ্য শুধুমাত্র আপনার চিকিৎসকের সাথেই ভাগ করা হবে।",
+       consentBody:"মেডিকিয়স্ক ডাক্তারের সময় বাঁচাতে প্রাথমিক ইতিহাস স্বয়ংক্রিয়ভাবে প্রস্তুত করে।",
+       consentCheck:"আমি পরামর্শের জন্য আমার তথ্য প্রদান করতে সম্মত।",
+       chatTitle:"আপনার কী সমস্যা হচ্ছে?", chatLede:"মাইকে বলুন অথবা টাইপ করুন।",
+       typePh:"আপনার লক্ষণ এখানে লিখুন…", uploadTitle:"কোনো পুরোনো প্রেসক্রিপশন বা রিপোর্ট আছে?",
+       uploadLede:"ঐচ্ছিক — পুরোনো ওষুধ বুঝতে ছবি বা PDF আপলোড করুন।", uploadDrop:"ছবি বা PDF আপলোড করতে চাপুন",
+       skipUpload:"এই ধাপটি এড়িয়ে যান", scanning:"নথি পরীক্ষা করা হচ্ছে…", scanDone:"বিবরণ পাওয়া গেছে",
+       genTitle:"সারাংশ প্রস্তুত হচ্ছে…", genLede:"ডাক্তারের জন্য তথ্য সাজানো হচ্ছে।",
+       recapTitle:"সব প্রস্তুত!", recapLede:"আপনার টোকেন ডাক্তারের কাছে পৌঁছে গেছে:",
+       tokenPrefix:"আপনার টোকেন", waitNote:"অনুগ্রহ করে অপেক্ষা করুন। ডাক পড়লে স্ক্রিনে জানানো হবে।",
+       newIntake:"পরবর্তী রোগী"
      }
 };
-function t(k){ return STR[S.lang][k] || ''; }
+function t(k){ return (STR[S.lang] && STR[S.lang][k]) || STR['en'][k] || ''; }
 
 /* ── API CALLS ── */
 async function apiDoctorLogin(docId, pin){
@@ -309,7 +380,7 @@ async function apiChatNext(userMsg){
   } catch(e){}
 
   if(!userMsg){
-    return { question: S.lang==='hi' ? "नमस्ते, बताइए आज आपको क्या समस्या है?" : "How can we help you today?", done: false };
+    return { question: t('chatTitle') + "?", done: false };
   }
   return { question: "", done: true };
 }
@@ -519,6 +590,7 @@ async function generateSummary(){
   render();
 }
 
+// Multilingual Speech Recognition
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser"); return; }
@@ -527,7 +599,15 @@ function toggleMic(){
     return;
   }
   var rec = new SR();
-  rec.lang = S.lang === 'hi' ? 'hi-IN' : 'en-IN';
+  var speechLangMap = {
+    'en': 'en-IN',
+    'hi': 'hi-IN',
+    'ta': 'ta-IN',
+    'ml': 'ml-IN',
+    'gu': 'gu-IN',
+    'bn': 'bn-IN'
+  };
+  rec.lang = speechLangMap[S.lang] || 'en-IN';
   rec.interimResults = false;
   rec.onstart = function(){ S.listening = true; render(); };
   rec.onend = function(){ S.listening = false; render(); };
@@ -590,15 +670,29 @@ function renderKiosk(){
 }
 
 function screenWelcome(){
+  var langs = [
+    { code: 'en', native: 'English', sub: 'Universal' },
+    { code: 'hi', native: 'हिंदी', sub: 'Hindi' },
+    { code: 'ta', native: 'தமிழ்', sub: 'Tamil (Siddha)' },
+    { code: 'ml', native: 'മലയാളം', sub: 'Malayalam (Ayurveda)' },
+    { code: 'gu', native: 'ગુજરાતી', sub: 'Gujarati (Jamnagar)' },
+    { code: 'bn', native: 'বাংলা', sub: 'Bengali' }
+  ];
+
+  var gridHtml = '<div class="lang-grid-6">';
+  for(var i=0; i<langs.length; i++){
+    var l = langs[i];
+    gridHtml += '<div class="lang-opt ' + (S.lang===l.code?'selected':'') + '" onclick="setLang(\'' + l.code + '\')">' +
+      '<div class="lang-native">' + l.native + '</div>' +
+      '<div class="lang-eng">' + l.sub + '</div>' +
+      '</div>';
+  }
+  gridHtml += '</div>';
+
   return '<h1 class="title serif">' + t('welcomeTitle') + '</h1>' +
     '<p class="lede">' + t('welcomeLede') + '</p>' +
     '<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;">' + t('chooseLang') + '</div>' +
-    '<div class="lang-grid">' +
-      '<div class="lang-opt ' + (S.lang==='en'?'selected':'') + '" onclick="setLang(\'en\')">' +
-        '<div class="lang-native">English</div><div class="lang-eng">EN</div></div>' +
-      '<div class="lang-opt ' + (S.lang==='hi'?'selected':'') + '" onclick="setLang(\'hi\')">' +
-        '<div class="lang-native">हिंदी</div><div class="lang-eng">HI</div></div>' +
-    '</div><br/>' +
+    gridHtml + '<br/>' +
     '<button class="btn btn-primary" onclick="goto(\'details\')">' + t('start') + '</button>';
 }
 
@@ -706,7 +800,7 @@ function screenRecap(){
     '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>';
 }
 
-/* ── DOCTOR LOGIN MODAL WITH WITTY JOKE ── */
+/* ── DOCTOR LOGIN MODAL WITH CUSTOM JOKE ── */
 function renderDoctorModal(){
   var div = document.createElement('div');
   div.className = 'modal-overlay';
@@ -718,8 +812,9 @@ function renderDoctorModal(){
       '<input id="docIdInput" type="text" placeholder="e.g. DOC1" value=""/></div>' +
     '<div class="field" style="margin-bottom:6px;"><label>Security Password</label>' +
       '<input id="docPinInput" type="password" placeholder="Enter password" value=""/></div>' +
-    '<div style="font-size:11.5px;color:var(--sage);font-style:italic;margin-bottom:16px;line-height:1.4;">' +
-      '🩺 <b>Doc Humor Hint:</b> What did the doctor say during morning attendance? <span style="color:var(--teal);font-weight:bold;">"Present"</span> (P is capital 😉)' +
+    '<div style="font-size:11.5px;color:var(--sage);font-style:italic;margin-bottom:16px;line-height:1.45;">' +
+      '🩺 <b>Doc Humor Hint:</b> "I\'m here, I\'m a gift, and I\'m completely tense-less."<br>' +
+      '<span style="color:var(--teal);font-weight:600;">(Password: Present — with capital P 😉)</span>' +
     '</div>' +
     (S.loginError ? '<div style="color:var(--brick);font-size:12px;margin-bottom:12px;font-weight:500;">' + S.loginError + '</div>' : '') +
     '<button class="btn btn-primary" onclick="submitDoctorLogin()">Sign In to Dashboard →</button>' +
