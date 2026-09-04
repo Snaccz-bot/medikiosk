@@ -70,7 +70,7 @@ def query_gemini(prompt_or_contents):
     raise RuntimeError(f"Gemini call failed: {last_err}")
 
 
-# ── 2. DATABASE LAYER (MongoDB Atlas Cloud with Local JSON Fallback) ──────────
+# ── 2. DATABASE LAYER ─────────────────────────────────────────────────────────
 MONGO_URI = os.environ.get("MONGO_URI", "")
 mongo_col = None
 
@@ -128,7 +128,7 @@ def db_delete(session_id: str):
             json.dump(all_data, f, ensure_ascii=False, indent=2)
 
 
-# ── 3. SERVE FRONTEND DIRECTLY AT http://localhost:8000 ──────────────────────
+# ── 3. SERVE FRONTEND AT http://localhost:8000 ───────────────────────────────
 @app.get("/", response_class=HTMLResponse)
 def serve_home():
     candidate_paths = [
@@ -141,7 +141,7 @@ def serve_home():
     for p in candidate_paths:
         if p.exists():
             return FileResponse(p)
-    return HTMLResponse("<h2>MediKiosk: index.html not found. Please verify folder structure.</h2>")
+    return HTMLResponse("<h2>MediKiosk: index.html not found.</h2>")
 
 
 # ── 4. DATA MODELS ────────────────────────────────────────────────────────────
@@ -170,15 +170,24 @@ class UpdateSummaryRequest(BaseModel):
 
 # ── 5. DOCTOR AUTHENTICATION ──────────────────────────────────────────────────
 VALID_DOCTORS = {
+    "DOC1": "Present",
     "DOC-101": "1234",
-    "DR.SHARMA": "1234",
-    "AYUSH-OPD": "1234"
+    "DR.SHARMA": "1234"
 }
 
 @app.post("/doctor/login")
 def doctor_login(req: DoctorLoginRequest):
     doc_id = req.doctor_id.strip().upper()
     pin = req.pin.strip()
+    
+    # Check DOC1 with Present (handles case-insensitivity as safety)
+    if doc_id == "DOC1" and pin.lower() == "present":
+        return {
+            "success": True,
+            "doctor_name": "Dr. Rameshwar Sharma, MD (Ayu)",
+            "role": "Senior Consultant",
+            "department": "Kayachikitsa (Internal Medicine) OPD Room 2"
+        }
     if doc_id in VALID_DOCTORS and VALID_DOCTORS[doc_id] == pin:
         return {
             "success": True,
@@ -186,7 +195,7 @@ def doctor_login(req: DoctorLoginRequest):
             "role": "Senior Consultant",
             "department": "Kayachikitsa (Internal Medicine) OPD Room 2"
         }
-    raise HTTPException(status_code=401, detail="Invalid Doctor ID or PIN")
+    raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
 # ── 6. PATIENT KIOSK ROUTES ───────────────────────────────────────────────────

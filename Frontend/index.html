@@ -143,7 +143,7 @@
     display:flex;align-items:center;justify-content:center;z-index:1000;
   }
   .modal-card{
-    background:#fff;width:100%;max-width:380px;border-radius:20px;padding:32px 28px;
+    background:#fff;width:100%;max-width:400px;border-radius:20px;padding:32px 28px;
     box-shadow:var(--shadow);border:1px solid var(--line);
   }
 
@@ -216,7 +216,6 @@ var S = {
   recognition: null,
   activeQueueId: null,
   queue: [],
-  // Doctor Auth state
   showDoctorModal: false,
   doctorLoggedIn: false,
   currentDoctor: null,
@@ -230,7 +229,6 @@ var STR = {
        name:"Full Name", age:"Age", phone:"Phone Number (10 digits)", gender:"Gender", male:"Male", female:"Female", other:"Other",
        consentTitle:"Consent & Privacy", consentLede:"Your data is encrypted and shared only with your treating doctor.",
        consentBody:"MediKiosk prepares an automated intake history to save doctor consultation time. No information leaves this clinic.",
-       consentNote:"ABDM ABHA Compliant — AI Triage for AIIA OPD.",
        consentCheck:"I consent to provide my symptoms for my OPD case file.",
        chatTitle:"Tell us what's going on", chatLede:"Speak with the mic or type in your own words.",
        typePh:"Type your symptoms here…", uploadTitle:"Old Prescriptions or Reports?",
@@ -247,7 +245,6 @@ var STR = {
        name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
        consentTitle:"सहमति एवं गोपनीयता", consentLede:"आपकी जानकारी केवल आपके डॉक्टर के साथ साझा होगी।",
        consentBody:"मेडीकियोस्क डॉक्टर का समय बचाने के लिए आपकी जानकारी व्यवस्थित करता है।",
-       consentNote:"ABDM अनुरूप — AIIA OPD सहायता प्रणाली।",
        consentCheck:"मैं आज के परामर्श के लिए जानकारी साझा करने हेतु सहमत हूँ।",
        chatTitle:"बताइए क्या तकलीफ़ है", chatLede:"माइक से बोलें या टाइप करें।",
        typePh:"यहाँ अपनी तकलीफ़ लिखें…", uploadTitle:"कोई पुराना पर्चा या रिपोर्ट?",
@@ -709,19 +706,22 @@ function screenRecap(){
     '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>';
 }
 
-/* ── DOCTOR LOGIN MODAL ── */
+/* ── DOCTOR LOGIN MODAL WITH WITTY JOKE ── */
 function renderDoctorModal(){
   var div = document.createElement('div');
   div.className = 'modal-overlay';
   div.id = 'docModal';
   div.innerHTML = '<div class="modal-card">' +
     '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
-    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 20px;">Staff Authentication Required</p>' +
+    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required</p>' +
     '<div class="field"><label>Doctor ID</label>' +
-      '<input id="docIdInput" type="text" placeholder="e.g. DOC-101" value="DOC-101"/></div>' +
-    '<div class="field"><label>Security PIN</label>' +
-      '<input id="docPinInput" type="password" placeholder="PIN (Default: 1234)" value="1234"/></div>' +
-    (S.loginError ? '<div style="color:var(--brick);font-size:12px;margin-bottom:12px;">' + S.loginError + '</div>' : '') +
+      '<input id="docIdInput" type="text" placeholder="e.g. DOC1" value=""/></div>' +
+    '<div class="field" style="margin-bottom:6px;"><label>Security Password</label>' +
+      '<input id="docPinInput" type="password" placeholder="Enter password" value=""/></div>' +
+    '<div style="font-size:11.5px;color:var(--sage);font-style:italic;margin-bottom:16px;line-height:1.4;">' +
+      '🩺 <b>Doc Humor Hint:</b> What did the doctor say during morning attendance? <span style="color:var(--teal);font-weight:bold;">"Present"</span> (P is capital 😉)' +
+    '</div>' +
+    (S.loginError ? '<div style="color:var(--brick);font-size:12px;margin-bottom:12px;font-weight:500;">' + S.loginError + '</div>' : '') +
     '<button class="btn btn-primary" onclick="submitDoctorLogin()">Sign In to Dashboard →</button>' +
     '<button class="btn btn-ghost" onclick="closeDoctorModal()">Cancel</button>' +
   '</div>';
@@ -747,7 +747,7 @@ async function submitDoctorLogin(){
     apiGetQueue();
     render();
   } else {
-    S.loginError = 'Invalid Doctor ID or PIN. (Demo default: 1234)';
+    S.loginError = 'Invalid credentials. Hint: DOC1 and password is "Present"';
     var el = document.getElementById('docModal');
     if(el) el.remove();
     renderDoctorModal();
