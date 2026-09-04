@@ -6,8 +6,7 @@
 <title>MediKiosk — Ministry of AYUSH</title>
 <style>
   :root{
-    --paper:#F1F5EC;
-    --paper-card:#FFFFFF;
+    --paper:#F3EFEA;
     --teal:#0D3B36;
     --teal-deep:#081A17;
     --teal-mid:#144F48;
@@ -17,9 +16,9 @@
     --ink:#14231D;
     --ink-soft:#48584E;
     --brick:#B4472A;
-    --line:rgba(13,59,54,0.12);
-    --line-dark:rgba(241,245,236,0.12);
-    --shadow:0 2px 8px rgba(13,59,54,0.06), 0 10px 28px rgba(13,59,54,0.08);
+    --line:rgba(13,59,54,0.14);
+    --line-dark:rgba(243,239,234,0.12);
+    --shadow:0 2px 8px rgba(13,59,54,0.06), 0 12px 30px rgba(13,59,54,0.08);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100vh;overflow:hidden;}
@@ -33,10 +32,10 @@
   #root{height:100vh;display:flex;flex-direction:column;overflow:hidden;}
   .serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype',serif;}
 
-  /* Compact Top Bar */
+  /* ── COMPACT TOPBAR ── */
   .topbar{
     display:flex;align-items:center;justify-content:space-between;
-    padding:12px 28px;background:#fff;border-bottom:1px solid var(--line);
+    padding:10px 24px;background:#fff;border-bottom:1px solid var(--line);
     flex-shrink:0;
   }
   .brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
@@ -47,7 +46,7 @@
   }
   .brand-mark svg{width:18px;height:18px;}
   .brand-name{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--teal);}
-  .brand-sub{font-size:11px;color:var(--ink-soft);margin-top:-2px;}
+  .brand-sub{font-size:10.5px;color:var(--ink-soft);margin-top:-2px;}
   .top-btn{
     font-size:12px;color:var(--teal);font-weight:600;
     border:1px solid var(--line);padding:6px 14px;border-radius:20px;
@@ -56,74 +55,77 @@
   }
   .top-btn:hover{background:var(--paper);border-color:var(--teal);}
 
-  /* ── 100% ZOOM HOMEPAGE (COMPACT & BALANCED) ── */
+  /* ── 100% ZOOM HOMEPAGE (SEAMLESS BLEND) ── */
   .home-stage{
     flex:1;display:flex;align-items:center;justify-content:center;
-    padding:20px 24px;overflow:hidden;
+    padding:16px 24px;overflow:hidden;
   }
   .home-grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+    display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center;
     width:100%;max-width:880px;
   }
   @media(max-width:768px){
     .home-grid{grid-template-columns:1fr;gap:20px;text-align:center;}
   }
 
+  /* Left: Natural Floating Mascot without harsh box borders */
   .home-left{
-    display:flex;flex-direction:column;justify-content:center;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
   }
-  .home-left .badge{
-    display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
-    color:var(--saffron);background:var(--saffron-soft);padding:3px 10px;border-radius:12px;margin-bottom:10px;
-    width:fit-content;
+  .mascot-blend-canvas{
+    width:220px;height:220px;display:flex;align-items:center;justify-content:center;
+    margin-bottom:12px;position:relative;
   }
-  .home-left h1{
-    font-family:Georgia,serif;font-size:32px;color:var(--teal);line-height:1.15;margin:0 0 10px;
+  .mascot-blend-canvas img{
+    width:100%;height:100%;object-fit:contain;
+    mix-blend-mode:multiply;
+    filter:contrast(1.04) saturate(1.02);
+    /* Soft vignette mask so edges dissolve into canvas */
+    -webkit-mask-image:radial-gradient(circle, black 65%, transparent 100%);
+    mask-image:radial-gradient(circle, black 65%, transparent 100%);
   }
-  .home-left p{
-    font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 16px;max-width:360px;
+  .mascot-tag{
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
+    color:var(--saffron);background:var(--saffron-soft);padding:3px 10px;border-radius:12px;margin-bottom:6px;
   }
-  .ayush-bullet{
-    display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--teal);font-weight:500;margin-bottom:6px;
-  }
+  .home-left h2{font-family:Georgia,serif;font-size:22px;color:var(--teal);margin:0 0 4px;}
+  .home-left p{font-size:12.5px;color:var(--ink-soft);line-height:1.45;margin:0;max-width:300px;}
 
+  /* Right: Two Clean Floating Action Tiles */
   .home-right{display:flex;flex-direction:column;gap:12px;}
   .home-card{
     background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:18px 20px;
     box-shadow:var(--shadow);cursor:pointer;transition:all .18s ease;display:flex;align-items:center;gap:16px;
   }
   .home-card:hover{
-    transform:translateY(-2px);border-color:var(--saffron);box-shadow:0 6px 18px rgba(13,59,54,0.1);
+    transform:translateY(-2px);border-color:var(--saffron);box-shadow:0 6px 20px rgba(13,59,54,0.1);
   }
   .home-card.doctor-card:hover{border-color:var(--teal);}
   .card-icon{
-    width:44px;height:44px;border-radius:12px;flex-shrink:0;
+    width:46px;height:46px;border-radius:12px;flex-shrink:0;
     display:flex;align-items:center;justify-content:center;
   }
   .home-card.patient-card .card-icon{background:var(--saffron-soft);color:var(--teal);}
   .home-card.doctor-card .card-icon{background:var(--teal);color:#fff;}
-  .card-text h3{font-size:15.5px;font-weight:700;color:var(--teal);margin:0 0 3px;}
+  .card-text h3{font-size:16px;font-weight:700;color:var(--teal);margin:0 0 2px;}
   .card-text p{font-size:11.5px;color:var(--ink-soft);margin:0;line-height:1.35;}
 
-  /* ── STAGES (FITS 100% ZOOM WITHOUT SCROLLING) ── */
-  .stage{
-    flex:1;display:flex;align-items:center;justify-content:center;
-    padding:16px;overflow:hidden;
-  }
+  /* ── 100% ZOOM KIOSK CARD ── */
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;overflow:hidden;}
   .kiosk-card{
     width:100%;max-width:480px;background:#fff;border-radius:20px;
-    box-shadow:var(--shadow);padding:24px 26px;border:1px solid var(--line);
+    box-shadow:var(--shadow);padding:22px 24px;border:1px solid var(--line);
     max-height:86vh;display:flex;flex-direction:column;
   }
-  .steps{display:flex;justify-content:center;gap:6px;margin:0 0 18px;}
+  .steps{display:flex;justify-content:center;gap:6px;margin:0 0 16px;}
   .step-dot{width:6px;height:6px;border-radius:50%;background:var(--line);transition:all .3s;}
   .step-dot.active{background:var(--saffron);width:18px;border-radius:4px;}
   .step-dot.done{background:var(--sage);}
 
-  h2.card-title{font-family:Georgia,serif;font-size:22px;line-height:1.2;margin:0 0 6px;color:var(--teal);}
-  p.card-lede{font-size:13px;color:var(--ink-soft);line-height:1.45;margin:0 0 16px;}
+  h2.card-title{font-family:Georgia,serif;font-size:21px;line-height:1.2;margin:0 0 4px;color:var(--teal);}
+  p.card-lede{font-size:12.5px;color:var(--ink-soft);line-height:1.4;margin:0 0 14px;}
 
-  .lang-grid-6{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:16px;}
+  .lang-grid-6{display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:14px;}
   .lang-opt{
     border:1.5px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;
     cursor:pointer;background:var(--paper);transition:all .15s ease;
@@ -132,11 +134,11 @@
   .lang-opt .native{font-family:Georgia,serif;font-size:15px;color:var(--teal);font-weight:600;}
   .lang-opt .sub{font-size:10px;color:var(--ink-soft);margin-top:1px;}
 
-  .field{margin-bottom:11px;}
+  .field{margin-bottom:10px;}
   .field label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;font-weight:500;}
   .field input{
-    width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--line);
-    font-size:14px;background:var(--paper);color:var(--ink);
+    width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--line);
+    font-size:13.5px;background:var(--paper);color:var(--ink);
   }
   .field input:focus{outline:none;border-color:var(--saffron);}
   .field-error{font-size:11px;color:var(--brick);margin-top:2px;}
@@ -150,14 +152,14 @@
 
   .consent-box{
     background:var(--paper);border:1px solid var(--line);border-radius:10px;
-    padding:12px;font-size:12px;color:var(--ink-soft);line-height:1.45;margin-bottom:14px;
+    padding:11px;font-size:11.5px;color:var(--ink-soft);line-height:1.45;margin-bottom:12px;
   }
-  .check-row{display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-bottom:16px;}
+  .check-row{display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin-bottom:14px;}
   .check-row input{margin-top:2px;width:15px;height:15px;accent-color:var(--saffron);flex-shrink:0;}
   .check-row span{font-size:12px;color:var(--ink);line-height:1.4;}
 
   .btn{
-    width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:600;
+    width:100%;padding:11px;border-radius:10px;border:none;font-size:13.5px;font-weight:600;
     cursor:pointer;transition:all .15s ease;
   }
   .btn-primary{background:var(--teal);color:#fff;}
@@ -169,28 +171,33 @@
   /* Chat */
   .chat-card{max-width:500px;}
   .chat-window{
-    flex:1;min-height:220px;max-height:300px;overflow-y:auto;
+    flex:1;min-height:210px;max-height:280px;overflow-y:auto;
     display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding-right:4px;
   }
   .bubble-row{display:flex;align-items:flex-start;gap:8px;}
   .bubble-row.user{justify-content:flex-end;}
-  .bubble{max-width:85%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.45;}
+  .bot-avatar-mini{
+    width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid var(--saffron);
+    overflow:hidden;flex-shrink:0;margin-top:3px;display:flex;align-items:center;justify-content:center;
+  }
+  .bot-avatar-mini img{width:100%;height:100%;object-fit:cover;}
+  .bubble{max-width:85%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.4;}
   .bubble.bot{background:var(--paper);color:var(--ink);border-bottom-left-radius:3px;}
   .bubble.user{background:var(--teal);color:#fff;border-bottom-right-radius:3px;}
   .typing{display:flex;gap:4px;align-self:flex-start;padding:10px 14px;}
   .typing span{width:5px;height:5px;border-radius:50%;background:var(--ink-soft);animation:bounce 1.2s infinite ease-in-out;}
   .typing span:nth-child(2){animation-delay:.15s;}
   .typing span:nth-child(3){animation-delay:.3s;}
-  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-3px);opacity:1;}}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
 
   .input-bar{display:flex;gap:6px;align-items:center;}
   .input-bar input{
-    flex:1;padding:11px 14px;border-radius:20px;border:1.5px solid var(--line);
-    font-size:13.5px;background:var(--paper);
+    flex:1;padding:10px 14px;border-radius:20px;border:1.5px solid var(--line);
+    font-size:13px;background:var(--paper);
   }
   .input-bar input:focus{outline:none;border-color:var(--saffron);}
   .mic-btn, .send-btn{
-    width:38px;height:38px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;
+    width:36px;height:36px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
   }
   .mic-btn{background:var(--paper);border:1.5px solid var(--line);}
@@ -202,66 +209,80 @@
   .send-btn:disabled{background:var(--line);cursor:not-allowed;}
 
   .dropzone{
-    border:1.5px dashed var(--line);border-radius:12px;padding:22px 14px;text-align:center;
-    cursor:pointer;margin-bottom:12px;background:var(--paper);
+    border:1.5px dashed var(--line);border-radius:12px;padding:18px 12px;text-align:center;
+    cursor:pointer;margin-bottom:10px;background:var(--paper);
   }
-  .dropzone svg{width:24px;height:24px;stroke:var(--teal);margin-bottom:6px;}
-  .dropzone p{margin:0;font-size:12.5px;color:var(--ink-soft);}
-  .preview-row{display:flex;gap:10px;align-items:center;background:var(--paper);border-radius:10px;padding:10px;margin-bottom:12px;}
-  .preview-row img{width:46px;height:46px;object-fit:cover;border-radius:6px;}
-  .pdf-badge{width:46px;height:46px;background:#C0392B;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:11px;}
+  .dropzone svg{width:22px;height:22px;stroke:var(--teal);margin-bottom:4px;}
+  .dropzone p{margin:0;font-size:12px;color:var(--ink-soft);}
+  .preview-row{display:flex;gap:10px;align-items:center;background:var(--paper);border-radius:10px;padding:8px 10px;margin-bottom:10px;}
+  .preview-row img{width:42px;height:42px;object-fit:cover;border-radius:6px;}
+  .pdf-badge{width:42px;height:42px;background:#C0392B;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:11px;}
 
-  .gen-wrap{text-align:center;padding:30px 10px;}
+  .gen-wrap{text-align:center;padding:28px 10px;}
   .gen-spinner{
-    width:36px;height:36px;border-radius:50%;border:3px solid var(--line);
-    border-top-color:var(--saffron);margin:0 auto 16px;animation:spin 0.9s linear infinite;
+    width:34px;height:34px;border-radius:50%;border:3px solid var(--line);
+    border-top-color:var(--saffron);margin:0 auto 14px;animation:spin 0.9s linear infinite;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ── WAITING ROOM (COMPACT, 100% ZOOM FIT) ── */
   .waiting-card{
     width:100%;max-width:480px;background:#fff;border-radius:20px;
-    box-shadow:var(--shadow);padding:24px 24px;border:1px solid var(--line);
+    box-shadow:var(--shadow);padding:20px 22px;border:1px solid var(--line);
     text-align:center;max-height:86vh;display:flex;flex-direction:column;justify-content:center;
   }
   .room-banner{
     background:linear-gradient(145deg, var(--teal), var(--teal-mid));
-    color:#fff;padding:14px 16px;border-radius:14px;margin-bottom:14px;
+    color:#fff;padding:12px 14px;border-radius:12px;margin-bottom:12px;
   }
-  .r-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--saffron-soft);}
-  .r-main{font-family:Georgia,serif;font-size:24px;font-weight:700;margin:2px 0;}
-  .r-sub{font-size:11px;color:rgba(255,255,255,0.8);}
+  .r-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--saffron-soft);}
+  .r-main{font-family:Georgia,serif;font-size:22px;font-weight:700;margin:1px 0;}
+  .r-sub{font-size:10.5px;color:rgba(255,255,255,0.85);}
 
   .token-timer-grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;
   }
-  .stat-box{background:var(--paper);border-radius:12px;padding:12px 10px;border:1px solid var(--line);}
-  .stat-lbl{font-size:10px;color:var(--ink-soft);text-transform:uppercase;font-weight:600;}
-  .stat-val{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--teal);margin-top:2px;}
-  .stat-val.timer{color:var(--brick);font-family:monospace;font-size:23px;}
+  .stat-box{background:var(--paper);border-radius:12px;padding:10px;border:1px solid var(--line);}
+  .stat-lbl{font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;font-weight:600;}
+  .stat-val{font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--teal);margin-top:2px;}
+  .stat-val.timer{color:var(--brick);font-family:monospace;font-size:21px;}
 
+  /* Dr. Mallard the Buff Duck Card */
   .doc-assigned-row{
     background:var(--paper);border:1px solid var(--line);border-radius:12px;
-    padding:10px 12px;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:14px;
+    padding:8px 12px;display:flex;align-items:center;gap:12px;text-align:left;margin-bottom:12px;
   }
-  .doc-avatar{
-    width:40px;height:40px;border-radius:10px;background:#fff;border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;
+  .doc-avatar-duck{
+    width:44px;height:44px;border-radius:10px;overflow:hidden;background:#fff;border:1px solid var(--line);
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;
   }
-  .doc-info h4{font-size:13.5px;font-weight:700;color:var(--teal);margin:0;}
-  .doc-info p{font-size:11px;color:var(--ink-soft);margin:0;}
-  .doc-info .badge{font-size:9.5px;font-weight:700;color:var(--saffron);text-transform:uppercase;}
+  .doc-avatar-duck img{width:100%;height:100%;object-fit:cover;}
+  .doc-info h4{font-size:13px;font-weight:700;color:var(--teal);margin:0;}
+  .doc-info p{font-size:10.5px;color:var(--ink-soft);margin:0;}
+  .doc-info .badge{font-size:9px;font-weight:700;color:var(--saffron);text-transform:uppercase;}
 
-  .meditate-hint{
-    font-size:12px;font-style:italic;color:var(--ink-soft);line-height:1.45;margin-bottom:14px;
-    background:rgba(217,143,43,0.08);padding:10px 12px;border-radius:10px;border:1px solid rgba(217,143,43,0.25);
+  /* Meditating Toad in Padmasana */
+  .toad-meditate-box{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    background:rgba(217,143,43,0.06);border:1px solid rgba(217,143,43,0.22);border-radius:12px;
+    padding:10px 14px;margin-bottom:12px;text-align:left;
   }
+  .toad-img-wrap{
+    width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  }
+  .toad-img-wrap img{
+    width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;
+  }
+  .toad-text{font-size:11.5px;font-style:italic;color:var(--ink-soft);line-height:1.4;}
 
+  /* When Called: Live Gecko Animation */
   .called-hero{
-    background:#27ae60;color:#fff;border-radius:16px;padding:20px 18px;margin-bottom:14px;
+    background:#27ae60;color:#fff;border-radius:16px;padding:18px 14px;margin-bottom:12px;
     box-shadow:0 0 24px rgba(39,174,96,0.5);animation:pulse 1.2s infinite alternate;
   }
   @keyframes pulse{from{transform:scale(1);}to{transform:scale(1.02);}}
+  .gecko-img-wrap{width:90px;height:90px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;}
+  .gecko-img-wrap img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;}
 
   /* Modal */
   .modal-overlay{
@@ -269,7 +290,7 @@
     backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;
   }
   .modal-card{
-    background:#fff;width:100%;max-width:380px;border-radius:20px;padding:28px 24px;
+    background:#fff;width:100%;max-width:380px;border-radius:20px;padding:26px 22px;
     box-shadow:var(--shadow);border:1px solid var(--line);
   }
   .fun-error-badge{
@@ -278,41 +299,41 @@
     display:flex;align-items:flex-start;gap:6px;
   }
 
-  /* Doctor Dashboard (Fits screen) */
+  /* Doctor Dashboard (100% Zoom Fit) */
   .dash{display:flex;height:100vh;background:var(--teal-deep);color:var(--paper);overflow:hidden;}
-  .dash-sidebar{width:280px;border-right:1px solid var(--line-dark);padding:18px 0;display:flex;flex-direction:column;flex-shrink:0;}
-  .dash-sidebar-header{padding:0 18px 14px;border-bottom:1px solid var(--line-dark);}
+  .dash-sidebar{width:280px;border-right:1px solid var(--line-dark);padding:16px 0;display:flex;flex-direction:column;flex-shrink:0;}
+  .dash-sidebar-header{padding:0 16px 12px;border-bottom:1px solid var(--line-dark);}
   .queue-scroll{flex:1;overflow-y:auto;}
-  .queue-item{padding:12px 18px;cursor:pointer;border-left:3px solid transparent;display:flex;justify-content:space-between;align-items:center;}
+  .queue-item{padding:11px 16px;cursor:pointer;border-left:3px solid transparent;display:flex;justify-content:space-between;align-items:center;}
   .queue-item:hover{background:rgba(241,245,236,0.05);}
   .queue-item.active{background:rgba(217,143,43,0.12);border-left-color:var(--saffron);}
-  .queue-item .qi-name{font-size:13.5px;font-weight:600;}
-  .queue-item .qi-meta{font-size:11px;color:#9FB0A5;margin-top:1px;}
+  .queue-item .qi-name{font-size:13px;font-weight:600;}
+  .queue-item .qi-meta{font-size:10.5px;color:#9FB0A5;margin-top:1px;}
 
-  .dash-main{flex:1;padding:24px 32px;display:flex;flex-direction:column;overflow-y:auto;}
-  .dash-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
-  .dash-header h1{font-family:Georgia,serif;font-size:22px;margin:0 0 2px;}
-  .dash-header .dh-meta{font-size:12px;color:#9FB0A5;}
-  .redflag-pill{background:rgba(180,71,42,0.25);color:#E9987F;border:1px solid rgba(180,71,42,0.5);padding:4px 10px;border-radius:14px;font-size:11.5px;font-weight:600;}
+  .dash-main{flex:1;padding:20px 28px;display:flex;flex-direction:column;overflow-y:auto;}
+  .dash-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+  .dash-header h1{font-family:Georgia,serif;font-size:20px;margin:0 0 2px;}
+  .dash-header .dh-meta{font-size:11.5px;color:#9FB0A5;}
+  .redflag-pill{background:rgba(180,71,42,0.25);color:#E9987F;border:1px solid rgba(180,71,42,0.5);padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600;}
 
-  .clinical-section{margin-bottom:14px;}
-  .cs-label{font-size:11px;color:var(--saffron-soft);letter-spacing:.3px;margin-bottom:4px;}
+  .clinical-section{margin-bottom:12px;}
+  .cs-label{font-size:10.5px;color:var(--saffron-soft);letter-spacing:.3px;margin-bottom:3px;}
   .cs-content{
-    font-size:13.5px;line-height:1.5;background:rgba(241,245,236,0.04);
-    border:1px solid var(--line-dark);border-radius:8px;padding:10px 12px;
-    outline:none;color:var(--paper);min-height:36px;
+    font-size:13px;line-height:1.45;background:rgba(241,245,236,0.04);
+    border:1px solid var(--line-dark);border-radius:8px;padding:8px 10px;
+    outline:none;color:var(--paper);min-height:34px;
   }
   .cs-content:focus{border-color:var(--saffron);}
 
-  .dash-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line-dark);}
-  .dash-btn{padding:9px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;}
+  .dash-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-dark);}
+  .dash-btn{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;}
   .dash-btn.primary{background:var(--saffron);color:var(--teal-deep);}
   .dash-btn.success{background:#27ae60;color:#fff;}
   .dash-btn.ghost{background:transparent;border:1px solid var(--line-dark);color:var(--paper);}
   .dash-btn.danger{background:transparent;border:1px solid rgba(180,71,42,0.5);color:#E9987F;}
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:10px 20px;border-radius:24px;font-size:12.5px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:9px 18px;border-radius:24px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;}
   .toast.show{opacity:1;}
-  .empty-detail{padding:40px 20px;text-align:center;color:#9FB0A5;font-size:13px;}
+  .empty-detail{padding:30px 20px;text-align:center;color:#9FB0A5;font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -344,7 +365,7 @@ var S = {
   patientRecap: null,
   calledIn: false,
   roomName: 'OPD ROOM 2',
-  deptName: 'Kayachikitsa & Panchakarma Wing',
+  deptName: 'Kayachikitsa Wing',
   doctorName: 'Dr. Mallard, MD (Ayu)',
   patientsAhead: 1,
   countdownSeconds: 300,
@@ -596,7 +617,7 @@ async function apiDeletePatient(sessionId){
   } catch(e){ return false; }
 }
 
-/* ── WAITING ROOM REAL COUNTDOWN & LIVE STATUS ── */
+/* ── WAITING ROOM LIVE COUNTDOWN & STATUS ── */
 function startWaitingRoomEngines(){
   if(S.countdownTimer) clearInterval(S.countdownTimer);
   if(S.statusTimer) clearInterval(S.statusTimer);
@@ -799,7 +820,7 @@ function renderKiosk(){
   if(S.screen === 'landing'){
     return '<div class="topbar">' +
       '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
-      '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — All India Institute of Ayurveda</div></div></div>' +
+      '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Autonomous Triage</div></div></div>' +
       '</div>' +
       '<div class="home-stage">' + inner + '</div>';
   }
@@ -812,20 +833,20 @@ function renderKiosk(){
     '<div class="stage">' + inner + '</div>';
 }
 
-/* ── SCREEN 1: BALANCED COMPACT HOMEPAGE (FITS 100% ZOOM) ── */
+/* ── SCREEN 1: SEAMLESS HOMEPAGE ── */
 function screenLanding(){
   return '<div class="home-grid">' +
-    '<!-- Left Side: High-Contrast Hospital Branding -->' +
+    '<!-- Left Side: Real Sage Artwork smoothly blended without harsh borders -->' +
     '<div class="home-left">' +
-      '<span class="badge">AIIA OPD Triage Portal</span>' +
-      '<h1>Autonomous Pre-Consultation Kiosk</h1>' +
-      '<p>Designed for Ministry of AYUSH outpatient clinics to capture case histories, verify past records, and generate immediate queue tokens.</p>' +
-      '<div class="ayush-bullet">' + checkSvg() + ' Saves 4–5 minutes of doctor consultation time</div>' +
-      '<div class="ayush-bullet">' + checkSvg() + ' 6 Regional Indian Languages with Voice Input</div>' +
-      '<div class="ayush-bullet">' + checkSvg() + ' Automated Triage & Emergency Red Flag Alerts</div>' +
+      '<div class="mascot-blend-canvas">' +
+        '<img src="sage.png" alt="Sage Ayu" onerror="this.style.display=\'none\'"/>' +
+      '</div>' +
+      '<span class="mascot-tag">Official Herbal AI Guide</span>' +
+      '<h2>Sage Ayu (ऋषि आयु)</h2>' +
+      '<p>"Ancient Dravya-Guna science meets intelligent hospital triage."</p>' +
     '</div>' +
 
-    '<!-- Right Side: Clean Action Tiles -->' +
+    '<!-- Right Side: Clean Floating Action Tiles -->' +
     '<div class="home-right">' +
       '<div class="home-card patient-card" onclick="goto(\'welcome\')">' +
         '<div class="card-icon">' + patientSvg() + '</div>' +
@@ -922,9 +943,16 @@ function screenChat(){
   var bubbles = '';
   for(var i=0; i<S.messages.length; i++){
     var m = S.messages[i];
-    bubbles += '<div class="bubble-row ' + (m.role==='user'?'user':'') + '">' +
-      '<div class="bubble ' + (m.role==='bot'?'bot':'user') + '">' + escapeHtml(m.text) + '</div>' +
-      '</div>';
+    if(m.role === 'bot'){
+      bubbles += '<div class="bubble-row">' +
+        '<div class="bot-avatar-mini"><img src="sage.png" alt="Ayu" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%23E8D3C0\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'30\\\' text-anchor=\\\'middle\\\'>🌿</text></svg>\'"/></div>' +
+        '<div class="bubble bot">' + escapeHtml(m.text) + '</div>' +
+        '</div>';
+    } else {
+      bubbles += '<div class="bubble-row user">' +
+        '<div class="bubble user">' + escapeHtml(m.text) + '</div>' +
+        '</div>';
+    }
   }
   var typing = S.awaitingReply ? '<div class="typing"><span></span><span></span><span></span></div>' : '';
 
@@ -977,14 +1005,14 @@ function screenWaitingRoom(){
   if(S.calledIn){
     return '<div class="waiting-card">' +
       '<div class="called-hero">' +
-        '<div style="font-size:36px;margin-bottom:4px;">🔔</div>' +
-        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.95;">DOCTOR IS WAITING FOR YOU</div>' +
-        '<h2 style="font-size:24px;font-family:Georgia,serif;margin:4px 0;">YOUR TOKEN IS CALLED!</h2>' +
-        '<p style="font-size:13.5px;margin:0;">Please enter <b>' + escapeHtml(S.roomName) + '</b> (' + escapeHtml(S.deptName) + ').</p>' +
+        '<div class="gecko-img-wrap"><img src="frog_gecko.jpeg" alt="Gecko Ride" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%2327ae60\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'32\\\' text-anchor=\\\'middle\\\'>🦎</text></svg>\'"/></div>' +
+        '<div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:0.95;">DOCTOR IS READY FOR YOU!</div>' +
+        '<h2 style="font-size:23px;font-family:Georgia,serif;margin:4px 0;">YOUR TOKEN IS CALLED!</h2>' +
+        '<p style="font-size:13px;margin:0;">Please proceed immediately inside <b>' + escapeHtml(S.roomName) + '</b> (' + escapeHtml(S.deptName) + ').</p>' +
       '</div>' +
-      '<div class="stat-box" style="margin-bottom:14px;">' +
+      '<div class="stat-box" style="margin-bottom:12px;">' +
         '<div class="stat-lbl">Consultation Token</div>' +
-        '<div class="stat-val" style="font-size:28px;">' + S.token + '</div>' +
+        '<div class="stat-val" style="font-size:26px;">' + S.token + '</div>' +
       '</div>' +
       '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>' +
     '</div>';
@@ -992,7 +1020,7 @@ function screenWaitingRoom(){
 
   return '<div class="waiting-card">' +
     '<div class="room-banner">' +
-      '<div class="r-tag">Assigned OPD Room</div>' +
+      '<div class="r-tag">Assigned OPD Consultation Room</div>' +
       '<div class="r-main">' + escapeHtml(S.roomName) + '</div>' +
       '<div class="r-sub">' + escapeHtml(S.deptName) + '</div>' +
     '</div>' +
@@ -1008,17 +1036,26 @@ function screenWaitingRoom(){
       '</div>' +
     '</div>' +
 
+    '<!-- Dr. Mallard Buff Duck Card -->' +
     '<div class="doc-assigned-row">' +
-      '<div class="doc-avatar">🩺</div>' +
+      '<div class="doc-avatar-duck">' +
+        '<img src="doctor_duck.jpeg" alt="Dr. Mallard" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%23E8D3C0\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'30\\\' text-anchor=\\\'middle\\\'>🦆</text></svg>\'"/>' +
+      '</div>' +
       '<div class="doc-info">' +
-        '<div class="badge">Consulting Doctor</div>' +
+        '<div class="badge">Treating Physician</div>' +
         '<h4>' + escapeHtml(S.doctorName) + '</h4>' +
         '<p>Senior Consultant · Marma & Kayachikitsa</p>' +
       '</div>' +
     '</div>' +
 
-    '<div class="meditate-hint">' +
-      '"Please relax in the waiting lounge. Patients ahead of you: <b id="liveAheadVal">' + S.patientsAhead + '</b>."' +
+    '<!-- Meditating Toad Padmasana -->' +
+    '<div class="toad-meditate-box">' +
+      '<div class="toad-img-wrap">' +
+        '<img src="frog_meditate.jpeg" alt="Padmasana Toad" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%23E8D3C0\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'30\\\' text-anchor=\\\'middle\\\'>🧘‍♂️</text></svg>\'"/>' +
+      '</div>' +
+      '<div class="toad-text">' +
+        '"Practice slow, deep breaths (Pranayama). Channel your inner calm while Dr. Mallard reviews your case file."' +
+      '</div>' +
     '</div>' +
 
     '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>' +
@@ -1084,7 +1121,7 @@ function doctorLogout(){
   showToast('Logged out of Doctor Portal');
 }
 
-/* ── DOCTOR DASHBOARD ── */
+/* ── DOCTOR DASHBOARD (100% ZOOM FIT) ── */
 function renderDashboard(){
   var active = null;
   for(var i=0; i<S.queue.length; i++){
@@ -1247,7 +1284,6 @@ function logoSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC
 function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
 function patientSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'; }
 function homeSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'; }
-function checkSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>'; }
 function micSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>'; }
 function sendSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>'; }
 function uploadSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>'; }
