@@ -33,7 +33,7 @@
   .serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype',serif;}
 
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;}
-  .brand{display:flex;align-items:center;gap:10px;}
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
   .brand-mark{
     width:34px;height:34px;border-radius:9px;
     background:linear-gradient(155deg,var(--teal),var(--teal-mid));
@@ -43,14 +43,74 @@
   .brand-mark svg{width:18px;height:18px;}
   .brand-name{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--teal);}
   .brand-sub{font-size:11.5px;color:var(--ink-soft);margin-top:-2px;}
-  .doctor-lock-btn{
+  .home-pill-btn{
     font-size:12.5px;color:var(--ink-soft);text-decoration:none;
-    border:1px solid var(--line);padding:7px 13px;border-radius:20px;
+    border:1px solid var(--line);padding:7px 14px;border-radius:20px;
     display:flex;align-items:center;gap:6px;cursor:pointer;background:transparent;
     transition:all .15s ease;
   }
-  .doctor-lock-btn:hover{background:var(--paper-dim);color:var(--teal);}
+  .home-pill-btn:hover{background:var(--paper-dim);color:var(--teal);}
 
+  /* ── LANDING SPLIT HERO ── */
+  .landing-stage{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    padding:20px 24px 60px;
+  }
+  .split-card{
+    width:100%;max-width:960px;background:#fff;border-radius:28px;
+    box-shadow:var(--shadow);border:1px solid var(--line);
+    display:grid;grid-template-columns:1.05fr 1fr;overflow:hidden;
+  }
+  @media(max-width:768px){
+    .split-card{grid-template-columns:1fr;}
+  }
+
+  /* Left Hero Mascot Panel */
+  .mascot-panel{
+    background:radial-gradient(circle at 50% 35%, #FDF4EC 0%, #F5E8DC 85%);
+    padding:40px 32px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    border-right:1px solid var(--line);position:relative;
+  }
+  .mascot-art-wrap{
+    width:240px;height:240px;position:relative;margin-bottom:18px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .mascot-art-wrap img{
+    width:100%;height:100%;object-fit:contain;
+    mix-blend-mode:multiply;filter:contrast(1.05) saturate(1.05);
+  }
+  .mascot-badge{
+    font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+    color:var(--saffron);background:rgba(217,143,43,0.12);padding:4px 10px;border-radius:20px;margin-bottom:8px;
+  }
+  .mascot-name{font-family:Georgia,serif;font-size:24px;font-weight:700;color:var(--teal);margin:0 0 6px;}
+  .mascot-tagline{font-size:13px;color:var(--ink-soft);max-width:280px;line-height:1.5;}
+
+  /* Right Portal Choice Panel */
+  .choice-panel{padding:48px 40px;display:flex;flex-direction:column;justify-content:center;}
+  .choice-panel h2{font-family:Georgia,serif;font-size:28px;color:var(--teal);margin:0 0 8px;line-height:1.2;}
+  .choice-panel p.sub{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0 0 28px;}
+
+  .portal-card{
+    border:1.5px solid var(--line);border-radius:18px;padding:20px 20px;margin-bottom:14px;
+    cursor:pointer;transition:all .2s ease;background:var(--paper);text-align:left;display:flex;align-items:center;gap:16px;
+  }
+  .portal-card:hover{
+    border-color:var(--saffron);background:#fff;transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(13,59,54,0.06);
+  }
+  .portal-card.doctor-card:hover{border-color:var(--teal);}
+  .portal-icon-wrap{
+    width:48px;height:48px;border-radius:14px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .portal-card.patient-card .portal-icon-wrap{background:var(--saffron-soft);color:var(--teal);}
+  .portal-card.doctor-card .portal-icon-wrap{background:var(--teal);color:#fff;}
+  .portal-info h3{font-size:16px;font-weight:700;color:var(--teal);margin:0 0 3px;}
+  .portal-info p{font-size:12px;color:var(--ink-soft);margin:0;line-height:1.4;}
+
+  /* ── STANDARD KIOSK STAGE ── */
   .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 20px 60px;}
   .card{width:100%;max-width:480px;background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:34px 28px;border:1px solid var(--line);}
   .steps{display:flex;justify-content:center;gap:8px;margin:0 0 28px;}
@@ -61,13 +121,8 @@
   h1.title{font-family:Georgia,serif;font-size:26px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
   p.lede{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0 0 24px;}
 
-  /* 6-Language Touch Grid */
-  .lang-grid-6{
-    display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:12px;
-  }
-  @media(max-width:480px){
-    .lang-grid-6{grid-template-columns:repeat(2, 1fr);}
-  }
+  .lang-grid-6{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:12px;}
+  @media(max-width:480px){.lang-grid-6{grid-template-columns:repeat(2, 1fr);}}
   .lang-opt{
     border:1.5px solid var(--line);border-radius:12px;padding:14px 8px;text-align:center;
     cursor:pointer;background:var(--paper);transition:all .15s ease;
@@ -100,9 +155,16 @@
 
   .chat-card{max-width:520px;}
   .chat-window{min-height:280px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+  .bubble-row{display:flex;align-items:flex-start;gap:8px;}
+  .bubble-row.user{justify-content:flex-end;}
+  .bot-avatar-mini{
+    width:28px;height:28px;border-radius:50%;background:#F5E8DC;
+    border:1px solid var(--saffron);overflow:hidden;flex-shrink:0;margin-top:4px;
+  }
+  .bot-avatar-mini img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;}
   .bubble{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14.5px;line-height:1.5;}
-  .bubble.bot{background:var(--paper);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px;}
-  .bubble.user{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .bubble.bot{background:var(--paper);color:var(--ink);border-bottom-left-radius:4px;}
+  .bubble.user{background:var(--teal);color:#fff;border-bottom-right-radius:4px;}
   .typing{display:flex;gap:4px;align-self:flex-start;padding:12px 15px;}
   .typing span{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);animation:bounce 1.2s infinite ease-in-out;}
   .typing span:nth-child(2){animation-delay:.15s;}
@@ -153,6 +215,12 @@
     box-shadow:var(--shadow);border:1px solid var(--line);
   }
 
+  .fun-error-badge{
+    background:rgba(217,143,43,0.12);border:1px solid rgba(217,143,43,0.35);color:#92400e;
+    padding:12px 14px;border-radius:12px;font-size:12.5px;line-height:1.45;margin-bottom:16px;
+    display:flex;align-items:flex-start;gap:8px;
+  }
+
   /* Doctor Dashboard */
   .dash{display:flex;min-height:100vh;background:var(--teal-deep);color:var(--paper);}
   .dash-sidebar{width:300px;border-right:1px solid var(--line-dark);padding:24px 0;flex-shrink:0;}
@@ -197,7 +265,7 @@ var BACKEND_URL = (window.location.origin.startsWith("http") ? window.location.o
 
 var S = {
   view: 'kiosk',
-  screen: 'welcome',
+  screen: 'landing', // Starts at the elegant Split Home
   lang: 'en',
   patient: { name:'', age:'', gender:'M', phone:'', mock_abha:'' },
   phoneError: '',
@@ -228,7 +296,6 @@ var S = {
   loginError: ''
 };
 
-// 6 Regional AYUSH Language Dictionaries
 var STR = {
   en:{ welcomeTitle:"Welcome to MediKiosk", welcomeLede:"Autonomous outpatient triage for Ministry of AYUSH OPD. Takes ~2 minutes.",
        chooseLang:"Choose your language", start:"Continue",
@@ -590,7 +657,6 @@ async function generateSummary(){
   render();
 }
 
-// Multilingual Speech Recognition
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser"); return; }
@@ -650,7 +716,8 @@ function progressDots(){
 
 function renderKiosk(){
   var inner = '';
-  if(S.screen === 'welcome') inner = screenWelcome();
+  if(S.screen === 'landing') inner = screenLanding();
+  else if(S.screen === 'welcome') inner = screenWelcome();
   else if(S.screen === 'details') inner = screenDetails();
   else if(S.screen === 'consent') inner = screenConsent();
   else if(S.screen === 'chat') inner = screenChat();
@@ -658,15 +725,67 @@ function renderKiosk(){
   else if(S.screen === 'generating') inner = screenGenerating();
   else if(S.screen === 'recap') inner = screenRecap();
 
+  if(S.screen === 'landing'){
+    return '<div class="topbar">' +
+      '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
+      '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — All India Institute of Ayurveda</div></div></div>' +
+      '</div>' +
+      '<div class="landing-stage">' + inner + '</div>';
+  }
+
   return '<div class="topbar">' +
-    '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
+    '<div class="brand" onclick="gotoHome()"><div class="brand-mark">' + logoSvg() + '</div>' +
     '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Patient Intake Kiosk</div></div></div>' +
-    '<div class="doctor-lock-btn" onclick="openDoctorModal()">' + lockSvg() + '<span>Doctor Portal (Staff Only)</span></div>' +
+    '<div class="home-pill-btn" onclick="gotoHome()">' + homeSvg() + '<span>Home Menu</span></div>' +
     '</div>' +
     '<div class="stage"><div class="card ' + (S.screen==='chat'?'chat-card':'') + '">' +
     (['welcome','details','consent','chat','upload'].indexOf(S.screen) !== -1 ? progressDots() : '') +
     inner +
     '</div></div>';
+}
+
+/* ── SCREEN: SPLIT HOMEPAGE (Mascot on Left, Portals on Right) ── */
+function screenLanding(){
+  return '<div class="split-card">' +
+    '<!-- Left Mascot Panel -->' +
+    '<div class="mascot-panel">' +
+      '<div class="mascot-badge">Official AI Triage Mascot</div>' +
+      '<div class="mascot-art-wrap">' +
+        '<img src="sage.png" alt="Sage Ayu" onerror="this.onerror=null; this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%23E7D3C2\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'30\\\' text-anchor=\\\'middle\\\'>🧙‍♂️</text></svg>\'"/>' +
+      '</div>' +
+      '<div class="mascot-name">Sage Ayu (ऋषि आयु)</div>' +
+      '<div class="mascot-tagline">"Ancient Herbal Wisdom meets Autonomous Hospital Triage."</div>' +
+    '</div>' +
+
+    '<!-- Right Portal Choice Panel -->' +
+    '<div class="choice-panel">' +
+      '<h2>Welcome to MediKiosk</h2>' +
+      '<p class="sub">Select your portal to begin. Fast pre-consultation intake for outpatient hospital clinics.</p>' +
+
+      '<!-- Patient Portal Card -->' +
+      '<div class="portal-card patient-card" onclick="goto(\'welcome\')">' +
+        '<div class="portal-icon-wrap">' + patientSvg() + '</div>' +
+        '<div class="portal-info">' +
+          '<h3>Patient Check-In (मरीज़ प्रवेश)</h3>' +
+          '<p>Report your symptoms by voice or text, upload old prescriptions, and get your OPD queue token.</p>' +
+        '</div>' +
+      '</div>' +
+
+      '<!-- Doctor Portal Card -->' +
+      '<div class="portal-card doctor-card" onclick="openDoctorModal()">' +
+        '<div class="portal-icon-wrap">' + lockSvg() + '</div>' +
+        '<div class="portal-info">' +
+          '<h3>Doctor Portal (चिकित्सक कक्ष)</h3>' +
+          '<p>Authorized OPD staff sign-in (DOC1 / Present). Review structured case files and call patients in.</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function gotoHome(){
+  S.screen = 'landing';
+  render();
 }
 
 function screenWelcome(){
@@ -735,7 +854,16 @@ function screenChat(){
   var bubbles = '';
   for(var i=0; i<S.messages.length; i++){
     var m = S.messages[i];
-    bubbles += '<div class="bubble ' + (m.role==='bot'?'bot':'user') + '">' + escapeHtml(m.text) + '</div>';
+    if(m.role === 'bot'){
+      bubbles += '<div class="bubble-row">' +
+        '<div class="bot-avatar-mini"><img src="sage.png" alt="Sage" onerror="this.onerror=null; this.src=\'data:image/svg+xml;utf8,<svg xmlns=\\\'http://www.w3.org/2000/svg\\\' viewBox=\\\'0 0 100 100\\\'><circle cx=\\\'50\\\' cy=\\\'50\\\' r=\\\'40\\\' fill=\\\'%23E7D3C2\\\'/><text x=\\\'50\\\' y=\\\'58\\\' font-size=\\\'30\\\' text-anchor=\\\'middle\\\'>🧙‍♂️</text></svg>\'"/></div>' +
+        '<div class="bubble bot">' + escapeHtml(m.text) + '</div>' +
+        '</div>';
+    } else {
+      bubbles += '<div class="bubble-row user">' +
+        '<div class="bubble user">' + escapeHtml(m.text) + '</div>' +
+        '</div>';
+    }
   }
   var typing = S.awaitingReply ? '<div class="typing"><span></span><span></span><span></span></div>' : '';
 
@@ -800,7 +928,7 @@ function screenRecap(){
     '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>';
 }
 
-/* ── DOCTOR LOGIN MODAL WITH CUSTOM JOKE ── */
+/* ── DOCTOR LOGIN MODAL (WITTY JOKE ON WRONG ENTRY) ── */
 function renderDoctorModal(){
   var div = document.createElement('div');
   div.className = 'modal-overlay';
@@ -809,14 +937,17 @@ function renderDoctorModal(){
     '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
     '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required</p>' +
     '<div class="field"><label>Doctor ID</label>' +
-      '<input id="docIdInput" type="text" placeholder="e.g. DOC1" value=""/></div>' +
-    '<div class="field" style="margin-bottom:6px;"><label>Security Password</label>' +
-      '<input id="docPinInput" type="password" placeholder="Enter password" value=""/></div>' +
-    '<div style="font-size:11.5px;color:var(--sage);font-style:italic;margin-bottom:16px;line-height:1.45;">' +
-      '🩺 <b>Doc Humor Hint:</b> "I\'m here, I\'m a gift, and I\'m completely tense-less."<br>' +
-      '<span style="color:var(--teal);font-weight:600;">(Password: Present — with capital P 😉)</span>' +
-    '</div>' +
-    (S.loginError ? '<div style="color:var(--brick);font-size:12px;margin-bottom:12px;font-weight:500;">' + S.loginError + '</div>' : '') +
+      '<input id="docIdInput" type="text" placeholder="Enter Doctor ID" value=""/></div>' +
+    '<div class="field"><label>Security Password</label>' +
+      '<input id="docPinInput" type="password" placeholder="Enter Password" value=""/></div>' +
+    (S.loginError ? (
+      '<div class="fun-error-badge">' +
+        '<span>🩺</span>' +
+        '<div>' +
+          '<b>Access Denied:</b> Even an apple a day won\'t crack this login! Check your exact uppercase & lowercase letters.' +
+        '</div>' +
+      '</div>'
+    ) : '') +
     '<button class="btn btn-primary" onclick="submitDoctorLogin()">Sign In to Dashboard →</button>' +
     '<button class="btn btn-ghost" onclick="closeDoctorModal()">Cancel</button>' +
   '</div>';
@@ -842,7 +973,7 @@ async function submitDoctorLogin(){
     apiGetQueue();
     render();
   } else {
-    S.loginError = 'Invalid credentials. Hint: DOC1 and password is "Present"';
+    S.loginError = 'wrong';
     var el = document.getElementById('docModal');
     if(el) el.remove();
     renderDoctorModal();
@@ -853,11 +984,12 @@ function doctorLogout(){
   S.doctorLoggedIn = false;
   S.currentDoctor = null;
   S.view = 'kiosk';
+  S.screen = 'landing';
   render();
   showToast('Logged out of Doctor Portal');
 }
 
-/* ── DOCTOR DASHBOARD ── */
+/* ── DOCTOR DASHBOARD (LOCKED TO DASHBOARD) ── */
 function renderDashboard(){
   var active = null;
   for(var i=0; i<S.queue.length; i++){
@@ -904,7 +1036,6 @@ function renderDashboard(){
         '<div class="dsh-label">WAITING ROOM · ' + S.queue.length + ' PATIENTS</div>' +
       '</div>' + sidebarItems +
       '<div style="padding:16px 20px;display:flex;flex-direction:column;gap:8px;">' +
-        '<div class="doctor-lock-btn" style="color:var(--paper);border-color:var(--line-dark);justify-content:center;" onclick="goKiosk()">' + logoSmall(true) + '<span>Switch to Kiosk View</span></div>' +
         '<div class="doctor-lock-btn" style="color:#E9987F;border-color:rgba(180,71,42,0.4);justify-content:center;" onclick="doctorLogout()"><span>Sign Out (Lock Portal)</span></div>' +
       '</div>' +
     '</div>' +
@@ -999,10 +1130,9 @@ function submitChat(){
   input.value = '';
   sendAnswer(val);
 }
-function goKiosk(){ S.view = 'kiosk'; render(); }
 function setActiveQueue(id){ S.activeQueueId = id; render(); }
 function resetKiosk(){
-  S.screen='welcome'; S.patient={name:'',age:'',gender:'M',phone:'',mock_abha:''}; S.consent=false;
+  S.screen='landing'; S.patient={name:'',age:'',gender:'M',phone:'',mock_abha:''}; S.consent=false;
   S.sessionId=null; S.token=null; S.messages=[]; S.chatDone=false;
   S.uploadFile=null; S.uploadFileName=''; S.uploadIsPdf=false; S.uploadPreview=null;
   S.uploadStatus='idle'; S.extracted=null; S.clinicalSummary=null; S.patientRecap=null;
@@ -1018,7 +1148,9 @@ function escapeHtml(s){
 
 function logoSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12" stroke="#F1F5EC"/><path d="M8 12a4 4 0 018 0" stroke="#D98F2B" fill="none"/></svg>'; }
 function logoSmall(dark){ return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (dark?'#F1F5EC':'#0D3B36') + '" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>'; }
-function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
+function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
+function patientSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'; }
+function homeSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'; }
 function micSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>'; }
 function sendSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>'; }
 function uploadSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>'; }
