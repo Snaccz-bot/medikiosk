@@ -19,7 +19,7 @@
     --brick:#B4472A;
     --line:rgba(22,35,29,0.14);
     --line-dark:rgba(241,245,236,0.14);
-    --shadow:0 1px 2px rgba(13,59,54,0.06), 0 8px 24px rgba(13,59,54,0.08);
+    --shadow:0 1px 3px rgba(13,59,54,0.06), 0 10px 30px rgba(13,59,54,0.08);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -32,7 +32,7 @@
   #root{min-height:100vh;display:flex;flex-direction:column;}
   .serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype',serif;}
 
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;}
   .brand{display:flex;align-items:center;gap:10px;}
   .brand-mark{
     width:34px;height:34px;border-radius:9px;
@@ -43,64 +43,94 @@
   .brand-mark svg{width:18px;height:18px;}
   .brand-name{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--teal);}
   .brand-sub{font-size:11.5px;color:var(--ink-soft);margin-top:-2px;}
-  .doctor-lock-btn{
-    font-size:12.5px;color:var(--ink-soft);text-decoration:none;
-    border:1px solid var(--line);padding:7px 13px;border-radius:20px;
-    display:flex;align-items:center;gap:6px;cursor:pointer;background:transparent;
-    transition:all .15s ease;
-  }
-  .doctor-lock-btn:hover{background:var(--paper-dim);color:var(--teal);}
 
-  .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 20px 60px;}
-  .card{width:100%;max-width:480px;background:#fff;border-radius:22px;box-shadow:var(--shadow);padding:34px 28px;border:1px solid var(--line);}
-  .steps{display:flex;justify-content:center;gap:8px;margin:0 0 28px;}
+  /* Main split container */
+  .stage-split{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    padding:20px 24px 60px;max-width:1160px;margin:0 auto;width:100%;gap:48px;
+  }
+  .hero-side{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;max-width:480px;}
+  .hero-img{width:100%;max-width:420px;height:auto;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(13,59,54,0.09));}
+
+  .card-side{width:100%;max-width:480px;}
+  .card{
+    background:#fff;border-radius:24px;box-shadow:var(--shadow);
+    padding:34px 28px;border:1px solid var(--line);width:100%;
+  }
+
+  /* Role Selection Cards */
+  .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+  .role-box{
+    border:1.5px solid var(--line);border-radius:18px;padding:22px 16px;text-align:center;
+    background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    min-height:220px;transition:all .18s ease;
+  }
+  .role-box.patient-box{background:#f0f7f3;border-color:rgba(110,143,107,0.3);}
+  .role-box.doctor-box{background:#fbf5ed;border-color:rgba(217,143,43,0.3);}
+  .role-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+  .patient-box .role-icon{background:rgba(110,143,107,0.2);color:var(--teal);}
+  .doctor-box .role-icon{background:rgba(217,143,43,0.2);color:#92400e;}
+  .role-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--teal);margin-bottom:6px;}
+  .role-desc{font-size:12px;color:var(--ink-soft);line-height:1.45;margin-bottom:14px;}
+  .role-btn{
+    width:100%;padding:10px 12px;border-radius:10px;border:none;font-size:12.5px;font-weight:600;
+    cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .patient-btn{background:var(--teal);color:#fff;}
+  .doctor-btn{background:#92400e;color:#fff;}
+
+  /* Ayush Footer */
+  .ayush-footer{
+    margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+    text-align:center;font-size:10.5px;color:var(--ink-soft);letter-spacing:.3px;text-transform:uppercase;
+  }
+  .ayush-sub{font-size:9px;color:var(--sage);margin-top:4px;letter-spacing:.6px;}
+
+  /* Kiosk Steps */
+  .steps{display:flex;justify-content:center;gap:8px;margin:0 0 26px;}
   .step-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .3s ease;}
   .step-dot.active{background:var(--saffron);width:20px;border-radius:4px;}
   .step-dot.done{background:var(--sage);}
 
-  h1.title{font-family:Georgia,serif;font-size:26px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
-  p.lede{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0 0 24px;}
+  h1.title{font-family:Georgia,serif;font-size:24px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
+  p.lede{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 22px;}
 
-  /* 6-Language Touch Grid */
-  .lang-grid-6{
-    display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:12px;
-  }
-  @media(max-width:480px){
-    .lang-grid-6{grid-template-columns:repeat(2, 1fr);}
-  }
+  /* Language Grid */
+  .lang-grid-6{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;margin-bottom:16px;}
+  @media(max-width:480px){.lang-grid-6{grid-template-columns:repeat(2, 1fr);}}
   .lang-opt{
-    border:1.5px solid var(--line);border-radius:12px;padding:14px 8px;text-align:center;
+    border:1.5px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;
     cursor:pointer;background:var(--paper);transition:all .15s ease;
   }
   .lang-opt.selected{border-color:var(--saffron);background:var(--saffron-soft);}
-  .lang-opt .lang-native{font-family:Georgia,serif;font-size:17px;color:var(--teal);font-weight:600;}
-  .lang-opt .lang-eng{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+  .lang-opt .lang-native{font-family:Georgia,serif;font-size:16px;color:var(--teal);font-weight:600;}
+  .lang-opt .lang-eng{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
 
   .field{margin-bottom:14px;}
-  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;}
-  .field input{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-size:15px;background:var(--paper);color:var(--ink);}
+  .field label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input{width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);font-size:14px;background:var(--paper);color:var(--ink);}
   .field input:focus{outline:none;border-color:var(--saffron);}
-  .field-error{font-size:11.5px;color:var(--brick);margin-top:4px;font-weight:500;}
 
   .radio-row{display:flex;gap:8px;}
-  .radio-pill{flex:1;text-align:center;padding:10px;border-radius:10px;border:1.5px solid var(--line);font-size:13.5px;cursor:pointer;background:var(--paper);}
+  .radio-pill{flex:1;text-align:center;padding:9px;border-radius:10px;border:1.5px solid var(--line);font-size:13px;cursor:pointer;background:var(--paper);}
   .radio-pill.selected{border-color:var(--saffron);background:var(--saffron-soft);color:var(--teal);font-weight:600;}
 
-  .consent-box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:18px;}
+  .consent-box{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:16px;}
   .check-row{display:flex;gap:10px;align-items:flex-start;cursor:pointer;}
-  .check-row input{margin-top:3px;width:16px;height:16px;accent-color:var(--saffron);flex-shrink:0;}
-  .check-row span{font-size:13.5px;color:var(--ink);line-height:1.5;}
+  .check-row input{margin-top:3px;width:15px;height:15px;accent-color:var(--saffron);flex-shrink:0;}
+  .check-row span{font-size:13px;color:var(--ink);line-height:1.45;}
 
-  .btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s ease;}
+  .btn{width:100%;padding:13px;border-radius:12px;border:none;font-size:14.5px;font-weight:600;cursor:pointer;transition:all .15s ease;}
   .btn-primary{background:var(--teal);color:#fff;}
   .btn-primary:hover{background:var(--teal-mid);}
   .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:not-allowed;}
   .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);margin-top:10px;}
   .btn-ghost:hover{background:var(--paper);}
 
+  /* Chat */
   .chat-card{max-width:520px;}
   .chat-window{min-height:280px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
-  .bubble{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14.5px;line-height:1.5;}
+  .bubble{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14px;line-height:1.5;}
   .bubble.bot{background:var(--paper);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px;}
   .bubble.user{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
   .typing{display:flex;gap:4px;align-self:flex-start;padding:12px 15px;}
@@ -110,9 +140,9 @@
   @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
 
   .input-bar{display:flex;gap:8px;align-items:center;}
-  .input-bar input{flex:1;padding:13px 16px;border-radius:24px;border:1.5px solid var(--line);font-size:14.5px;background:var(--paper);}
+  .input-bar input{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid var(--line);font-size:14px;background:var(--paper);}
   .input-bar input:focus{outline:none;border-color:var(--saffron);}
-  .mic-btn, .send-btn{width:44px;height:44px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .mic-btn, .send-btn{width:42px;height:42px;border-radius:50%;border:none;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;}
   .mic-btn{background:var(--paper);border:1.5px solid var(--line);}
   .mic-btn.listening{background:var(--brick);border-color:var(--brick);}
   .mic-btn svg{width:18px;height:18px;stroke:var(--teal);}
@@ -121,52 +151,53 @@
   .send-btn svg{width:18px;height:18px;stroke:#fff;}
   .send-btn:disabled{background:var(--line);cursor:not-allowed;}
 
-  .dropzone{border:1.5px dashed var(--line);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:14px;background:var(--paper);}
-  .preview-row{display:flex;gap:12px;align-items:center;background:var(--paper);border-radius:12px;padding:12px;margin-bottom:14px;}
-  .preview-row img{width:54px;height:54px;object-fit:cover;border-radius:8px;}
-  .pdf-badge{width:54px;height:54px;background:#C0392B;color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;}
+  .dropzone{border:1.5px dashed var(--line);border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;margin-bottom:14px;background:var(--paper);}
 
-  .gen-wrap{text-align:center;padding:40px 10px;}
-  .gen-spinner{width:44px;height:44px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--saffron);margin:0 auto 20px;animation:spin 0.9s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-
-  .token-badge{display:inline-flex;align-items:center;gap:8px;background:var(--teal);color:#fff;padding:10px 18px;border-radius:30px;font-family:Georgia,serif;font-size:17px;margin-bottom:20px;}
-  .recap-list{list-style:none;padding:0;margin:0 0 22px;}
-  .recap-list li{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.5;}
-  .recap-list li:last-child{border-bottom:none;}
-  .recap-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);margin-top:7px;flex-shrink:0;}
-
-  /* Live Room Call Banner */
-  .call-banner{
-    background:#27ae60;color:#fff;padding:18px 20px;border-radius:14px;
-    margin-bottom:20px;animation:pulseCall 1.2s infinite alternate;
+  /* Waiting Room Styles (Matching Image 4) */
+  .wait-card{padding:26px 24px;}
+  .doc-info-row{
+    background:#f4f8f4;border:1px solid rgba(110,143,107,0.3);border-radius:14px;padding:14px 16px;
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
   }
-  @keyframes pulseCall{from{box-shadow:0 0 0 rgba(39,174,96,0.4);}to{box-shadow:0 0 24px rgba(39,174,96,0.85);}}
+  .doc-avatar{width:42px;height:42px;border-radius:50%;background:#e2ece3;display:flex;align-items:center;justify-content:center;color:var(--teal);margin-right:12px;}
+  .doc-name{font-weight:700;font-size:15px;color:var(--teal);}
+  .doc-sub{font-size:11.5px;color:var(--ink-soft);margin-top:1px;}
+  .token-pill{background:var(--teal);color:#fff;border-radius:20px;padding:6px 16px;text-align:center;}
+  .token-pill-label{font-size:10px;text-transform:uppercase;color:#9fb0a5;letter-spacing:.4px;}
+  .token-pill-val{font-size:18px;font-weight:800;font-family:Georgia,serif;letter-spacing:1px;}
 
-  /* Modal Dialog for Doctor Sign-in */
-  .modal-overlay{
-    position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,26,23,0.75);
-    display:flex;align-items:center;justify-content:center;z-index:1000;
-  }
-  .modal-card{
-    background:#fff;width:100%;max-width:410px;border-radius:20px;padding:32px 28px;
-    box-shadow:var(--shadow);border:1px solid var(--line);
-  }
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+  .stat-card{border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;}
+  .stat-card.green{background:#f0f7f3;border:1px solid rgba(110,143,107,0.3);}
+  .stat-card.peach{background:#fbf5ed;border:1px solid rgba(217,143,43,0.3);}
+  .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .stat-card.green .stat-icon{background:#e0ede4;color:var(--teal);}
+  .stat-card.peach .stat-icon{background:#f5ebd9;color:#92400e;}
+  .stat-label{font-size:11px;color:var(--ink-soft);}
+  .stat-val{font-size:18px;font-weight:800;color:var(--teal);margin-top:1px;}
+  .stat-card.peach .stat-val{color:#92400e;}
 
-  /* Non-red witty error card */
-  .fun-error-badge{
-    background:rgba(217,143,43,0.12);
-    border:1px solid rgba(217,143,43,0.35);
-    color:#92400e;
-    padding:12px 14px;
-    border-radius:12px;
-    font-size:12.5px;
-    line-height:1.45;
-    margin-bottom:16px;
-    display:flex;
-    align-items:flex-start;
-    gap:8px;
+  .queue-list-head{font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px;}
+  .queue-table{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+  .queue-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px;background:#fff;}
+  .queue-row:last-child{border-bottom:none;}
+  .queue-row:nth-child(even){background:var(--paper);}
+  .mini-token{background:#e7eedf;color:var(--teal);font-weight:700;font-size:11.5px;padding:3px 8px;border-radius:6px;}
+
+  .wait-banner{
+    background:#eef5ec;border:1px solid rgba(110,143,107,0.4);color:var(--teal-mid);
+    padding:12px 14px;border-radius:12px;font-size:12px;display:flex;align-items:center;gap:8px;
   }
+  .call-alert-banner{
+    background:#27ae60;color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:16px;
+    animation:pulseCall 1.2s infinite alternate;text-align:center;
+  }
+  @keyframes pulseCall{from{box-shadow:0 0 0 rgba(39,174,96,0.3);}to{box-shadow:0 0 20px rgba(39,174,96,0.8);}}
+
+  /* Modal */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,26,23,0.78);display:flex;align-items:center;justify-content:center;z-index:1000;}
+  .modal-card{background:#fff;width:100%;max-width:390px;border-radius:20px;padding:32px 26px;box-shadow:var(--shadow);}
+  .fun-error-badge{background:rgba(217,143,43,0.12);border:1px solid rgba(217,143,43,0.35);color:#92400e;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.45;margin-bottom:14px;}
 
   /* Doctor Dashboard */
   .dash{display:flex;min-height:100vh;background:var(--teal-deep);color:var(--paper);}
@@ -186,11 +217,7 @@
   .redflag-pill{background:rgba(180,71,42,0.18);color:#E9987F;border:1px solid rgba(180,71,42,0.4);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;}
   .clinical-section{margin-bottom:22px;}
   .cs-label{font-size:11.5px;color:var(--saffron-soft);letter-spacing:.3px;margin-bottom:6px;}
-  .cs-content{
-    font-size:14.5px;line-height:1.6;background:rgba(241,245,236,0.04);
-    border:1px solid var(--line-dark);border-radius:10px;padding:14px 16px;
-    outline:none;color:var(--paper);min-height:48px;
-  }
+  .cs-content{font-size:14.5px;line-height:1.6;background:rgba(241,245,236,0.04);border:1px solid var(--line-dark);border-radius:10px;padding:14px 16px;outline:none;color:var(--paper);min-height:48px;}
   .cs-content:focus{border-color:var(--saffron);}
   .dash-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line-dark);}
   .dash-btn{padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;}
@@ -201,6 +228,12 @@
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:12px 22px;border-radius:30px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999;}
   .toast.show{opacity:1;}
   .empty-detail{padding:60px 20px;text-align:center;color:#9FB0A5;font-size:14px;}
+
+  @media(max-width:880px){
+    .stage-split{flex-direction:column;gap:24px;}
+    .hero-side{display:none;} /* On small mobile, show just card */
+    .card-side{max-width:100%;}
+  }
 </style>
 </head>
 <body>
@@ -211,12 +244,10 @@
 var BACKEND_URL = (window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8000");
 
 var S = {
-  view: 'kiosk',
-  screen: 'welcome',
+  view: 'landing', // 'landing' | 'patient' | 'dashboard'
+  screen: 'role',  // role -> welcome -> details -> consent -> chat -> upload -> generating -> waiting
   lang: 'en',
   patient: { name:'', age:'', gender:'M', phone:'', mock_abha:'' },
-  phoneError: '',
-  consent: false,
   sessionId: null,
   token: null,
   messages: [],
@@ -229,7 +260,6 @@ var S = {
   uploadStatus: 'idle',
   extracted: null,
   clinicalSummary: null,
-  patientRecap: null,
   calledIn: false,
   roomName: '',
   statusTimer: null,
@@ -237,13 +267,25 @@ var S = {
   recognition: null,
   activeQueueId: null,
   queue: [],
+  waitData: {
+    doctor_name: "Dr. Ananya Sharma",
+    doctor_title: "BAMS (Ayurveda)",
+    department: "General Consultation",
+    people_ahead: 4,
+    estimated_wait_mins: 20,
+    next_queue: [
+      { token: 'B-21', visit_type: 'General Consultation' },
+      { token: 'B-22', visit_type: 'Follow-up Visit' },
+      { token: 'B-23', visit_type: 'General Consultation' },
+      { token: 'B-24', visit_type: 'New Patient' }
+    ]
+  },
   showDoctorModal: false,
   doctorLoggedIn: false,
   currentDoctor: null,
   loginError: ''
 };
 
-// 6 Regional AYUSH Language Dictionaries
 var STR = {
   en:{ welcomeTitle:"Welcome to MediKiosk", welcomeLede:"Autonomous outpatient triage for Ministry of AYUSH OPD. Takes ~2 minutes.",
        chooseLang:"Choose your language", start:"Continue",
@@ -255,11 +297,9 @@ var STR = {
        chatTitle:"Tell us what's going on", chatLede:"Speak with the mic or type in your own words.",
        typePh:"Type your symptoms here…", uploadTitle:"Old Prescriptions or Reports?",
        uploadLede:"Optional — Upload a photo or PDF to auto-extract past medications.", uploadDrop:"Tap to upload Photo or PDF",
-       skipUpload:"Skip this step", scanning:"Analyzing document with Gemini Vision…", scanDone:"Details extracted",
+       skipUpload:"Skip this step", scanning:"Analyzing document with Gemini Vision…",
        genTitle:"Preparing your summary…", genLede:"Organising clinical note for the doctor.",
-       recapTitle:"You're all set!", recapLede:"Your token has been sent to the doctor's queue:",
-       tokenPrefix:"Your Queue Token", waitNote:"Please have a seat in the waiting room. The screen will notify you when called.",
-       newIntake:"Next Patient Intake"
+       waitingTitle:"Waiting Room", waitingSub:"Please wait. You will be called shortly."
      },
   hi:{ welcomeTitle:"मेडीकियोस्क में आपका स्वागत है", welcomeLede:"आयुष ओपीडी परामर्श सहायता। इसमें 2 मिनट लगेंगे।",
        chooseLang:"अपनी भाषा चुनें", start:"आगे बढ़ें",
@@ -271,75 +311,65 @@ var STR = {
        chatTitle:"बताइए क्या तकलीफ़ है", chatLede:"माइक से बोलें या टाइप करें।",
        typePh:"यहाँ अपनी तकलीफ़ लिखें…", uploadTitle:"कोई पुराना पर्चा या रिपोर्ट?",
        uploadLede:"वैकल्पिक — फोटो या PDF अपलोड करें, हम दवाइयाँ निकाल लेंगे।", uploadDrop:"फोटो या PDF अपलोड करें",
-       skipUpload:"यह चरण छोड़ें", scanning:"दस्तावेज़ पढ़ा जा रहा है…", scanDone:"जानकारी मिल गई",
+       skipUpload:"यह चरण छोड़ें", scanning:"दस्तावेज़ पढ़ा जा रहा है…",
        genTitle:"सारांश तैयार हो रहा है…", genLede:"डॉक्टर के लिए सब कुछ व्यवस्थित किया जा रहा है।",
-       recapTitle:"आप तैयार हैं!", recapLede:"आपका टोकन डॉक्टर के पास पहुँच चुका है:",
-       tokenPrefix:"आपका टोकन", waitNote:"कृपया प्रतीक्षालय में बैठें। बुलाए जाने पर स्क्रीन पर सूचना दिखेगी।",
-       newIntake:"नया मरीज़ शुरू करें"
+       waitingTitle:"प्रतीक्षालय", waitingSub:"कृपया प्रतीक्षा करें। आपको जल्द ही बुलाया जाएगा।"
      },
-  ta:{ welcomeTitle:"MediKiosk-க்கு நல்வரவு", welcomeLede:"மருத்துவரை சந்திக்கும் முன் சில தகவல்களை தயார் செய்வோம். இதற்கு 2 நிமிடங்கள் ஆகும்.",
+  ta:{ welcomeTitle:"MediKiosk-க்கு நல்வரவு", welcomeLede:"மருத்துவரை சந்திக்கும் முன் சில தகவல்களை தயார் செய்வோம்.",
        chooseLang:"உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்", start:"தொடரவும்",
        detailsTitle:"நோயாளியின் விவரங்கள்", detailsLede:"இன்றைய ஆலோசனையின் அடிப்படை விவரங்கள்.",
-       name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண் (10 இலக்கங்கள்)", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
-       consentTitle:"ஒப்புதல் & தனியுரிமை", consentLede:"உங்கள் தகவல்கள் உங்கள் மருத்துவரிடம் மட்டுமே பகிரப்படும்.",
-       consentBody:"மருத்துவரின் நேரத்தை சேமிக்க MediKiosk தானியங்கி மருத்துவ குறிப்பை தயார் செய்கிறது.",
-       consentCheck:"மருத்துவ ஆலோசனைக்காக என் விவரங்களை பகிர ஒப்புக்கொள்கிறேன்.",
+       name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண்", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
+       consentTitle:"ஒப்புதல் & தனியுரிமை", consentLede:"உங்கள் தகவல்கள் மருத்துவரிடம் மட்டுமே பகிரப்படும்.",
+       consentBody:"MediKiosk தானியங்கி மருத்துவ குறிப்பை தயார் செய்கிறது.",
+       consentCheck:"என் விவரங்களை பகிர ஒப்புக்கொள்கிறேன்.",
        chatTitle:"உங்கள் உடல்நிலையை விவரிக்கவும்", chatLede:"மைக் மூலம் பேசலாம் அல்லது தட்டச்சு செய்யலாம்.",
-       typePh:"உங்கள் அறிகுறிகளை இங்கே தட்டச்சு செய்யவும்…", uploadTitle:"பழைய மருத்துவச் சீட்டு அல்லது அறிக்கை?",
-       uploadLede:"விருப்பமானது — பழைய மருந்துகளை அறிய புகைப்படம் அல்லது PDF பதிவேற்றவும்.", uploadDrop:"புகைப்படம் அல்லது PDF பதிவேற்ற தட்டவும்",
-       skipUpload:"இந்த படிநிலையைத் தவிர்க்கவும்", scanning:"ஆவணம் ஆய்வு செய்யப்படுகிறது…", scanDone:"விவரங்கள் பெறப்பட்டன",
+       typePh:"உங்கள் அறிகுறிகளை இங்கே தட்டச்சு செய்யவும்…", uploadTitle:"பழைய மருத்துவச் சீட்டு?",
+       uploadLede:"விருப்பமானது — பழைய மருந்துகளை அறிய பதிவேற்றவும்.", uploadDrop:"பதிவேற்ற தட்டவும்",
+       skipUpload:"தவிர்க்கவும்", scanning:"ஆய்வு செய்யப்படுகிறது…",
        genTitle:"சுருக்கம் தயாராகிறது…", genLede:"மருத்துவருக்கான தகவல்கள் ஒழுங்கமைக்கப்படுகின்றன.",
-       recapTitle:"நீங்கள் தயாராகிவிட்டீர்கள்!", recapLede:"உங்கள் டோக்கன் மருத்துவரிடம் அனுப்பப்பட்டது:",
-       tokenPrefix:"உங்கள் டோக்கன்", waitNote:"தயவுசெய்து காத்திருப்பு அறையில் அமரவும். அழைப்பு வரும்போது அறிவிக்கப்படும்.",
-       newIntake:"அடுத்த நோயாளி"
+       waitingTitle:"காத்திருப்பு அறை", waitingSub:"தயவுசெய்து காத்திருக்கவும். விரைவில் அழைக்கப்படுவீர்கள்."
      },
-  ml:{ welcomeTitle:"മെഡിക്കിയോസ്കിലേക്ക് സ്വാഗതം", welcomeLede:"ഡോക്ടറെ കാണുന്നതിന് മുൻപ് വിവരങ്ങൾ തയ്യാറാക്കാം. ഇതിന് 2 മിനിറ്റ് എടുക്കും.",
+  ml:{ welcomeTitle:"മെഡിക്കിയോസ്കിലേക്ക് സ്വാഗതം", welcomeLede:"ഡോക്ടറെ കാണുന്നതിന് മുൻപ് വിവരങ്ങൾ തയ്യാറാക്കാം.",
        chooseLang:"ഭാഷ തിരഞ്ഞെടുക്കുക", start:"തുടരുക",
-       detailsTitle:"രോഗിയുടെ വിവരങ്ങൾ", detailsLede:"ഇന്നത്തെ ഒ.പി.ഡി കൺസൾട്ടേഷനായുള്ള പ്രാഥമിക വിവരങ്ങൾ.",
-       name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ (10 അക്കങ്ങൾ)", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
-       consentTitle:"സമ്മതവും സ്വകാര്യതയും", consentLede:"ഈ വിവരങ്ങൾ ചികിത്സിക്കുന്ന ഡോക്ടറുമായി മാത്രമേ പങ്കിടുകയുള്ളൂ.",
-       consentBody:"ഡോക്ടറുടെ സമയം ലാഭിക്കാൻ മെഡിക്കിയോസ്ക് ഓട്ടോമേറ്റഡ് കേസ് ഷീറ്റ് തയ്യാറാക്കുന്നു.",
-       consentCheck:"ഇന്നത്തെ കൺസൾട്ടേഷനായി വിവരങ്ങൾ നൽകാൻ ഞാൻ സമ്മതിക്കുന്നു.",
-       chatTitle:"ബുദ്ധിമുട്ടുകൾ എന്തൊക്കെയാണ്?", chatLede:"മൈക്ക് ഉപയോഗിച്ച് സംസാരിക്കുകയോ ടൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.",
-       typePh:"നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഇവിടെ എഴുതുക…", uploadTitle:"പഴയ കുറിപ്പടിയോ ലാബ് റിപ്പോർട്ടോ ഉണ്ടോ?",
-       uploadLede:"ഓപ്ഷണൽ — മരുന്നുകൾ മനസ്സിലാക്കാൻ ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാം.", uploadDrop:"ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക",
-       skipUpload:"ഈ ഘട്ടം ഒഴിവാക്കുക", scanning:"രേഖ പരിശോധിക്കുന്നു…", scanDone:"വിവരങ്ങൾ ലഭ്യമായി",
-       genTitle:"സംഗ്രഹം തയ്യാറാക്കുന്നു…", genLede:"ഡോക്ടർക്കായി വിവരങ്ങൾ ക്രമീകരിക്കുകയാണ്.",
-       recapTitle:"എല്ലാം തയ്യാറായി!", recapLede:"നിങ്ങളുടെ ടോക്കൺ ഡോക്ടറുടെ ക്യൂവിലേക്ക് ചേർത്തു:",
-       tokenPrefix:"നിങ്ങളുടെ ടോക്കൺ", waitNote:"ദയവായി കാത്തിരിപ്പ് മുറിയിൽ ഇരിക്കുക. വിളിക്കുമ്പോൾ അറിയിപ്പ് ലഭിക്കും.",
-       newIntake:"അടുത്ത രോഗി"
+       detailsTitle:"രോഗിയുടെ വിവരങ്ങൾ", detailsLede:"ഇന്നത്തെ കൺസൾട്ടേഷനായുള്ള പ്രാഥമിക വിവരങ്ങൾ.",
+       name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
+       consentTitle:"സമ്മതവും സ്വകാര്യതയും", consentLede:"ചികിത്സിക്കുന്ന ഡോക്ടറുമായി മാത്രമേ പങ്കിടുകയുള്ളൂ.",
+       consentBody:"ഡോക്ടറുടെ സമയം ലാഭിക്കാൻ കേസ് ഷീറ്റ് തയ്യാറാക്കുന്നു.",
+       consentCheck:"വിവരങ്ങൾ നൽകാൻ ഞാൻ സമ്മതിക്കുന്നു.",
+       chatTitle:"ബുദ്ധിമുട്ടുകൾ എന്തൊക്കെയാണ്?", chatLede:"സംസാരിക്കുകയോ ടൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.",
+       typePh:"ലക്ഷണങ്ങൾ ഇവിടെ എഴുതുക…", uploadTitle:"പഴയ കുറിപ്പടിയോ റിപ്പോർട്ടോ?",
+       uploadLede:"ഓപ്ഷണൽ — ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാം.", uploadDrop:"അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക",
+       skipUpload:"ഒഴിവാക്കുക", scanning:"പരിശോധിക്കുന്നു…",
+       genTitle:"സംഗ്രഹം തയ്യാറാക്കുന്നു…", genLede:"വിവരങ്ങൾ ക്രമീകരിക്കുകയാണ്.",
+       waitingTitle:"കാത്തിരിപ്പ് മുറി", waitingSub:"ദയവായി കാത്തിരിക്കുക. ഉടൻ വിളിക്കും."
      },
-  gu:{ welcomeTitle:"મેડિકિઓસ્કમાં આપનું સ્વાગત છે", welcomeLede:"ડોક્ટરને મળતા પહેલા માહિતી તૈયાર કરીએ. લગભગ 2 મિનિટ લાગશે.",
+  gu:{ welcomeTitle:"મેડિકિઓસ્કમાં આપનું સ્વાગત છે", welcomeLede:"ડોક્ટરને મળતા પહેલા માહિતી તૈયાર કરીએ.",
        chooseLang:"ભાષા પસંદ કરો", start:"આગળ વધો",
        detailsTitle:"દર્દીની માહિતી", detailsLede:"આજના પરામર્શ માટે જરૂરી માહિતી.",
-       name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર (10 અંક)", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
-       consentTitle:"સંમતિ અને ગોપનીયતા", consentLede:"આ માહિતી ફક્ત આપની સારવાર કરતા ડોક્ટર સાથે જ શેર થશે.",
-       consentBody:"મેડિકિઓસ્ક ડોક્ટરનો સમય બચાવવા આપની કેસ હિસ્ટ્રી તૈયાર કરે છે.",
-       consentCheck:"હું આજના પરામર્શ માટે માહિતી આપવા સંમત છું.",
+       name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
+       consentTitle:"સંમતિ અને ગોપનીયતા", consentLede:"માહિતી ફક્ત ડોક્ટર સાથે જ શેર થશે.",
+       consentBody:"મેડિકિઓસ્ક આપની કેસ હિસ્ટ્રી તૈયાર કરે છે.",
+       consentCheck:"હું માહિતી આપવા સંમત છું.",
        chatTitle:"તમને શું તકલીફ છે?", chatLede:"માઈકથી બોલો અથવા ટાઈપ કરો.",
-       typePh:"તમારી સમસ્યા અહીં લખો…", uploadTitle:"જૂનો પ્રિસ્ક્રિપ્શન અથવા રિપોર્ટ છે?",
-       uploadLede:"વૈકલ્પિક — જૂની દવાઓ જાણવા ફોટો કે PDF અપલોડ કરો.", uploadDrop:"ફોટો અથવા PDF અપલોડ કરવા ટેપ કરો",
-       skipUpload:"આ પગલું છોડો", scanning:"દસ્તાવેજ વંચાઈ રહ્યો છે…", scanDone:"વિગતો મળી ગઈ",
-       genTitle:"સારાંશ તૈયાર થઈ રહ્યો છે…", genLede:"ડોક્ટર માટે વિગતો ગોઠવાઈ રહી છે.",
-       recapTitle:"તમે તૈયાર છો!", recapLede:"તમારો ટોકન ડોક્ટર પાસે પહોંચી ગયો છે:",
-       tokenPrefix:"તમારો ટોકન", waitNote:"કૃપા કરીને પ્રતીક્ષાલયમાં બેસો. વારો આવ્યે સૂચના મળશે.",
-       newIntake:"નવો દર્દી"
+       typePh:"સમસ્યા અહીં લખો…", uploadTitle:"જૂનો રિપોર્ટ છે?",
+       uploadLede:"વૈકલ્પિક — ફોટો કે PDF અપલોડ કરો.", uploadDrop:"અપલોડ કરવા ટેપ કરો",
+       skipUpload:"છોડો", scanning:"વંચાઈ રહ્યો છે…",
+       genTitle:"સારાંશ તૈયાર થઈ રહ્યો છે…", genLede:"વિગતો ગોઠવાઈ રહી છે.",
+       waitingTitle:"પ્રતીક્ષાલય", waitingSub:"કૃપા કરીને પ્રતીક્ષા કરો."
      },
-  bn:{ welcomeTitle:"মেডিকিয়স্কে স্বাগতম", welcomeLede:"ডাক্তারকে দেখানোর আগে তথ্য প্রস্তুত করি। প্রায় ২ মিনিট লাগবে।",
+  bn:{ welcomeTitle:"মেডিকিয়স্কে স্বাগতম", welcomeLede:"ডাক্তারকে দেখানোর আগে তথ্য প্রস্তুত করি।",
        chooseLang:"ভাষা নির্বাচন করুন", start:"এগিয়ে যান",
-       detailsTitle:"রোগীর বিবরণ", detailsLede:"আজকের ওপিডি পরামর্শের প্রাথমিক তথ্য।",
-       name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর (১০ সংখ্যা)", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
-       consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"এই তথ্য শুধুমাত্র আপনার চিকিৎসকের সাথেই ভাগ করা হবে।",
-       consentBody:"মেডিকিয়স্ক ডাক্তারের সময় বাঁচাতে প্রাথমিক ইতিহাস স্বয়ংক্রিয়ভাবে প্রস্তুত করে।",
-       consentCheck:"আমি পরামর্শের জন্য আমার তথ্য প্রদান করতে সম্মত।",
-       chatTitle:"আপনার কী সমস্যা হচ্ছে?", chatLede:"মাইকে বলুন অথবা টাইপ করুন।",
-       typePh:"আপনার লক্ষণ এখানে লিখুন…", uploadTitle:"কোনো পুরোনো প্রেসক্রিপশন বা রিপোর্ট আছে?",
-       uploadLede:"ঐচ্ছিক — পুরোনো ওষুধ বুঝতে ছবি বা PDF আপলোড করুন।", uploadDrop:"ছবি বা PDF আপলোড করতে চাপুন",
-       skipUpload:"এই ধাপটি এড়িয়ে যান", scanning:"নথি পরীক্ষা করা হচ্ছে…", scanDone:"বিবরণ পাওয়া গেছে",
-       genTitle:"সারাংশ প্রস্তুত হচ্ছে…", genLede:"ডাক্তারের জন্য তথ্য সাজানো হচ্ছে।",
-       recapTitle:"সব প্রস্তুত!", recapLede:"আপনার টোকেন ডাক্তারের কাছে পৌঁছে গেছে:",
-       tokenPrefix:"আপনার টোকেন", waitNote:"অনুগ্রহ করে অপেক্ষা করুন। ডাক পড়লে স্ক্রিনে জানানো হবে।",
-       newIntake:"পরবর্তী রোগী"
+       detailsTitle:"রোগীর বিবরণ", detailsLede:"আজকের পরামর্শের প্রাথমিক তথ্য।",
+       name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
+       consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"তথ্য শুধুমাত্র চিকিৎসকের সাথেই ভাগ করা হবে।",
+       consentBody:"মেডিকিয়স্ক ইতিহাস প্রস্তুত করে।",
+       consentCheck:"আমি তথ্য প্রদান করতে সম্মত।",
+       chatTitle:"আপনার কী সমস্যা?", chatLede:"মাইকে বলুন বা টাইপ করুন।",
+       typePh:"লক্ষণ এখানে লিখুন…", uploadTitle:"পুরোনো রিপোর্ট?",
+       uploadLede:"ঐচ্ছিক — ছবি বা PDF আপলোড করুন।", uploadDrop:"আপলোড করতে চাপুন",
+       skipUpload:"এড়িয়ে যান", scanning:"পরীক্ষা হচ্ছে…",
+       genTitle:"সারাংশ প্রস্তুত হচ্ছে…", genLede:"তথ্য সাজানো হচ্ছে।",
+       waitingTitle:"অপেক্ষার কক্ষ", waitingSub:"অনুগ্রহ করে অপেক্ষা করুন।"
      }
 };
 function t(k){ return (STR[S.lang] && STR[S.lang][k]) || STR['en'][k] || ''; }
@@ -368,7 +398,7 @@ async function apiStartSession(){
         gender: S.patient.gender,
         phone: S.patient.phone,
         language: S.lang,
-        mock_abha: S.patient.mock_abha || "91-4829-1029-4412"
+        mock_abha: "91-4829-1029-4412"
       })
     });
     if(res.ok){
@@ -427,11 +457,6 @@ async function apiGenerateSummary(){
   var cc = firstUserMsg ? firstUserMsg.text : "Consultation requested";
   return {
     token: S.token,
-    patient_recap: [
-      "Symptoms recorded for consultation.",
-      "Vitals and medical history prepared for OPD doctor.",
-      "Your case file is now ready in the consultation room."
-    ],
     clinical_summary: {
       chiefComplaint: cc,
       hpi: S.messages.map(m => (m.role==='bot'?'Dr: ':'Pt: ') + m.text).join('\n'),
@@ -495,17 +520,22 @@ async function apiDeletePatient(sessionId){
 function startPollingStatus(){
   if(S.statusTimer) clearInterval(S.statusTimer);
   S.statusTimer = setInterval(async function(){
-    if(!S.sessionId || S.view !== 'kiosk' || S.screen !== 'recap') return;
+    if(!S.sessionId || S.view !== 'patient' || S.screen !== 'waiting') return;
     try {
       var res = await fetch(BACKEND_URL + "/session/" + S.sessionId + "/status");
       if(res.ok){
         var data = await res.json();
+        S.waitData.people_ahead = data.people_ahead;
+        S.waitData.estimated_wait_mins = data.estimated_wait_mins;
+        if(data.next_queue && data.next_queue.length) S.waitData.next_queue = data.next_queue;
+        if(data.doctor_name) S.waitData.doctor_name = data.doctor_name;
+
         if(data.status === 'in_consultation' && !S.calledIn){
           S.calledIn = true;
           S.roomName = data.room || "OPD Consultation Room 2";
           playChime();
-          render();
         }
+        render();
       }
     } catch(e){}
   }, 3000);
@@ -532,14 +562,13 @@ function onPhoneInput(el){
   if(val.length > 10) val = val.slice(0, 10);
   el.value = val;
   S.patient.phone = val;
-  if(val.length > 0 && val.length < 10){
-    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर पूरे 10 अंकों का होना चाहिए' : 'Phone number must be exactly 10 digits';
-  } else {
-    S.phoneError = '';
-  }
-  var errEl = document.getElementById('phoneErr');
-  if(errEl) errEl.innerText = S.phoneError;
   refreshBtn();
+}
+
+function startPatientFlow(){
+  S.view = 'patient';
+  S.screen = 'welcome';
+  render();
 }
 
 async function beginChat(){
@@ -577,35 +606,23 @@ async function onFileChosen(ev){
   S.uploadStatus = 'scanning';
   render();
 
-  if(!S.uploadIsPdf){
-    var reader = new FileReader();
-    reader.onload = function(e){ S.uploadPreview = e.target.result; render(); };
-    reader.readAsDataURL(file);
-  } else {
-    S.uploadPreview = null;
-    render();
-  }
-
   var extracted = await apiUploadFile(file);
   S.extracted = extracted;
   S.uploadStatus = 'done';
   render();
 }
 
-async function generateSummary(){
+async function generateSummaryAndEnterWaitingRoom(){
   S.screen = 'generating'; render();
   var res = await apiGenerateSummary();
   S.clinicalSummary = res.clinical_summary;
-  S.patientRecap = res.patient_recap || [];
   if(res.token) S.token = res.token;
 
-  S.activeQueueId = S.sessionId;
-  S.screen = 'recap';
+  S.screen = 'waiting';
   startPollingStatus();
   render();
 }
 
-// Multilingual Speech Recognition
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser"); return; }
@@ -614,14 +631,7 @@ function toggleMic(){
     return;
   }
   var rec = new SR();
-  var speechLangMap = {
-    'en': 'en-IN',
-    'hi': 'hi-IN',
-    'ta': 'ta-IN',
-    'ml': 'ml-IN',
-    'gu': 'gu-IN',
-    'bn': 'bn-IN'
-  };
+  var speechLangMap = {'en':'en-IN','hi':'hi-IN','ta':'ta-IN','ml':'ml-IN','gu':'gu-IN','bn':'bn-IN'};
   rec.lang = speechLangMap[S.lang] || 'en-IN';
   rec.interimResults = false;
   rec.onstart = function(){ S.listening = true; render(); };
@@ -643,27 +653,66 @@ function showToast(msg){
   setTimeout(function(){ el.classList.remove('show'); }, 2400);
 }
 
-/* ── RENDERING ── */
+/* ── RENDERING ROUTER ── */
 function render(){
   var root = document.getElementById('root');
   if(!root) return;
-  root.innerHTML = (S.view === 'dashboard' && S.doctorLoggedIn) ? renderDashboard() : renderKiosk();
+
+  if(S.view === 'dashboard' && S.doctorLoggedIn){
+    root.innerHTML = renderDashboard();
+  } else if(S.view === 'patient'){
+    root.innerHTML = renderPatientFlow();
+  } else {
+    root.innerHTML = renderLandingPage();
+  }
+
   if(S.showDoctorModal) renderDoctorModal();
   bindEvents();
 }
 
-function progressDots(){
-  var order = ['welcome','details','consent','chat','upload'];
-  var idx = order.indexOf(S.screen);
-  var html = '<div class="steps">';
-  for(var i=0; i<order.length; i++){
-    var cls = 'step-dot' + (i===idx ? ' active' : (i<idx ? ' done' : ''));
-    html += '<div class="' + cls + '"></div>';
-  }
-  return html + '</div>';
+/* ── 1. LANDING / ROLE SELECTION (Matching Image 1) ── */
+function renderLandingPage(){
+  return '<div class="topbar">' +
+    '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
+    '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Patient Intake Kiosk</div></div></div>' +
+    '</div>' +
+    '<div class="stage-split">' +
+      '<div class="hero-side">' +
+        '<img src="/assets/sage.png" class="hero-img" alt="Ayush Sage" onerror="this.onerror=null; this.src=\'data:image/svg+xml;utf8,<svg viewBox=\\\'0 0 200 200\\\' xmlns=\\\'http://www.w3.org/2000/svg\\\'><circle cx=\\\'100\\\' cy=\\\'100\\\' r=\\\'80\\\' fill=\\\'%23e2ece3\\\'/><text x=\\\'50%\\\' y=\\\'52%\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' font-size=\\\'48\\\'>🍄</text></svg>\';">' +
+      '</div>' +
+      '<div class="card-side">' +
+        '<div class="card">' +
+          '<h1 class="title serif" style="font-size:26px;margin-bottom:6px;">How would you like to continue?</h1>' +
+          '<p class="lede" style="margin-bottom:18px;">Choose your role to get started.</p>' +
+          '<div class="role-grid">' +
+            '<div class="role-box patient-box">' +
+              '<div>' +
+                '<div class="role-icon">' + userSvg() + '</div>' +
+                '<div class="role-title">Patient</div>' +
+                '<div class="role-desc">Register for your visit, get a token, and wait comfortably.</div>' +
+              '</div>' +
+              '<button class="role-btn patient-btn" onclick="startPatientFlow()">Continue as Patient →</button>' +
+            '</div>' +
+            '<div class="role-box doctor-box">' +
+              '<div>' +
+                '<div class="role-icon">' + stethoscopeSvg() + '</div>' +
+                '<div class="role-title">Doctor</div>' +
+                '<div class="role-desc">View patient queue and manage consultations.</div>' +
+              '</div>' +
+              '<button class="role-btn doctor-btn" onclick="openDoctorModal()">Continue as Doctor →</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ayush-footer">' +
+            '🌿 MINISTRY OF AYUSH 🌿' +
+            '<div class="ayush-sub">AYURVEDA | YOGA | NATUROPATHY | UNANI | SIDDHA | SOWA-RIGPA</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
 }
 
-function renderKiosk(){
+/* ── 2. PATIENT FLOW (NO DOCTOR LINK) ── */
+function renderPatientFlow(){
   var inner = '';
   if(S.screen === 'welcome') inner = screenWelcome();
   else if(S.screen === 'details') inner = screenDetails();
@@ -671,17 +720,18 @@ function renderKiosk(){
   else if(S.screen === 'chat') inner = screenChat();
   else if(S.screen === 'upload') inner = screenUpload();
   else if(S.screen === 'generating') inner = screenGenerating();
-  else if(S.screen === 'recap') inner = screenRecap();
+  else if(S.screen === 'waiting') return renderWaitingRoom();
 
   return '<div class="topbar">' +
     '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
-    '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Patient Intake Kiosk</div></div></div>' +
-    '<div class="doctor-lock-btn" onclick="openDoctorModal()">' + lockSvg() + '<span>Doctor Portal (Staff Only)</span></div>' +
+    '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Patient Self-Service Triage</div></div></div>' +
     '</div>' +
-    '<div class="stage"><div class="card ' + (S.screen==='chat'?'chat-card':'') + '">' +
-    (['welcome','details','consent','chat','upload'].indexOf(S.screen) !== -1 ? progressDots() : '') +
-    inner +
-    '</div></div>';
+    '<div class="stage-split" style="justify-content:center;">' +
+      '<div class="card" style="max-width:480px;">' +
+        (['welcome','details','consent','chat','upload'].indexOf(S.screen) !== -1 ? progressDots() : '') +
+        inner +
+      '</div>' +
+    '</div>';
 }
 
 function screenWelcome(){
@@ -693,21 +743,18 @@ function screenWelcome(){
     { code: 'gu', native: 'ગુજરાતી', sub: 'Gujarati (Jamnagar)' },
     { code: 'bn', native: 'বাংলা', sub: 'Bengali' }
   ];
-
   var gridHtml = '<div class="lang-grid-6">';
   for(var i=0; i<langs.length; i++){
     var l = langs[i];
     gridHtml += '<div class="lang-opt ' + (S.lang===l.code?'selected':'') + '" onclick="setLang(\'' + l.code + '\')">' +
-      '<div class="lang-native">' + l.native + '</div>' +
-      '<div class="lang-eng">' + l.sub + '</div>' +
-      '</div>';
+      '<div class="lang-native">' + l.native + '</div><div class="lang-eng">' + l.sub + '</div></div>';
   }
   gridHtml += '</div>';
 
   return '<h1 class="title serif">' + t('welcomeTitle') + '</h1>' +
     '<p class="lede">' + t('welcomeLede') + '</p>' +
-    '<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;">' + t('chooseLang') + '</div>' +
-    gridHtml + '<br/>' +
+    '<div style="font-size:12px;color:var(--ink-soft);margin-bottom:8px;">' + t('chooseLang') + '</div>' +
+    gridHtml +
     '<button class="btn btn-primary" onclick="goto(\'details\')">' + t('start') + '</button>';
 }
 
@@ -729,8 +776,7 @@ function screenDetails(){
         '<div class="radio-pill ' + (p.gender==='O'?'selected':'') + '" onclick="setGender(\'O\')">' + t('other') + '</div>' +
       '</div></div>' +
     '<div class="field"><label>' + t('phone') + ' (Optional)</label>' +
-      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile" oninput="onPhoneInput(this)"/>' +
-      '<div class="field-error" id="phoneErr">' + S.phoneError + '</div></div>' +
+      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile" oninput="onPhoneInput(this)"/></div>' +
     '<button id="detailsBtn" class="btn btn-primary" ' + (ready?'':'disabled') + ' onclick="goto(\'consent\')">' + t('start') + '</button>';
 }
 
@@ -738,9 +784,9 @@ function screenConsent(){
   return '<h1 class="title serif">' + t('consentTitle') + '</h1>' +
     '<p class="lede">' + t('consentLede') + '</p>' +
     '<div class="consent-box">' + t('consentBody') +
-      '<div style="font-size:11.5px;color:var(--sage);margin-top:10px;font-weight:600;">✓ ABHA Health ID: 91-4829-1029-4412 (Simulated ABDM)</div>' +
+      '<div style="font-size:11px;color:var(--sage);margin-top:8px;font-weight:600;">✓ ABHA ID: 91-4829-1029-4412 (Simulated ABDM)</div>' +
     '</div>' +
-    '<label class="check-row" style="margin-bottom:22px;">' +
+    '<label class="check-row" style="margin-bottom:20px;">' +
       '<input type="checkbox" ' + (S.consent?'checked':'') + ' onchange="S.consent=this.checked; refreshBtn()"/>' +
       '<span>' + t('consentCheck') + '</span></label>' +
     '<button id="consentBtn" class="btn btn-primary" ' + (S.consent?'':'disabled') + ' onclick="beginChat()">' + t('start') + '</button>';
@@ -755,7 +801,7 @@ function screenChat(){
   var typing = S.awaitingReply ? '<div class="typing"><span></span><span></span><span></span></div>' : '';
 
   return '<h1 class="title serif" style="font-size:20px;">' + t('chatTitle') + '</h1>' +
-    '<p class="lede" style="margin-bottom:16px;">' + t('chatLede') + '</p>' +
+    '<p class="lede" style="margin-bottom:14px;">' + t('chatLede') + '</p>' +
     '<div class="chat-window" id="chatWindow">' + bubbles + typing + '</div>' +
     (S.chatDone ? '<button class="btn btn-primary" onclick="goto(\'upload\')">' + (S.lang==='hi'?'आगे बढ़ें':'Continue') + '</button>' :
       '<div class="input-bar">' +
@@ -773,17 +819,15 @@ function screenUpload(){
       '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">Supports JPG, PNG, and PDF</div></div>' +
       '<input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg,application/pdf" style="display:none" onchange="onFileChosen(event)"/>';
   } else {
-    previewHtml = '<div class="preview-row">' +
-      (S.uploadIsPdf ? '<div class="pdf-badge">PDF</div>' : '<img src="' + (S.uploadPreview || '') + '"/>') +
-      '<div style="flex:1;"><div style="font-weight:600;font-size:13px;">' + escapeHtml(S.uploadFileName) + '</div>' +
-      '<div class="scan-status done">Details extracted ✓</div></div></div>';
+    previewHtml = '<div style="background:var(--paper);border-radius:12px;padding:12px;margin-bottom:14px;font-size:13px;font-weight:600;color:var(--teal);">' +
+      '✓ ' + escapeHtml(S.uploadFileName) + ' attached</div>';
   }
 
   return '<h1 class="title serif" style="font-size:21px;">' + t('uploadTitle') + '</h1>' +
     '<p class="lede">' + t('uploadLede') + '</p>' + previewHtml +
-    '<button class="btn btn-primary" onclick="generateSummary()">' +
+    '<button class="btn btn-primary" onclick="generateSummaryAndEnterWaitingRoom()">' +
     (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary') + '</button>' +
-    (!S.uploadFile ? '<button class="btn btn-ghost" onclick="generateSummary()">' + t('skipUpload') + '</button>' : '');
+    (!S.uploadFile ? '<button class="btn btn-ghost" onclick="generateSummaryAndEnterWaitingRoom()">' + t('skipUpload') + '</button>' : '');
 }
 
 function screenGenerating(){
@@ -792,30 +836,76 @@ function screenGenerating(){
     '<p>' + t('genLede') + '</p></div>';
 }
 
-function screenRecap(){
-  var bullets = '';
-  var list = S.patientRecap || [];
-  for(var i=0; i<list.length; i++){
-    bullets += '<li><span class="recap-dot"></span><span>' + escapeHtml(list[i]) + '</span></li>';
+/* ── 3. WAITING ROOM SCREEN (Matching Image 4 Layout) ── */
+function renderWaitingRoom(){
+  var wd = S.waitData;
+  var queueRows = '';
+  for(var i=0; i<wd.next_queue.length; i++){
+    var item = wd.next_queue[i];
+    queueRows += '<div class="queue-row">' +
+      '<span class="mini-token">' + escapeHtml(item.token) + '</span>' +
+      '<span style="color:var(--ink-soft);">' + escapeHtml(item.visit_type) + '</span>' +
+      '</div>';
   }
 
-  var liveCallAlert = S.calledIn ? (
-    '<div class="call-banner">' +
-      '<div style="font-size:18px;font-weight:bold;">🔔 YOUR TOKEN IS CALLED!</div>' +
-      '<div style="font-size:13.5px;margin-top:4px;">Please proceed inside <b>' + escapeHtml(S.roomName) + '</b> for your consultation.</div>' +
+  var liveAlertHtml = S.calledIn ? (
+    '<div class="call-alert-banner">' +
+      '<div style="font-size:18px;font-weight:800;letter-spacing:.3px;">🔔 YOUR TOKEN IS CALLED!</div>' +
+      '<div style="font-size:13px;margin-top:4px;">Please proceed inside <b>' + escapeHtml(S.roomName) + '</b> for your consultation.</div>' +
     '</div>'
   ) : '';
 
-  return liveCallAlert +
-    '<h1 class="title serif">' + t('recapTitle') + '</h1>' +
-    '<div class="token-badge">' + t('tokenPrefix') + ': ' + S.token + '</div>' +
-    '<p class="lede" style="margin-bottom:10px;">' + t('recapLede') + '</p>' +
-    '<ul class="recap-list">' + bullets + '</ul>' +
-    '<p class="lede">' + (S.calledIn ? '<b>Doctor is waiting for you inside the room.</b>' : t('waitNote')) + '</p>' +
-    '<button class="btn btn-ghost" onclick="resetKiosk()">' + t('newIntake') + '</button>';
+  return '<div class="topbar">' +
+    '<div class="brand"><div class="brand-mark">' + logoSvg() + '</div>' +
+    '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">Ministry of AYUSH — Patient Waiting Room</div></div></div>' +
+    '</div>' +
+    '<div class="stage-split">' +
+      '<div class="hero-side">' +
+        '<img src="/assets/duck.png" class="hero-img" alt="Chill Duck Waiting on Bench" onerror="this.onerror=null; this.src=\'data:image/svg+xml;utf8,<svg viewBox=\\\'0 0 200 200\\\' xmlns=\\\'http://www.w3.org/2000/svg\\\'><circle cx=\\\'100\\\' cy=\\\'100\\\' r=\\\'80\\\' fill=\\\'%23fbf5ed\\\'/><text x=\\\'50%\\\' y=\\\'52%\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' font-size=\\\'48\\\'>🦆</text></svg>\';">' +
+      '</div>' +
+      '<div class="card-side">' +
+        '<div class="card wait-card">' +
+          liveAlertHtml +
+          '<h1 class="title serif" style="font-size:24px;margin-bottom:4px;">' + t('waitingTitle') + '</h1>' +
+          '<p class="lede" style="margin-bottom:18px;">' + t('waitingSub') + '</p>' +
+
+          '<div class="doc-info-row">' +
+            '<div style="display:flex;align-items:center;">' +
+              '<div class="doc-avatar">' + doctorSmallSvg() + '</div>' +
+              '<div><div class="doc-name">' + escapeHtml(wd.doctor_name) + '</div>' +
+              '<div class="doc-sub">' + escapeHtml(wd.doctor_title) + '</div>' +
+              '<div class="doc-sub" style="color:var(--teal);font-weight:500;">' + escapeHtml(wd.department) + '</div></div>' +
+            '</div>' +
+            '<div class="token-pill">' +
+              '<div class="token-pill-label">Your Token</div>' +
+              '<div class="token-pill-val">' + escapeHtml(S.token || 'B-25') + '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="stats-grid">' +
+            '<div class="stat-card green">' +
+              '<div class="stat-icon">' + usersSvg() + '</div>' +
+              '<div><div class="stat-label">People ahead of you</div><div class="stat-val">' + wd.people_ahead + '</div></div>' +
+            '</div>' +
+            '<div class="stat-card peach">' +
+              '<div class="stat-icon">' + clockSvg() + '</div>' +
+              '<div><div class="stat-label">Estimated waiting time</div><div class="stat-val">~ ' + wd.estimated_wait_mins + ' mins</div></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="queue-list-head">Next in Queue</div>' +
+          '<div class="queue-table">' + queueRows + '</div>' +
+
+          '<div class="wait-banner">' +
+            '<span>🌱</span>' +
+            '<span>Kindly remain seated. The screen will notify you when your token is called.</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
 }
 
-/* ── DOCTOR LOGIN MODAL (WITTY JOKE ON WRONG ENTRY) ── */
+/* ── 4. DOCTOR LOGIN MODAL ── */
 function renderDoctorModal(){
   var div = document.createElement('div');
   div.className = 'modal-overlay';
@@ -830,9 +920,7 @@ function renderDoctorModal(){
     (S.loginError ? (
       '<div class="fun-error-badge">' +
         '<span>🩺</span>' +
-        '<div>' +
-          '<b>Access Denied:</b> Even an apple a day won\'t crack this login! Check your exact uppercase & lowercase letters.' +
-        '</div>' +
+        '<div><b>Access Denied:</b> Even an apple a day won\'t crack this login! Check your exact uppercase & lowercase letters.</div>' +
       '</div>'
     ) : '') +
     '<button class="btn btn-primary" onclick="submitDoctorLogin()">Sign In to Dashboard →</button>' +
@@ -870,12 +958,13 @@ async function submitDoctorLogin(){
 function doctorLogout(){
   S.doctorLoggedIn = false;
   S.currentDoctor = null;
-  S.view = 'kiosk';
+  S.view = 'landing';
+  S.screen = 'role';
   render();
   showToast('Logged out of Doctor Portal');
 }
 
-/* ── DOCTOR DASHBOARD (NO SWITCH TO KIOSK ALLOWED) ── */
+/* ── 5. DOCTOR DASHBOARD (LOCKED, NO SWITCH TO KIOSK) ── */
 function renderDashboard(){
   var active = null;
   for(var i=0; i<S.queue.length; i++){
@@ -943,7 +1032,7 @@ function renderDashboard(){
     '</div></div>';
 }
 
-/* ── DOCTOR ACTIONS ── */
+/* ── ACTIONS ── */
 async function saveDoctorEdits(sessionId){
   var fields = ['chiefComplaint', 'hpi', 'pastHistory', 'allergies', 'medications', 'familyHistory', 'reviewOfSystems', 'uploadedDocSummary'];
   var updated = {};
@@ -963,7 +1052,7 @@ async function callPatient(sessionId){
   showToast('Calling patient into room...');
   var ok = await apiApprovePatient(sessionId);
   if(ok){
-    showToast('Patient notified and called in ✓');
+    showToast('Patient notified in Waiting Room ✓');
     apiGetQueue();
   }
 }
@@ -980,7 +1069,7 @@ async function completeVisit(sessionId){
 }
 
 async function deletePatientRecord(sessionId){
-  if(!confirm("Are you sure you want to delete this patient from the waiting list?")) return;
+  if(!confirm("Delete this patient from the waiting list?")) return;
   showToast('Deleting patient...');
   var ok = await apiDeletePatient(sessionId);
   if(ok){
@@ -1017,24 +1106,19 @@ function submitChat(){
   sendAnswer(val);
 }
 function setActiveQueue(id){ S.activeQueueId = id; render(); }
-function resetKiosk(){
-  S.screen='welcome'; S.patient={name:'',age:'',gender:'M',phone:'',mock_abha:''}; S.consent=false;
-  S.sessionId=null; S.token=null; S.messages=[]; S.chatDone=false;
-  S.uploadFile=null; S.uploadFileName=''; S.uploadIsPdf=false; S.uploadPreview=null;
-  S.uploadStatus='idle'; S.extracted=null; S.clinicalSummary=null; S.patientRecap=null;
-  S.calledIn=false;
-  if(S.statusTimer) clearInterval(S.statusTimer);
-  render();
-}
 function escapeHtml(s){
   return String(s||'').replace(/[&<>"']/g, function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
 }
 
+/* SVGs */
 function logoSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12" stroke="#F1F5EC"/><path d="M8 12a4 4 0 018 0" stroke="#D98F2B" fill="none"/></svg>'; }
-function logoSmall(dark){ return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (dark?'#F1F5EC':'#0D3B36') + '" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>'; }
-function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
+function userSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'; }
+function stethoscopeSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>'; }
+function doctorSmallSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>'; }
+function usersSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'; }
+function clockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'; }
 function micSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>'; }
 function sendSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>'; }
 function uploadSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>'; }

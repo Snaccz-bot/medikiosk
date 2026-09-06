@@ -1,5 +1,5 @@
 """
-MediKiosk — Full Backend with Strict Case-Sensitive Doctor Auth
+MediKiosk — Full Backend with Live OPD Queue Analytics
 Serves both API and Frontend at http://localhost:8000
 """
 
@@ -143,6 +143,21 @@ def serve_home():
             return FileResponse(p)
     return HTMLResponse("<h2>MediKiosk: index.html not found.</h2>")
 
+@app.get("/assets/{asset_name}")
+def serve_assets(asset_name: str):
+    candidate_dirs = [
+        Path(__file__).parent.parent / "Frontend" / "assets",
+        Path(__file__).parent / "Frontend" / "assets",
+        Path(__file__).parent / "assets",
+        Path("Frontend/assets"),
+        Path("assets")
+    ]
+    for d in candidate_dirs:
+        f = d / asset_name
+        if f.exists():
+            return FileResponse(f)
+    raise HTTPException(status_code=404, detail="Asset not found")
+
 
 # ── 4. DATA MODELS ────────────────────────────────────────────────────────────
 class DoctorLoginRequest(BaseModel):
@@ -169,7 +184,6 @@ class UpdateSummaryRequest(BaseModel):
 
 
 # ── 5. STRICT CASE-SENSITIVE DOCTOR AUTHENTICATION ────────────────────────────
-# Must match EXACT uppercase / lowercase
 STRICT_DOCTORS = {
     "DOC1": "Present",
     "DOC-101": "1234"
@@ -177,15 +191,16 @@ STRICT_DOCTORS = {
 
 @app.post("/doctor/login")
 def doctor_login(req: DoctorLoginRequest):
-    doc_id = req.doctor_id.strip()  # Strict exact case
-    pin = req.pin.strip()           # Strict exact case
+    doc_id = req.doctor_id.strip()
+    pin = req.pin.strip()
     
     if doc_id in STRICT_DOCTORS and STRICT_DOCTORS[doc_id] == pin:
         return {
             "success": True,
-            "doctor_name": "Dr. Rameshwar Sharma, MD (Ayu)",
+            "doctor_name": "Dr. Ananya Sharma",
+            "qualification": "BAMS (Ayurveda), MD (Kayachikitsa)",
             "role": "Senior Consultant",
-            "department": "Kayachikitsa (Internal Medicine) OPD Room 2"
+            "department": "Ayurveda OPD Room 2"
         }
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
@@ -225,10 +240,33 @@ def get_session_status(session_id: str):
     session = sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
+    
+    # Calculate live queue metrics
+    all_waiting = [s for s in sessions.values() if s.get("status") in ("intake", "ready")]
+    people_ahead = 0
+    next_in_queue = []
+    found_self = False
+    
+    for s in all_waiting:
+        if s.get("session_id") == session_id:
+            found_self = True
+        elif not found_self:
+            people_ahead += 1
+            next_in_queue.append({
+                "token": s.get("token", "B-00"),
+                "visit_type": "General Consultation" if people_ahead % 2 == 1 else "Follow-up Visit"
+            })
+
     return {
         "status": session.get("status", "intake"),
         "token": session.get("token"),
-        "room": "OPD Consultation Room 2"
+        "room": "OPD Consultation Room 2",
+        "doctor_name": "Dr. Ananya Sharma",
+        "doctor_title": "BAMS (Ayurveda)",
+        "department": "General Consultation",
+        "people_ahead": max(0, people_ahead),
+        "estimated_wait_mins": max(5, people_ahead * 5),
+        "next_queue": next_in_queue[:4]
     }
 
 
