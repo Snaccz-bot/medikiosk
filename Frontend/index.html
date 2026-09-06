@@ -262,7 +262,7 @@ var STR = {
   en:{ welcomeTitle:"Select Intake Language", welcomeLede:"Choose your preferred language for autonomous OPD triage.",
        start:"Continue",
        detailsTitle:"Patient Details", detailsLede:"Basic information for today's doctor consultation.",
-       name:"Full Name", age:"Age", phone:"Phone Number (10 digits) (Optional)", gender:"Gender", male:"Male", female:"Female", other:"Other",
+       name:"Full Name", age:"Age", phone:"Phone Number (Optional)", gender:"Gender", male:"Male", female:"Female", other:"Other",
        consentTitle:"Consent & Privacy", consentLede:"Your data is encrypted and shared only with your treating doctor.",
        consentBody:"MediKiosk prepares an automated clinical history to save doctor consultation time. No information leaves this clinic.",
        consentCheck:"I consent to provide my symptoms for my OPD case file.",
@@ -277,7 +277,7 @@ var STR = {
   hi:{ welcomeTitle:"भाषा चुनें / Select Language", welcomeLede:"परामर्श सहायता के लिए अपनी पसंदीदा भाषा चुनें।",
        start:"आगे बढ़ें",
        detailsTitle:"मरीज़ की जानकारी", detailsLede:"डॉक्टर के लिए आपकी बुनियादी जानकारी।",
-       name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक) (वैकल्पिक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
+       name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (वैकल्पिक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
        consentTitle:"सहमति एवं गोपनीयता", consentLede:"आपकी जानकारी केवल आपके डॉक्टर के साथ साझा होगी।",
        consentBody:"मेडीकियोस्क डॉक्टर का समय बचाने के लिए आपकी केस हिस्ट्री तैयार करता है।",
        consentCheck:"मैं आज के परामर्श के लिए जानकारी साझा करने हेतु सहमत हूँ।",
@@ -341,7 +341,7 @@ var STR = {
        consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"এই তথ্য শুধুমাত্র আপনার চিকিৎসকের সাথেই ভাগ করা হবে।",
        consentBody:"মেডিকিয়স্ক ডাক্তারের সময় বাঁচাতে প্রাথমিক ইতিহাস স্বয়ংক্রিয়ভাবে প্রস্তুত করে।",
        consentCheck:"আমি পরামর্শের জন্য আমার তথ্য প্রদান করতে সম্মত।",
-       chatTitle:"আপনার কী সমস্যা হচ্ছে?", chatLede:"মাইকে বলুন অথবা টাইপ করুন।",
+       chatTitle:"আপনার কী समस्या হচ্ছে?", chatLede:"মাইকে বলুন অথবা টাইপ করুন।",
        typePh:"আপনার লক্ষণ এখানে লিখুন…", uploadTitle:"কোনো পুরোনো প্রেসক্রিপশন বা রিপোর্ট আছে?",
        uploadLede:"ঐচ্ছিক — পুরোনো ওষুধ বুঝতে ছবি বা PDF আপলোড করুন।", uploadDrop:"ছবি বা PDF আপলোড করতে চাপুন",
        skipUpload:"এই ধাপটি এড়িয়ে যান", scanning:"নথি পরীক্ষা করা হচ্ছে…", scanDone:"বিবরণ পাওয়া গেছে ✓",
@@ -418,7 +418,7 @@ async function apiUploadFile(file){
     });
     if(res.ok) return (await res.json()).extracted;
   } catch(e){}
-  return { summary: "Document uploaded: File attached for doctor's clinical review.", medicines: [], tests: [], date: 'Recent' };
+  return { summary: "Attached medical document logged for physician review.", medicines: [], tests: [], date: 'Recent' };
 }
 
 async function apiGenerateSummary(){
@@ -487,18 +487,30 @@ async function apiApprovePatient(sessionId){
   } catch(e){ return false; }
 }
 
-async function apiCompletePatient(sessionId){
+async function completeVisit(sessionId){
+  if(!confirm("Mark consultation complete and archive patient from queue?")) return;
+  showToast('Completing consultation...');
   try {
     var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId + "/complete", { method: "POST" });
-    return res.ok;
-  } catch(e){ return false; }
+    if(res.ok){
+      showToast('Visit completed and archived ✓');
+      S.activeQueueId = null;
+      apiGetQueue();
+    }
+  } catch(e){}
 }
 
-async function apiDeletePatient(sessionId){
+async function deletePatientRecord(sessionId){
+  if(!confirm("Are you sure you want to delete this patient from the waiting list?")) return;
+  showToast('Deleting patient...');
   try {
     var res = await fetch(BACKEND_URL + "/doctor/session/" + sessionId, { method: "DELETE" });
-    return res.ok;
-  } catch(e){ return false; }
+    if(res.ok){
+      showToast('Patient deleted from queue');
+      S.activeQueueId = null;
+      apiGetQueue();
+    }
+  } catch(e){}
 }
 
 function startPollingStatus(){
@@ -546,7 +558,7 @@ function onPhoneInput(el){
   el.value = val;
   S.patient.phone = val;
   if(val.length > 0 && val.length < 10){
-    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर 10 अंकों का होना चाहिए' : 'Phone number must be 10 digits if entered';
+    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर 10 अंकों का होना चाहिए' : 'Enter 10-digit number if providing phone';
   } else {
     S.phoneError = '';
   }
@@ -618,7 +630,7 @@ async function generateSummary(){
   render();
 }
 
-/* ── SPEECH RECOGNITION (STREAMING LIVE AS YOU SPEAK) ── */
+/* ── SPEECH RECOGNITION ── */
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser. Please use Chrome."); return; }
@@ -795,7 +807,7 @@ function screenWelcome(){
 
 function screenDetails(){
   var p = S.patient;
-  // Phone is 100% OPTIONAL — Name and Age are the only required fields
+  // PHONE IS STRICTLY OPTIONAL: Name and Age are required. Continue is active immediately!
   var isPhoneValid = !p.phone || p.phone.length === 10;
   var ready = p.name.trim().length > 0 && p.age.trim().length > 0 && isPhoneValid;
 
@@ -812,7 +824,7 @@ function screenDetails(){
         '<div class="radio-pill ' + (p.gender==='O'?'selected':'') + '" onclick="setGender(\'O\')">' + t('other') + '</div>' +
       '</div></div>' +
     '<div class="field"><label>' + t('phone') + '</label>' +
-      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile (optional)" oninput="onPhoneInput(this)"/>' +
+      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile number (optional)" oninput="onPhoneInput(this)"/>' +
       '<div class="field-error" id="phoneErr">' + S.phoneError + '</div></div>' +
     '<button id="detailsBtn" class="btn btn-primary" ' + (ready?'':'disabled') + ' onclick="goto(\'consent\')">' + t('start') + '</button>';
 }
@@ -861,13 +873,13 @@ function screenUpload(){
     previewHtml = '<div class="preview-row">' +
       (S.uploadIsPdf ? '<div class="pdf-badge">PDF</div>' : '<img src="' + (S.uploadPreview || '') + '"/>') +
       '<div style="flex:1;"><div style="font-weight:600;font-size:13px;">' + escapeHtml(S.uploadFileName) + '</div>' +
-      '<div class="scan-status done">' + (isScanning ? 'Analyzing prescription with Vision AI...' : 'Analyzed by AI ✓') + '</div></div></div>';
+      '<div class="scan-status done">' + (isScanning ? 'Analyzing prescription with AI...' : 'Analyzed by AI ✓') + '</div></div></div>';
   }
 
   return '<h1 class="title serif" style="font-size:21px;">' + t('uploadTitle') + '</h1>' +
     '<p class="lede">' + t('uploadLede') + '</p>' + previewHtml +
     '<button class="btn btn-primary" ' + (isScanning ? 'disabled' : '') + ' onclick="generateSummary()">' +
-    (isScanning ? 'Analyzing document with Vision AI...' : (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary →')) + '</button>' +
+    (isScanning ? 'Analyzing prescription...' : (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary →')) + '</button>' +
     (!S.uploadFile ? '<button class="btn btn-ghost" onclick="generateSummary()">' + t('skipUpload') + '</button>' : '');
 }
 
@@ -916,16 +928,16 @@ function renderDoctorModal(){
   div.id = 'docModal';
   div.innerHTML = '<div class="modal-card">' +
     '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
-    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required (DOC1 / Present)</p>' +
+    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required</p>' +
     '<div class="field"><label>Doctor ID</label>' +
-      '<input id="docIdInput" type="text" placeholder="Enter Doctor ID (e.g. DOC1)" value=""/></div>' +
+      '<input id="docIdInput" type="text" placeholder="Enter Doctor ID (DOC1)" value=""/></div>' +
     '<div class="field"><label>Security Password</label>' +
-      '<input id="docPinInput" type="password" placeholder="Enter Password" value=""/></div>' +
+      '<input id="docPinInput" type="password" placeholder="Enter Password (Present)" value=""/></div>' +
     (S.loginError ? (
       '<div class="fun-error-badge">' +
         '<span>🩺</span>' +
         '<div>' +
-          '<b>Access Denied:</b> Even an apple a day won\'t crack this login! (Check Doctor ID: DOC1 and Password: Present)' +
+          '<b>Access Denied:</b> Check Doctor ID (DOC1) and Password (Present)' +
         '</div>' +
       '</div>'
     ) : '') +
@@ -1066,28 +1078,6 @@ async function callPatient(sessionId){
   }
 }
 
-async function completeVisit(sessionId){
-  if(!confirm("Mark consultation complete and archive patient from queue?")) return;
-  showToast('Completing consultation...');
-  var ok = await apiCompletePatient(sessionId);
-  if(ok){
-    showToast('Visit completed and archived ✓');
-    S.activeQueueId = null;
-    apiGetQueue();
-  }
-}
-
-async function deletePatientRecord(sessionId){
-  if(!confirm("Are you sure you want to delete this patient from the waiting list?")) return;
-  showToast('Deleting patient...');
-  var ok = await apiDeletePatient(sessionId);
-  if(ok){
-    showToast('Patient deleted from queue');
-    S.activeQueueId = null;
-    apiGetQueue();
-  }
-}
-
 function printCaseSheet(){ window.print(); }
 
 function bindEvents(){
@@ -1100,7 +1090,7 @@ function setLang(l){ S.lang = l; render(); }
 function setGender(g){ S.patient.gender = g; render(); }
 function refreshBtn(){
   var p = S.patient;
-  // Phone is 100% OPTIONAL
+  // PHONE IS STRICTLY OPTIONAL: Name and Age are required. Continue is active immediately!
   var isPhoneValid = !p.phone || p.phone.length === 10;
   var ready = p.name.trim().length > 0 && p.age.trim().length > 0 && isPhoneValid;
   var db = document.getElementById('detailsBtn');

@@ -47,9 +47,6 @@ if GEMINI_KEY:
 else:
     print("\n[MediKiosk] ⚠ Running with clinical heuristic fallback")
 
-# Active Google AI Studio models (gemini-1.5-flash is retired)
-MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"]
-
 def clean_json_str(raw: str) -> str:
     clean = re.sub(r"^```(?:json)?\s*", "", raw.strip(), flags=re.I)
     clean = re.sub(r"\s*```$", "", clean).strip()
@@ -59,38 +56,57 @@ def clean_json_str(raw: str) -> str:
         clean = clean[first:last+1]
     return clean
 
-def query_gemini_text(prompt: str) -> dict:
+# ── ROBUST GEMINI CALL (Resolves 400 Multiple Credentials & 404 Model Errors) ──
+def call_gemini_api(payload: dict) -> str:
     if not GEMINI_KEY:
         raise RuntimeError("No Gemini API key")
-    
-    headers = {
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_KEY
-    }
-    payload = {
-        "contents": [{"role": "user", "parts": [{"text": prompt}]}]
-    }
-    
-    for model_name in MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
-        try:
-            r = requests.post(url, json=payload, headers=headers, timeout=9)
-            if r.status_code == 200:
-                text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(clean_json_str(text))
-            else:
-                print(f"[Gemini REST {model_name} Error {r.status_code}]: {r.text[:120]}")
-        except Exception as e:
-            print(f"[Gemini REST {model_name} Exception]: {e}")
-            continue
 
-    raise RuntimeError("All Gemini text models failed")
+    # Try active Gemini models in priority order
+    for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+        # 1. Official REST call with URL query parameter
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_KEY}"
+        headers = {"Content-Type": "application/json"}
+        try:
+            r = requests.post(url, json=payload, headers=headers, timeout=12)
+            if r.status_code == 200:
+                data = r.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                print(f"[MediKiosk AI] ✓ Successfully answered via {model_name}")
+                return text
+            else:
+                print(f"[Gemini REST {model_name} ?key failed]: {r.status_code} - {r.text[:120]}")
+        except Exception as e:
+            print(f"[Gemini REST {model_name} Error]: {e}")
+
+        # 2. Header authentication fallback (x-goog-api-key)
+        url_header = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
+        headers_auth = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_KEY
+        }
+        try:
+            r = requests.post(url_header, json=payload, headers=headers_auth, timeout=12)
+            if r.status_code == 200:
+                data = r.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                print(f"[MediKiosk AI] ✓ Successfully answered via {model_name} (Header)")
+                return text
+            else:
+                print(f"[Gemini REST {model_name} Header failed]: {r.status_code} - {r.text[:120]}")
+        except Exception as e:
+            print(f"[Gemini REST {model_name} Header Error]: {e}")
+
+    raise RuntimeError("All Gemini endpoints failed")
+
+def query_gemini_text(prompt: str) -> dict:
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
+    raw_text = call_gemini_api(payload)
+    return json.loads(clean_json_str(raw_text))
 
 def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> dict:
-    if not GEMINI_KEY:
-        raise RuntimeError("No Gemini API key")
-
-    # Fast downscale so camera photos upload in ~0.2s
+    # Downscale large mobile camera photos so transmission takes ~0.2s
     if content_type.startswith("image/"):
         try:
             img = Image.open(io.BytesIO(file_bytes))
@@ -98,40 +114,30 @@ def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> di
                 img = img.convert("RGB")
             img.thumbnail((800, 800))
             buf = io.BytesIO()
-            img.save(buf, format="JPEG", quality=70, optimize=True)
+            img.save(buf, format="JPEG", quality=75, optimize=True)
             file_bytes = buf.getvalue()
             content_type = "image/jpeg"
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Compression Note]: {e}")
 
     b64_data = base64.b64encode(file_bytes).decode("utf-8")
-    headers = {
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_KEY
-    }
+    
+    # Notice: Google REST API requires camelCase 'inlineData' and 'mimeType'!
     payload = {
         "contents": [{
-            "role": "user",
             "parts": [
-                {"inline_data": {"mime_type": content_type, "data": b64_data}},
-                {"text": prompt}
+                {"text": prompt},
+                {
+                    "inlineData": {
+                        "mimeType": content_type,
+                        "data": b64_data
+                    }
+                }
             ]
         }]
     }
-    for model_name in MODELS:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
-        try:
-            r = requests.post(url, json=payload, headers=headers, timeout=12)
-            if r.status_code == 200:
-                text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(clean_json_str(text))
-            else:
-                print(f"[Gemini Vision {model_name} Error {r.status_code}]: {r.text[:120]}")
-        except Exception as e:
-            print(f"[Gemini Vision {model_name} Exception]: {e}")
-            continue
-
-    raise RuntimeError("All Gemini vision attempts failed")
+    raw_text = call_gemini_api(payload)
+    return json.loads(clean_json_str(raw_text))
 
 
 # ── 2. DATABASE LAYER ─────────────────────────────────────────────────────────
@@ -236,6 +242,7 @@ def doctor_login(req: DoctorLoginRequest):
     doc_id = req.doctor_id.strip().upper()
     pin = req.pin.strip().lower()
     
+    # Accepts DOC1 or DOC-101 with Present or 1234
     if doc_id in ("DOC1", "DOC-101", "DR.SHARMA") and pin in ("present", "1234"):
         return {
             "success": True,
@@ -420,10 +427,10 @@ def upload_document(session_id: str, file: UploadFile = File(...)):
     elif file.filename.lower().endswith(".png"):
         content_type = "image/png"
 
-    prompt = """Analyze this prescription, medicine bottle, or medical test photo.
-Extract clinical details into JSON:
+    prompt = """Examine this prescription, medicine bottle, or medical test photo.
+Extract all clinical details into JSON:
 {
-  "summary": "1 to 2 sentences summarizing the visible medicine names, dosages, or lab findings. If this is medicine packaging, specify the brand and active ingredient. If text is unreadable, write: 'Uploaded medical document recorded for doctor review.'",
+  "summary": "1 to 2 sentences summarizing the visible medicine names, dosages, or lab findings. If this is medicine packaging, specify the brand and active ingredient. If text is completely unreadable, write: 'Uploaded image inspected: Document attached for doctor review.'",
   "medicines": ["List of medicines found with dosage and frequency"],
   "tests": ["Key lab findings if present"],
   "date": "Document date if found"
@@ -454,7 +461,7 @@ def generate_summary(req: SummaryRequest):
 
     transcript = "\n".join([f"{m['role']}: {m['text']}" for m in session["messages"]])
     
-    # Read upload from body if sent directly, else from session
+    # Read upload directly from body or from session
     upload_data = req.upload_summary or session.get("upload_summary") or {}
     doc_summary_text = upload_data.get("summary", "No document uploaded.")
     doc_data = json.dumps(upload_data)
