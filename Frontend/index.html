@@ -262,14 +262,14 @@ var STR = {
   en:{ welcomeTitle:"Select Intake Language", welcomeLede:"Choose your preferred language for autonomous OPD triage.",
        start:"Continue",
        detailsTitle:"Patient Details", detailsLede:"Basic information for today's doctor consultation.",
-       name:"Full Name", age:"Age", phone:"Phone Number (10 digits required)", gender:"Gender", male:"Male", female:"Female", other:"Other",
+       name:"Full Name", age:"Age", phone:"Phone Number (10 digits) (Optional)", gender:"Gender", male:"Male", female:"Female", other:"Other",
        consentTitle:"Consent & Privacy", consentLede:"Your data is encrypted and shared only with your treating doctor.",
        consentBody:"MediKiosk prepares an automated clinical history to save doctor consultation time. No information leaves this clinic.",
        consentCheck:"I consent to provide my symptoms for my OPD case file.",
        chatTitle:"Tell us what's going on", chatLede:"Speak using the mic or type in your own words.",
        typePh:"Type your symptoms here…", uploadTitle:"Old Prescriptions or Reports?",
        uploadLede:"Optional — Upload a photo or PDF to auto-extract past medications.", uploadDrop:"Tap to upload Photo or PDF",
-       skipUpload:"Skip this step", scanning:"Analyzing document with Gemini Vision…", scanDone:"Details extracted",
+       skipUpload:"Skip this step", scanning:"Analyzing document with Vision AI…", scanDone:"Details extracted ✓",
        genTitle:"Preparing your summary…", genLede:"Synthesizing clinical intake for doctor's review.",
        recapTitle:"You're all set!", recapLede:"Your token has been submitted to the OPD waiting queue:",
        tokenPrefix:"Your Queue Token", waitNote:"Please relax in the waiting area. Your screen will notify you when called."
@@ -277,14 +277,14 @@ var STR = {
   hi:{ welcomeTitle:"भाषा चुनें / Select Language", welcomeLede:"परामर्श सहायता के लिए अपनी पसंदीदा भाषा चुनें।",
        start:"आगे बढ़ें",
        detailsTitle:"मरीज़ की जानकारी", detailsLede:"डॉक्टर के लिए आपकी बुनियादी जानकारी।",
-       name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक अनिवार्य)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
+       name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक) (वैकल्पिक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
        consentTitle:"सहमति एवं गोपनीयता", consentLede:"आपकी जानकारी केवल आपके डॉक्टर के साथ साझा होगी।",
        consentBody:"मेडीकियोस्क डॉक्टर का समय बचाने के लिए आपकी केस हिस्ट्री तैयार करता है।",
        consentCheck:"मैं आज के परामर्श के लिए जानकारी साझा करने हेतु सहमत हूँ।",
        chatTitle:"बताइए क्या तकलीफ़ है", chatLede:"माइक से बोलें या टाइप करें।",
        typePh:"यहाँ अपनी तकलीफ़ लिखें…", uploadTitle:"कोई पुराना पर्चा या रिपोर्ट?",
        uploadLede:"वैकल्पिक — फोटो या PDF अपलोड करें, हम दवाइयाँ निकाल लेंगे।", uploadDrop:"फोटो या PDF अपलोड करें",
-       skipUpload:"यह चरण छोड़ें", scanning:"दस्तावेज़ पढ़ा जा रहा है…", scanDone:"जानकारी मिल गई",
+       skipUpload:"यह चरण छोड़ें", scanning:"दस्तावेज़ पढ़ा जा रहा है…", scanDone:"जानकारी मिल गई ✓",
        genTitle:"सारांश तैयार हो रहा है…", genLede:"डॉक्टर के लिए सब कुछ व्यवस्थित किया जा रहा है।",
        recapTitle:"आप तैयार हैं!", recapLede:"आपका टोकन डॉक्टर के पास पहुँच चुका है:",
        tokenPrefix:"आपका टोकन", waitNote:"कृपया प्रतीक्षालय में बैठें। बुलाए जाने पर स्क्रीन पर सूचना दिखेगी।"
@@ -292,14 +292,14 @@ var STR = {
   ta:{ welcomeTitle:"மொழியைத் தேர்ந்தெடுக்கவும்", welcomeLede:"OPD ஆலோசனைக்கு உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.",
        start:"தொடரவும்",
        detailsTitle:"நோயாளியின் விவரங்கள்", detailsLede:"இன்றைய ஆலோசனையின் அடிப்படை விவரங்கள்.",
-       name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண் (10 இலக்கங்கள் கட்டாயம்)", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
+       name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண் (விருப்பமானது)", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
        consentTitle:"ஒப்புதல் & தனியுரிமை", consentLede:"உங்கள் தகவல்கள் உங்கள் மருத்துவரிடம் மட்டுமே பகிரப்படும்.",
        consentBody:"மருத்துவரின் நேரத்தை சேமிக்க MediKiosk தானியங்கி மருத்துவ குறிப்பை தயார் செய்கிறது.",
        consentCheck:"மருத்துவ ஆலோசனைக்காக என் விவரங்களை பகிர ஒப்புக்கொள்கிறேன்.",
        chatTitle:"உங்கள் உடல்நிலையை விவரிக்கவும்", chatLede:"மைக் மூலம் பேசலாம் அல்லது தட்டச்சு செய்யலாம்.",
        typePh:"உங்கள் அறிகுறிகளை இங்கே தட்டச்சு செய்யவும்…", uploadTitle:"பழைய மருத்துவச் சீட்டு அல்லது அறிக்கை?",
        uploadLede:"விருப்பமானது — பழைய மருந்துகளை அறிய புகைப்படம் அல்லது PDF பதிவேற்றவும்.", uploadDrop:"புகைப்படம் அல்லது PDF பதிவேற்ற தட்டவும்",
-       skipUpload:"இந்த படிநிலையைத் தவிர்க்கவும்", scanning:"ஆவணம் ஆய்வு செய்யப்படுகிறது…", scanDone:"விவரங்கள் பெறப்பட்டன",
+       skipUpload:"இந்த படிநிலையைத் தவிர்க்கவும்", scanning:"ஆவணம் ஆய்வு செய்யப்படுகிறது…", scanDone:"விவரங்கள் பெறப்பட்டன ✓",
        genTitle:"சுருக்கம் தயாராகிறது…", genLede:"மருத்துவருக்கான தகவல்கள் ஒழுங்கமைக்கப்படுகின்றன.",
        recapTitle:"நீங்கள் தயாராகிவிட்டீர்கள்!", recapLede:"உங்கள் டோக்கன் மருத்துவரிடம் அனுப்பப்பட்டது:",
        tokenPrefix:"உங்கள் டோக்கன்", waitNote:"தயவுசெய்து காத்திருப்பு அறையில் அமரவும். அழைப்பு வரும்போது அறிவிக்கப்படும்."
@@ -307,14 +307,14 @@ var STR = {
   ml:{ welcomeTitle:"ഭാഷ തിരഞ്ഞെടുക്കുക", welcomeLede:"ഒ.പി.ഡി കൺസൾട്ടേഷനായി ഭാഷ തിരഞ്ഞെടുക്കുക.",
        start:"തുടരുക",
        detailsTitle:"രോഗിയുടെ വിവരങ്ങൾ", detailsLede:"ഇന്നത്തെ ഒ.പി.ഡി കൺസൾട്ടേഷനായുള്ള പ്രാഥമിക വിവരങ്ങൾ.",
-       name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ (10 അക്കങ്ങൾ നിർബന്ധം)", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
+       name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ (ഓപ്ഷണൽ)", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
        consentTitle:"സമ്മതവും സ്വകാര്യതയും", consentLede:"ഈ വിവരങ്ങൾ ചികിത്സിക്കുന്ന ഡോക്ടറുമായി മാത്രമേ പങ്കിടുകയുള്ളൂ.",
        consentBody:"ഡോക്ടറുടെ സമയം ലാഭിക്കാൻ മെഡിക്കിയോസ്ക് ഓട്ടോമേറ്റഡ് കേസ് ഷീറ്റ് തയ്യാറാക്കുന്നു.",
        consentCheck:"ഇന്നത്തെ കൺസൾട്ടേഷനായി വിവരങ്ങൾ നൽകാൻ ഞാൻ സമ്മതിക്കുന്നു.",
        chatTitle:"ബുദ്ധിമുട്ടുകൾ എന്തൊക്കെയാണ്?", chatLede:"മൈക്ക് ഉപയോഗിച്ച് സംസാരിക്കുകയോ ടൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.",
        typePh:"നിങ്ങളുടെ ലക്ഷണങ്ങൾ ഇവിടെ എഴുതുക…", uploadTitle:"പഴയ കുറിപ്പടിയോ ലാബ് റിപ്പോർട്ടോ ഉണ്ടോ?",
        uploadLede:"ഓപ്ഷണൽ — മരുന്നുകൾ മനസ്സിലാക്കാൻ ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാം.", uploadDrop:"ഫോട്ടോ അല്ലെങ്കിൽ PDF അപ്‌ലോഡ് ചെയ്യാൻ ടാപ്പ് ചെയ്യുക",
-       skipUpload:"ഈ ഘട്ടം ഒഴിവാക്കുക", scanning:"രേഖ പരിശോധിക്കുന്നു…", scanDone:"വിവരങ്ങൾ ലഭ്യമായി",
+       skipUpload:"ഈ ഘട്ടം ഒഴിവാക്കുക", scanning:"രേഖ പരിശോധിക്കുന്നു…", scanDone:"വിവരങ്ങൾ ലഭ്യമായി ✓",
        genTitle:"സംഗ്രഹം തയ്യാറാക്കുന്നു…", genLede:"ഡോക്ടർക്കായി വിവരങ്ങൾ ക്രമീകരിക്കുകയാണ്.",
        recapTitle:"എല്ലാം തയ്യാറായി!", recapLede:"നിങ്ങളുടെ ടോക്കൺ ഡോക്ടറുടെ ക്യൂവിലേക്ക് ചേർത്തു:",
        tokenPrefix:"നിങ്ങളുടെ ടോക്കൺ", waitNote:"ദയവായി കാത്തിരിപ്പ് മുറിയിൽ ഇരിക്കുക. വിളിക്കുമ്പോൾ അറിയിപ്പ് ലഭിക്കും."
@@ -322,14 +322,14 @@ var STR = {
   gu:{ welcomeTitle:"ભાષા પસંદ કરો", welcomeLede:"OPD પરામર્શ સહાય માટે ભાષા પસંદ કરો.",
        start:"આગળ વધો",
        detailsTitle:"દર્દીની માહિતી", detailsLede:"આજના પરામર્શ માટે જરૂરી માહિતી.",
-       name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર (10 અંક ફરજિયાત)", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
+       name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર (વૈકલ્પિક)", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
        consentTitle:"સંમતિ અને ગોપનીયતા", consentLede:"આ માહિતી ફક્ત આપની સારવાર કરતા ડોક્ટર સાથે જ શેર થશે.",
        consentBody:"મેડિકિઓસ્ક ડોક્ટરનો સમય બચાવવા આપની કેસ હિસ્ટ્રી તૈયાર કરે છે.",
        consentCheck:"હું આજના પરામર્શ માટે માહિતી આપવા સંમત છું.",
        chatTitle:"તમને શું તકલીફ છે?", chatLede:"માઈકથી બોલો અથવા ટાઈપ કરો.",
        typePh:"તમારી સમસ્યા અહીં લખો…", uploadTitle:"જૂનો પ્રિસ્ક્રિપ્શન અથવા રિપોર્ટ છે?",
        uploadLede:"વૈકલ્પિક — જૂની દવાઓ જાણવા ફોટો કે PDF અપલોડ કરો.", uploadDrop:"ફોટો અથવા PDF અપલોડ કરવા ટેપ કરો",
-       skipUpload:"આ પગલું છોડો", scanning:"દસ્તાવેજ વંચાઈ રહ્યો છે…", scanDone:"વિગતો મળી ગઈ",
+       skipUpload:"આ પગલું છોડો", scanning:"દસ્તાવેજ વંચાઈ રહ્યો છે…", scanDone:"વિગતો મળી ગઈ ✓",
        genTitle:"સારાંશ તૈયાર થઈ રહ્યો છે…", genLede:"ડોક્ટર માટે વિગતો ગોઠવાઈ રહી છે.",
        recapTitle:"તમે તૈયાર છો!", recapLede:"તમારો ટોકન ડોક્ટર પાસે પહોંચી ગયો છે:",
        tokenPrefix:"તમારો ટોકન", waitNote:"કૃપા કરીને પ્રતીક્ષાલયમાં બેસો. વારો આવ્યે સૂચના મળશે."
@@ -337,14 +337,14 @@ var STR = {
   bn:{ welcomeTitle:"ভাষা নির্বাচন করুন", welcomeLede:"পরামর্শ সহায়তার জন্য ভাষা বেছে নিন।",
        start:"এগিয়ে যান",
        detailsTitle:"রোগীর বিবরণ", detailsLede:"আজকের ওপিডি পরামর্শের প্রাথমিক তথ্য।",
-       name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর (১০ সংখ্যা বাধ্যতামূলক)", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
+       name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর (ঐচ্ছিক)", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
        consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"এই তথ্য শুধুমাত্র আপনার চিকিৎসকের সাথেই ভাগ করা হবে।",
        consentBody:"মেডিকিয়স্ক ডাক্তারের সময় বাঁচাতে প্রাথমিক ইতিহাস স্বয়ংক্রিয়ভাবে প্রস্তুত করে।",
        consentCheck:"আমি পরামর্শের জন্য আমার তথ্য প্রদান করতে সম্মত।",
        chatTitle:"আপনার কী সমস্যা হচ্ছে?", chatLede:"মাইকে বলুন অথবা টাইপ করুন।",
        typePh:"আপনার লক্ষণ এখানে লিখুন…", uploadTitle:"কোনো পুরোনো প্রেসক্রিপশন বা রিপোর্ট আছে?",
        uploadLede:"ঐচ্ছিক — পুরোনো ওষুধ বুঝতে ছবি বা PDF আপলোড করুন।", uploadDrop:"ছবি বা PDF আপলোড করতে চাপুন",
-       skipUpload:"এই ধাপটি এড়িয়ে যান", scanning:"নথি পরীক্ষা করা হচ্ছে…", scanDone:"বিবরণ পাওয়া গেছে",
+       skipUpload:"এই ধাপটি এড়িয়ে যান", scanning:"নথি পরীক্ষা করা হচ্ছে…", scanDone:"বিবরণ পাওয়া গেছে ✓",
        genTitle:"সারাংশ প্রস্তুত হচ্ছে…", genLede:"ডাক্তারের জন্য তথ্য সাজানো হচ্ছে।",
        recapTitle:"সব প্রস্তুত!", recapLede:"আপনার টোকেন ডাক্তারের কাছে পৌঁছে গেছে:",
        tokenPrefix:"আপনার টোকেন", waitNote:"অনুগ্রহ করে অপেক্ষা করুন। ডাক পড়লে স্ক্রিনে জানানো হবে।"
@@ -374,7 +374,7 @@ async function apiStartSession(){
         name: S.patient.name,
         age: String(S.patient.age),
         gender: S.patient.gender,
-        phone: S.patient.phone,
+        phone: S.patient.phone || "",
         language: S.lang,
         mock_abha: S.patient.mock_abha || "91-4829-1029-4412"
       })
@@ -426,7 +426,10 @@ async function apiGenerateSummary(){
     var res = await fetch(BACKEND_URL + "/summary/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: S.sessionId })
+      body: JSON.stringify({ 
+        session_id: S.sessionId,
+        upload_summary: S.extracted 
+      })
     });
     if(res.ok) return await res.json();
   } catch(e){}
@@ -447,7 +450,7 @@ async function apiGenerateSummary(){
       allergies: "None reported.",
       medications: "None reported.",
       clinicalImpression: "Triage note prepared for physician review.",
-      uploadedDocSummary: "No document uploaded."
+      uploadedDocSummary: S.extracted ? S.extracted.summary : "No document uploaded."
     }
   };
 }
@@ -543,7 +546,7 @@ function onPhoneInput(el){
   el.value = val;
   S.patient.phone = val;
   if(val.length > 0 && val.length < 10){
-    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर पूरे 10 अंकों का होना चाहिए' : 'Phone number must be exactly 10 digits';
+    S.phoneError = S.lang==='hi' ? 'फ़ोन नंबर 10 अंकों का होना चाहिए' : 'Phone number must be 10 digits if entered';
   } else {
     S.phoneError = '';
   }
@@ -615,7 +618,7 @@ async function generateSummary(){
   render();
 }
 
-/* ── SPEECH RECOGNITION (STREAMING REAL-TIME INPUT) ── */
+/* ── SPEECH RECOGNITION (STREAMING LIVE AS YOU SPEAK) ── */
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser. Please use Chrome."); return; }
@@ -792,8 +795,8 @@ function screenWelcome(){
 
 function screenDetails(){
   var p = S.patient;
-  // Phone Number is strictly REQUIRED: exactly 10 digits must be typed before Continue activates
-  var isPhoneValid = p.phone && p.phone.length === 10;
+  // Phone is 100% OPTIONAL — Name and Age are the only required fields
+  var isPhoneValid = !p.phone || p.phone.length === 10;
   var ready = p.name.trim().length > 0 && p.age.trim().length > 0 && isPhoneValid;
 
   return '<h1 class="title serif">' + t('detailsTitle') + '</h1>' +
@@ -809,7 +812,7 @@ function screenDetails(){
         '<div class="radio-pill ' + (p.gender==='O'?'selected':'') + '" onclick="setGender(\'O\')">' + t('other') + '</div>' +
       '</div></div>' +
     '<div class="field"><label>' + t('phone') + '</label>' +
-      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="Enter 10-digit mobile number" oninput="onPhoneInput(this)"/>' +
+      '<input id="fPhone" type="tel" maxlength="10" value="' + escapeHtml(p.phone) + '" placeholder="10-digit mobile (optional)" oninput="onPhoneInput(this)"/>' +
       '<div class="field-error" id="phoneErr">' + S.phoneError + '</div></div>' +
     '<button id="detailsBtn" class="btn btn-primary" ' + (ready?'':'disabled') + ' onclick="goto(\'consent\')">' + t('start') + '</button>';
 }
@@ -847,6 +850,8 @@ function screenChat(){
 
 function screenUpload(){
   var previewHtml = '';
+  var isScanning = (S.uploadStatus === 'scanning');
+  
   if(!S.uploadFile){
     previewHtml = '<div class="dropzone" onclick="document.getElementById(\'fileInput\').click()">' +
       uploadSvg() + '<p>' + t('uploadDrop') + '</p>' +
@@ -856,13 +861,13 @@ function screenUpload(){
     previewHtml = '<div class="preview-row">' +
       (S.uploadIsPdf ? '<div class="pdf-badge">PDF</div>' : '<img src="' + (S.uploadPreview || '') + '"/>') +
       '<div style="flex:1;"><div style="font-weight:600;font-size:13px;">' + escapeHtml(S.uploadFileName) + '</div>' +
-      '<div class="scan-status done">' + (S.uploadStatus==='scanning' ? 'Processing with Vision AI...' : 'Analyzed by AI ✓') + '</div></div></div>';
+      '<div class="scan-status done">' + (isScanning ? 'Analyzing prescription with Vision AI...' : 'Analyzed by AI ✓') + '</div></div></div>';
   }
 
   return '<h1 class="title serif" style="font-size:21px;">' + t('uploadTitle') + '</h1>' +
     '<p class="lede">' + t('uploadLede') + '</p>' + previewHtml +
-    '<button class="btn btn-primary" onclick="generateSummary()">' +
-    (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary') + '</button>' +
+    '<button class="btn btn-primary" ' + (isScanning ? 'disabled' : '') + ' onclick="generateSummary()">' +
+    (isScanning ? 'Analyzing document with Vision AI...' : (S.lang==='hi'?'सारांश तैयार करें':'Finish & prepare summary →')) + '</button>' +
     (!S.uploadFile ? '<button class="btn btn-ghost" onclick="generateSummary()">' + t('skipUpload') + '</button>' : '');
 }
 
@@ -872,7 +877,7 @@ function screenGenerating(){
     '<p>' + t('genLede') + '</p></div>';
 }
 
-/* ── 3. WAITING ROOM SCREEN ── */
+/* ── 3. WAITING ROOM (NO "NEXT PATIENT INTAKE" BUTTON) ── */
 function screenRecap(){
   var bullets = '';
   var list = S.patientRecap || [];
@@ -913,14 +918,14 @@ function renderDoctorModal(){
     '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
     '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required (DOC1 / Present)</p>' +
     '<div class="field"><label>Doctor ID</label>' +
-      '<input id="docIdInput" type="text" placeholder="Enter Doctor ID (DOC1)" value=""/></div>' +
+      '<input id="docIdInput" type="text" placeholder="Enter Doctor ID (e.g. DOC1)" value=""/></div>' +
     '<div class="field"><label>Security Password</label>' +
-      '<input id="docPinInput" type="password" placeholder="Enter Password (Present)" value=""/></div>' +
+      '<input id="docPinInput" type="password" placeholder="Enter Password" value=""/></div>' +
     (S.loginError ? (
       '<div class="fun-error-badge">' +
         '<span>🩺</span>' +
         '<div>' +
-          '<b>Access Denied:</b> Even an apple a day won\'t crack this login! (Doctor ID: DOC1 and Password: Present)' +
+          '<b>Access Denied:</b> Even an apple a day won\'t crack this login! (Check Doctor ID: DOC1 and Password: Present)' +
         '</div>' +
       '</div>'
     ) : '') +
@@ -1095,8 +1100,8 @@ function setLang(l){ S.lang = l; render(); }
 function setGender(g){ S.patient.gender = g; render(); }
 function refreshBtn(){
   var p = S.patient;
-  // STRICTLY MANDATORY 10-digit mobile number requirement
-  var isPhoneValid = p.phone && p.phone.length === 10;
+  // Phone is 100% OPTIONAL
+  var isPhoneValid = !p.phone || p.phone.length === 10;
   var ready = p.name.trim().length > 0 && p.age.trim().length > 0 && isPhoneValid;
   var db = document.getElementById('detailsBtn');
   if(db) db.disabled = !ready;
