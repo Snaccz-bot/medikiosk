@@ -56,12 +56,12 @@ def clean_json_str(raw: str) -> str:
         clean = clean[first:last+1]
     return clean
 
+# Single-credential REST call (resolves 400 Multiple Credentials error)
 def query_gemini_text(prompt: str) -> dict:
     if not GEMINI_KEY:
-        raise RuntimeError("No Gemini API key")
+        raise RuntimeError("No Gemini API key configured")
     
-    # Dual authentication: sends both query param and x-goog-api-key header for maximum compatibility
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
     headers = {
         "Content-Type": "application/json",
         "x-goog-api-key": GEMINI_KEY
@@ -70,36 +70,36 @@ def query_gemini_text(prompt: str) -> dict:
         "contents": [{"role": "user", "parts": [{"text": prompt}]}]
     }
     try:
-        r = requests.post(url, json=payload, headers=headers, timeout=10)
+        r = requests.post(url, json=payload, headers=headers, timeout=8)
         if r.status_code == 200:
             text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(clean_json_str(text))
         else:
-            print(f"[Gemini REST Status {r.status_code}]: {r.text[:200]}")
+            print(f"[Gemini Text Error {r.status_code}]: {r.text[:150]}")
     except Exception as e:
-        print(f"[Gemini REST Exception]: {e}")
+        print(f"[Gemini Text Exception]: {e}")
     raise RuntimeError("Gemini text query failed")
 
 def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> dict:
     if not GEMINI_KEY:
-        raise RuntimeError("No Gemini API key")
+        raise RuntimeError("No Gemini API key configured")
 
-    # Compress large camera photos to ~90KB so they don't choke the server
+    # Fast downscale to prevent upload timeouts
     if content_type.startswith("image/"):
         try:
             img = Image.open(io.BytesIO(file_bytes))
             if img.mode in ("RGBA", "P"):
                 img = img.convert("RGB")
-            img.thumbnail((1024, 1024))
+            img.thumbnail((800, 800))
             buf = io.BytesIO()
-            img.save(buf, format="JPEG", quality=75, optimize=True)
+            img.save(buf, format="JPEG", quality=70, optimize=True)
             file_bytes = buf.getvalue()
             content_type = "image/jpeg"
-        except Exception as e:
-            print(f"[Image Compression Warning]: {e}")
+        except Exception:
+            pass
 
     b64_data = base64.b64encode(file_bytes).decode("utf-8")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
     headers = {
         "Content-Type": "application/json",
         "x-goog-api-key": GEMINI_KEY
@@ -114,12 +114,12 @@ def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> di
         }]
     }
     try:
-        r = requests.post(url, json=payload, headers=headers, timeout=12)
+        r = requests.post(url, json=payload, headers=headers, timeout=10)
         if r.status_code == 200:
             text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(clean_json_str(text))
         else:
-            print(f"[Gemini Vision Status {r.status_code}]: {r.text[:200]}")
+            print(f"[Gemini Vision Error {r.status_code}]: {r.text[:150]}")
     except Exception as e:
         print(f"[Gemini Vision Exception]: {e}")
     raise RuntimeError("Gemini vision query failed")
@@ -205,7 +205,7 @@ class StartSessionRequest(BaseModel):
     name: str
     age: str
     gender: str
-    phone: Optional[str] = ""
+    phone: str
     language: str = "en"
     mock_abha: Optional[str] = ""
 
@@ -226,7 +226,6 @@ def doctor_login(req: DoctorLoginRequest):
     doc_id = req.doctor_id.strip().upper()
     pin = req.pin.strip().lower()
     
-    # Accepts DOC1 or DOC-101 with Present or 1234
     if doc_id in ("DOC1", "DOC-101", "DR.SHARMA") and pin in ("present", "1234"):
         return {
             "success": True,
@@ -239,12 +238,8 @@ def doctor_login(req: DoctorLoginRequest):
 
 # ── 6. PATIENT KIOSK & ADAPTIVE INTAKE ────────────────────────────────────────
 LANG_NAMES = {
-    "en": "English",
-    "hi": "Hindi",
-    "ta": "Tamil",
-    "ml": "Malayalam",
-    "gu": "Gujarati",
-    "bn": "Bengali"
+    "en": "English", "hi": "Hindi", "ta": "Tamil",
+    "ml": "Malayalam", "gu": "Gujarati", "bn": "Bengali"
 }
 
 GREETINGS = {
@@ -252,15 +247,11 @@ GREETINGS = {
     "namaskaram", "yo", "good morning", "good evening", "fine", "cool", "h", "no", "yes"
 }
 
-def is_meaningful_symptom(text: str) -> bool:
-    clean = text.lower().strip("!., ")
-    if clean in GREETINGS:
-        return False
-    # Check for random keyboard mash (too short, no vowels, or pure consonants)
-    vowels = set("aeiou")
-    if len(clean) < 3 or not any(c in vowels for c in clean):
-        return False
-    return True
+def clean_symptom_text(text: str) -> str:
+    clean = text.strip()
+    if clean.lower().strip("!., ") in GREETINGS:
+        return ""
+    return clean
 
 @app.post("/session/start")
 def start_session(req: StartSessionRequest):
@@ -327,26 +318,15 @@ def chat_next(req: ChatRequest):
         session["messages"].append({"role": "user", "text": user_text})
 
     user_msgs = [m["text"] for m in session["messages"] if m["role"] == "user"]
-    clinical_msgs = [t for t in user_msgs if is_meaningful_symptom(t)]
+    clinical_msgs = [t for t in user_msgs if clean_symptom_text(t)]
     clinical_count = len(clinical_msgs)
 
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    # If the user typed a greeting or random mash, ask for genuine symptoms
+    # If the user only said "hi" or empty input, prompt for symptoms
     if clinical_count == 0:
-        if lang_code == "hi":
-            q = "नमस्ते! कृपया बताइए आज आपको क्या तकलीफ़ या शारीरिक समस्या है?"
-        elif lang_code == "ta":
-            q = "வணக்கம்! இன்று உங்களுக்கு என்ன உடல்நலப் பிரச்சினை உள்ளது?"
-        elif lang_code == "ml":
-            q = "നമസ്കാരം! ഇന്ന് എന്താണ് നിങ്ങളുടെ പ്രധാന ബുദ്ധിമുട്ട്?"
-        elif lang_code == "gu":
-            q = "નમસ્તે! આજે તમને શું તકલીફ અથવા સમસ્યા થઈ રહી છે?"
-        elif lang_code == "bn":
-            q = "নমস্কার! আজ আপনার কী শারীরিক সমস্যা হচ্ছে?"
-        else:
-            q = "Hello! Please describe your symptoms or what health problem brought you in today."
+        q = "Hello! Please describe your symptoms or what health problem brought you in today." if lang_code == "en" else "नमस्ते! कृपया बताइए आज आपको क्या तकलीफ़ या स्वास्थ्य समस्या है?"
         session["messages"].append({"role": "bot", "text": q})
         db_save(session)
         return {"question": q, "done": False}
@@ -356,23 +336,21 @@ def chat_next(req: ChatRequest):
         for m in session["messages"]
     ])
 
-    prompt = f"""You are MediKiosk, an expert outpatient triage assistant at an Indian hospital OPD.
-A patient is describing their condition. Ask ONE short, empathetic question (under 16 words) in {target_lang}.
+    prompt = f"""You are MediKiosk, a pre-consultation OPD triage assistant at an Indian hospital.
+The patient is describing their condition. Ask ONE short, relevant medical question (under 16 words) in {target_lang}.
 
-Medical Inquiry Stages:
-- Stage 1: If onset or duration is missing, ask: How long have you had this and what triggers it?
-- Stage 2: Ask about associated signs (swelling, radiating pain, stiffness, or fever).
-- Stage 3: Inquire about current medications and drug allergies.
-
-Strict Rules:
-- NEVER assume pain or symptoms that were not mentioned.
-- NEVER repeat questions already answered.
-- Once 3 to 4 clinical responses are gathered, return done: true and empty question.
+Clinical Rules:
+- If the patient just entered random letters or unintelligible input, ask them to describe where they feel pain or discomfort.
+- If duration/onset is missing: Inquire how long they have had this symptom.
+- If radiation/swelling is missing: Ask if it spreads or is accompanied by swelling or stiffness.
+- Inquire about current medications and drug allergies.
+- NEVER repeat a question.
+- After 3 to 4 clinical responses, return done: true and an empty question.
 
 JSON format:
 {{"question": "<question string or empty if done>", "done": <true or false>}}
 
-Transcript:
+Conversation:
 {transcript}"""
 
     try:
@@ -380,15 +358,15 @@ Transcript:
         question = parsed.get("question", "")
         done = bool(parsed.get("done", False)) or not question or clinical_count >= 4
     except Exception:
-        # Contextual 4-stage clinical progression
+        # Dynamic fallback based on genuine clinical turns
         if clinical_count == 1:
-            question = "How long have you had this, and does it spread or feel worse with movement?" if lang_code == "en" else "यह तकलीफ़ कब से है, और क्या चलने-फिरने से बढ़ती है?"
+            question = "How long have you had this, and does it spread or feel worse with movement?"
             done = False
         elif clinical_count == 2:
-            question = "Do you have any associated swelling, stiffness, fever, or numbness?" if lang_code == "en" else "क्या कोई सूजन, अकड़न, बुखार या सुन्नपन महसूस होता है?"
+            question = "Do you have any associated swelling, morning stiffness, fever, or numbness?"
             done = False
         elif clinical_count == 3:
-            question = "Are you currently taking any medicines or painkillers, and do you have any allergies?" if lang_code == "en" else "क्या आप कोई दवा ले रहे हैं या किसी दवा से एलर्जी है?"
+            question = "Are you currently taking any medicines or painkillers, and do you have any allergies?"
             done = False
         else:
             question = ""
@@ -401,25 +379,26 @@ Transcript:
     return {"question": question, "done": done}
 
 
+# Standard threadpooled function (Prevents server lockup!)
 @app.post("/upload/document")
-async def upload_document(session_id: str, file: UploadFile = File(...)):
+def upload_document(session_id: str, file: UploadFile = File(...)):
     sessions = db_get_all()
     session = sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    file_bytes = await file.read()
+    file_bytes = file.file.read()
     content_type = file.content_type or "image/jpeg"
     if file.filename.lower().endswith(".pdf"):
         content_type = "application/pdf"
     elif file.filename.lower().endswith(".png"):
         content_type = "image/png"
 
-    prompt = """Examine this prescription or medicine photo.
-Extract all clinical details into JSON:
+    prompt = """Examine this medical prescription or report image.
+Extract findings into JSON:
 {
-  "summary": "1 to 2 sentences summarizing the medicines or lab findings in this document. If this is a medicine packaging or bottle, identify the medicine name and strength. If text is completely unreadable, write: 'Uploaded image inspected: Document attached for doctor's in-person review.'",
-  "medicines": ["List of medicines found with strength/dosage"],
+  "summary": "1 to 2 sentences summarizing the visible prescription medicines, dosages, or lab findings. If this is a medicine packaging or bottle, identify the medicine name and strength. If text is completely unreadable, write: 'Uploaded image inspected: Document attached for doctor's in-person review.'",
+  "medicines": ["List of medicines found with dosage"],
   "tests": ["Key lab findings if present"],
   "date": "Document date if found"
 }"""
@@ -429,7 +408,7 @@ Extract all clinical details into JSON:
     except Exception as e:
         print(f"[Vision Fallback]: {e}")
         extracted = {
-            "summary": f"Uploaded document ({file.filename}) attached and prepared for physician's review.",
+            "summary": f"Medical document ({file.filename}) uploaded and attached for doctor's review.",
             "medicines": [],
             "tests": [],
             "date": "Recent"
@@ -459,7 +438,7 @@ def generate_summary(req: SummaryRequest):
 Synthesize the patient intake into a physician-ready case note.
 
 Rules:
-- Filter out greetings ('hi', 'hello', 'ok'). The 'chiefComplaint' must be the patient's actual reported medical concern.
+- Filter out greetings ('hi', 'hello', 'ok') and random non-words. The 'chiefComplaint' must reflect the patient's actual reported concern.
 - Write clinical fields in concise medical English.
 - If patient answered 'no' or 'none' to medicines/allergies, write 'None reported'.
 - Under 'patientRecap', write exactly 3 short friendly bullets in {target_lang} for the patient.
@@ -486,10 +465,9 @@ Document Findings:
         if isinstance(parsed, list) and len(parsed) > 0 and isinstance(parsed[0], dict):
             parsed = parsed[0]
     except Exception:
-        # Clinical fallback that never outputs "hi" or "joefj"
         clinical_msgs = [
             m["text"] for m in session["messages"] 
-            if m["role"] == "user" and is_meaningful_symptom(m["text"])
+            if m["role"] == "user" and clean_symptom_text(m["text"])
         ]
         cc = clinical_msgs[0] if len(clinical_msgs) > 0 else "Patient OPD Consultation Request"
         timeline_notes = ". ".join(clinical_msgs[1:3]) if len(clinical_msgs) > 1 else "Reported during intake."
@@ -508,7 +486,7 @@ Document Findings:
             "allergies": allergies,
             "medications": meds,
             "uploadedDocSummary": doc_summary_text,
-            "clinicalImpression": f"Clinical triage assessment for {cc}. Correlate with physical examination in OPD Room 2.",
+            "clinicalImpression": f"Clinical triage assessment for {cc}. Correlate with physical examination.",
             "patientRecap": [
                 f"Complaint noted: {cc[:50]}",
                 "Symptom timeline prepared for your doctor.",
