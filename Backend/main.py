@@ -1,5 +1,5 @@
 """
-MediKiosk — Production Outpatient Triage Backend
+MediKiosk — Advanced OPD Triage Backend (Clean Clinical Extraction)
 Ministry of AYUSH / AIIA Hackathon
 """
 
@@ -42,14 +42,13 @@ if env_file.exists():
             k, v = line.split("=", 1)
             os.environ[k.strip()] = v.strip().strip("\"'")
 
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip().strip("\"'")
 if GEMINI_KEY:
     print(f"\n[MediKiosk] ✓ Google Gemini API Key loaded ({GEMINI_KEY[:8]}...)")
     genai.configure(api_key=GEMINI_KEY)
 else:
     print("\n[MediKiosk] ⚠ Running with clinical heuristic agent")
 
-# Stable GA Google AI Studio model names
 MODELS = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
 
 def clean_json_str(raw: str) -> str:
@@ -62,7 +61,6 @@ def clean_json_str(raw: str) -> str:
     return clean
 
 def query_gemini_text(prompt: str) -> dict:
-    # 1. Try SDK
     for model_name in MODELS:
         try:
             m = genai.GenerativeModel(model_name)
@@ -70,7 +68,6 @@ def query_gemini_text(prompt: str) -> dict:
             return json.loads(clean_json_str(res.text))
         except Exception:
             continue
-    # 2. Try Direct REST fallback
     if GEMINI_KEY:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
@@ -87,7 +84,6 @@ def query_gemini_text(prompt: str) -> dict:
     raise RuntimeError("Gemini text query failed")
 
 def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> dict:
-    # 1. Try PIL Image with SDK
     if content_type.startswith("image/"):
         try:
             pil_img = Image.open(io.BytesIO(file_bytes))
@@ -101,7 +97,6 @@ def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> di
         except Exception:
             pass
 
-    # 2. Try Direct REST with base64
     if GEMINI_KEY:
         try:
             b64_data = base64.b64encode(file_bytes).decode("utf-8")
@@ -240,7 +235,7 @@ def doctor_login(req: DoctorLoginRequest):
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
-# ── 6. PATIENT KIOSK & QUEUE ANALYTICS ROUTES ─────────────────────────────────
+# ── 6. PATIENT KIOSK & ADVANCED INTAKE ────────────────────────────────────────
 LANG_NAMES = {
     "en": "English",
     "hi": "Hindi",
@@ -248,6 +243,11 @@ LANG_NAMES = {
     "ml": "Malayalam",
     "gu": "Gujarati",
     "bn": "Bengali"
+}
+
+GREETINGS = {
+    "hi", "hello", "hey", "hii", "k", "ok", "namaste", "vanakkam", 
+    "namaskaram", "yo", "good morning", "good evening", "fine", "cool"
 }
 
 @app.post("/session/start")
@@ -303,8 +303,6 @@ def get_session_status(session_id: str):
     }
 
 
-GREETINGS = {"hi", "hello", "hey", "hii", "k", "ok", "namaste", "vanakkam", "namaskaram", "yo"}
-
 @app.post("/chat/next")
 def chat_next(req: ChatRequest):
     sessions = db_get_all()
@@ -316,17 +314,20 @@ def chat_next(req: ChatRequest):
     if user_text:
         session["messages"].append({"role": "user", "text": user_text})
 
-    user_msgs = [m for m in session["messages"] if m["role"] == "user"]
-    msg_count = len(user_msgs)
+    # Filter out pure greetings to identify actual clinical statements
+    clinical_msgs = [
+        m["text"] for m in session["messages"] 
+        if m["role"] == "user" and m["text"].strip().lower().strip("!., ") not in GREETINGS
+    ]
+    clinical_count = len(clinical_msgs)
 
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    # If the user just typed "hi" or empty input, don't ask symptom onset questions!
-    clean_last = user_text.lower().strip("!., ")
-    if msg_count > 0 and clean_last in GREETINGS:
+    # If patient has not stated any symptom yet (or just said "hi"), prompt for symptom
+    if clinical_count == 0:
         if lang_code == "hi":
-            q = "नमस्ते! कृपया बताइए आज आपको क्या तकलीफ़ या समस्या है?"
+            q = "नमस्ते! कृपया बताइए आज आपको क्या तकलीफ़ या शारीरिक समस्या है?"
         elif lang_code == "ta":
             q = "வணக்கம்! இன்று உங்களுக்கு என்ன உடல்நலப் பிரச்சினை உள்ளது?"
         elif lang_code == "ml":
@@ -344,42 +345,45 @@ def chat_next(req: ChatRequest):
     transcript = "\n".join([
         f"{'Assistant' if m['role']=='bot' else 'Patient'}: {m['text']}"
         for m in session["messages"]
-    ]) or "(Patient just arrived at kiosk.)"
+    ])
 
-    prompt = f"""You are MediKiosk, an expert OPD triage assistant at an Indian hospital (Ministry of AYUSH).
-A patient is describing their condition. Ask ONE short question (under 16 words) in {target_lang}.
+    prompt = f"""You are MediKiosk, an expert OPD triage clinical assistant at an Indian hospital (Ministry of AYUSH).
+A patient is describing their condition. Ask ONE short, empathetic question (under 16 words) in {target_lang}.
 
-Adaptive Rules:
-- If the patient hasn't stated any real illness yet, ask what health problem brought them in.
-- If symptoms are stated, ask about duration, triggers, or severity.
-- If duration is already answered, ask about associated signs (swelling, fever, radiation).
-- Finally, ask about current medications and drug allergies.
-- NEVER repeat a question the patient already answered.
-- If you have gathered 3-4 distinct answers, return done: true and empty question.
+Medical Inquiry Stages:
+- Stage 1 (Onset & Specifics): If duration or triggers are missing, ask: Since when and what makes it worse?
+- Stage 2 (Radiation & Signs): If pain is mentioned, ask if it spreads/radiates or if there is swelling/stiffness.
+- Stage 3 (Red Flags): Ask about fever, weakness, or numbness.
+- Stage 4 (Meds & Allergies): Inquire about current medicines or known drug allergies.
+
+Strict Rules:
+- NEVER repeat anything the patient already covered.
+- Keep questions under 16 words.
+- Once you have asked about onset, associated signs, and medications/allergies (clinical turns >= 4), return done: true and empty question.
 
 JSON Schema:
-{{"question": "<question string or empty if done>", "done": <true or false>}}
+{{"question": "<next question string or empty if done>", "done": <true or false>}}
 
-Conversation:
+Conversation History:
 {transcript}"""
 
     try:
         parsed = query_gemini_text(prompt)
         question = parsed.get("question", "")
-        done = bool(parsed.get("done", False)) or not question or msg_count >= 4
+        done = bool(parsed.get("done", False)) or not question or clinical_count >= 4
     except Exception:
-        # Context-aware fallback: doesn't assume pain if not mentioned
-        if msg_count == 0:
-            question = "How can we help you today? Please tell us your main symptom." if lang_code == "en" else "नमस्ते, बताइए आज क्या समस्या है?"
+        # Context-aware 4-turn medical progression
+        if clinical_count == 1:
+            question = "Since when have you had this, and does the pain radiate or spread?" if lang_code == "en" else "यह तकलीफ़ कब से है, और क्या यह दर्द कहीं और भी फैलता है?"
             done = False
-        elif msg_count == 1:
-            question = "Since when have you been having this problem, and does anything make it worse?"
+        elif clinical_count == 2:
+            question = "What makes it worse (like bending or sitting), and do you notice any swelling or stiffness?" if lang_code == "en" else "किस समय दर्द बढ़ता है, और क्या कोई सूजन या अकड़न महसूस होती है?"
             done = False
-        elif msg_count == 2:
-            question = "Are you experiencing any other symptoms like fever, swelling, or pain?"
+        elif clinical_count == 3:
+            question = "Do you have any other symptoms like fever, numbness, or tingling?" if lang_code == "en" else "क्या आपको बुखार, झनझनाहट या सुन्नपन जैसे कोई अन्य लक्षण हैं?"
             done = False
-        elif msg_count == 3:
-            question = "Are you currently taking any medicines, or do you have any allergies?"
+        elif clinical_count == 4:
+            question = "Are you currently taking any medicines or painkillers, and do you have any allergies?" if lang_code == "en" else "क्या आप वर्तमान में कोई दवा ले रहे हैं या किसी दवा से एलर्जी है?"
             done = False
         else:
             question = ""
@@ -406,21 +410,21 @@ async def upload_document(session_id: str, file: UploadFile = File(...)):
     elif file.filename.lower().endswith(".png"):
         content_type = "image/png"
 
-    prompt = """You are a medical record OCR synthesiser.
-Carefully examine this prescription, lab report, or medical photo.
-Extract clinical findings into pure JSON:
+    prompt = """You are an expert medical records OCR analyzer.
+Carefully examine this prescription or medical photo.
+Extract clinical findings into JSON:
 {
-  "summary": "1 to 2 sentences summarizing what this medical document contains (e.g. 'Lab report shows elevated blood sugar' or 'Orthopedic prescription for knee pain'). If this is not a medical document or text is illegible, state: 'Document uploaded: No legible prescription text or lab values identified.'",
-  "medicines": ["List of medicines found with dosage and frequency"],
-  "tests": ["Key lab values found"],
-  "date": "Document date if found, else 'Not specified'"
+  "summary": "1 to 2 sentences summarizing the actual medical findings or prescription contents. If this is a non-medical picture or text is illegible, write: 'Uploaded image inspected: No legible medical prescription or lab values found.'",
+  "medicines": ["List of medicines found with dose and frequency"],
+  "tests": ["Key lab test results"],
+  "date": "Document date if found"
 }"""
 
     try:
         extracted = query_gemini_vision(file_bytes, content_type, prompt)
     except Exception:
         extracted = {
-            "summary": "Document received. No legible prescription medications or lab findings detected in this file.",
+            "summary": "Uploaded document attached: No legible medical prescription or lab values identified in this file.",
             "medicines": [],
             "tests": [],
             "date": "Recent"
@@ -446,11 +450,14 @@ def generate_summary(req: SummaryRequest):
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    prompt = f"""You are MediKiosk's clinical clerk preparing a doctor-ready case summary.
-Rules:
-- Write clinical fields in concise medical English regardless of conversation language.
-- DO NOT invent filler. If something wasn't mentioned, state 'None reported'.
-- Formulate a brief 'clinicalImpression' for the doctor's review.
+    prompt = f"""You are MediKiosk's clinical clerk.
+Synthesize the patient intake into a physician-ready case note.
+
+Strict Rules:
+- Ignore conversational greetings like 'hi' or 'hello' completely. The 'chiefComplaint' must be the patient's actual medical problem (e.g. 'Back pain for a while').
+- Write clinical fields in concise medical English.
+- If patient answered 'no' or 'none' to medicines/allergies, write 'None reported'.
+- Formulate a provisional 'clinicalImpression' for physician evaluation.
 - Under 'patientRecap', write exactly 3 short friendly bullets in {target_lang} for the patient.
 
 JSON Schema:
@@ -475,27 +482,33 @@ Document Extraction:
         if isinstance(parsed, list) and len(parsed) > 0 and isinstance(parsed[0], dict):
             parsed = parsed[0]
     except Exception:
-        user_msgs = [m["text"] for m in session["messages"] if m["role"] == "user"]
-        cc = user_msgs[0] if len(user_msgs) > 0 else "Consultation requested"
-        duration_note = user_msgs[1] if len(user_msgs) > 1 else "Reported by patient."
-        symptoms_note = user_msgs[2] if len(user_msgs) > 2 else "Symptoms noted."
-        meds_note = user_msgs[3] if len(user_msgs) > 3 else "None reported."
-
-        all_text = " ".join(user_msgs).lower()
-        allergy_flag = "Allergic to Penicillin — Alert doctor." if "penicillin" in all_text else "None reported."
-        current_meds = "Paracetamol (reported)" if "paracetamol" in all_text else meds_note
+        # Robust clinical fallback: strictly filters out greetings
+        clinical_msgs = [
+            m["text"] for m in session["messages"] 
+            if m["role"] == "user" and m["text"].strip().lower().strip("!., ") not in GREETINGS
+        ]
+        cc = clinical_msgs[0] if len(clinical_msgs) > 0 else "General consultation"
+        timeline_notes = ". ".join(clinical_msgs[1:3]) if len(clinical_msgs) > 1 else "Reported by patient."
+        
+        last_str = " ".join(clinical_msgs[3:]).lower() if len(clinical_msgs) > 3 else ""
+        if "no" in last_str or "none" in last_str:
+            meds = "None reported"
+            allergies = "None reported"
+        else:
+            meds = clinical_msgs[-1] if len(clinical_msgs) > 3 else "None reported"
+            allergies = "Penicillin (Flagged)" if "penicillin" in transcript.lower() else "None reported"
 
         parsed = {
             "chiefComplaint": cc,
-            "hpi": f"{cc}. {duration_note}. {symptoms_note}",
-            "allergies": allergy_flag,
-            "medications": current_meds,
+            "hpi": f"Patient presents with {cc}. Details: {timeline_notes}",
+            "allergies": allergies,
+            "medications": meds,
             "uploadedDocSummary": doc_summary_text,
-            "clinicalImpression": f"Clinical triage note for {cc}. Correlate with physical examination and vitals.",
+            "clinicalImpression": f"Clinical triage note for {cc}. Correlate with physical examination and spinal/mobility assessment.",
             "patientRecap": [
                 f"Complaint noted: {cc[:50]}",
-                "Timeline and symptoms compiled for your doctor.",
-                "Your case file is ready for OPD consultation."
+                "Timeline and associated symptoms prepared for your doctor.",
+                "Your case file is now ready in OPD Room 2."
             ]
         }
 
