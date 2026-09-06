@@ -1,6 +1,6 @@
 """
-MediKiosk — Full Backend with Live OPD Queue Analytics
-Serves both API and Frontend at http://localhost:8000
+MediKiosk — Full Backend with Homepage, Image Serving & Live Queue Estimator
+Ministry of AYUSH / AIIA Hackathon
 """
 
 import os
@@ -128,7 +128,7 @@ def db_delete(session_id: str):
             json.dump(all_data, f, ensure_ascii=False, indent=2)
 
 
-# ── 3. SERVE FRONTEND AT http://localhost:8000 ───────────────────────────────
+# ── 3. SERVE FRONTEND & IMAGES ────────────────────────────────────────────────
 @app.get("/", response_class=HTMLResponse)
 def serve_home():
     candidate_paths = [
@@ -143,20 +143,20 @@ def serve_home():
             return FileResponse(p)
     return HTMLResponse("<h2>MediKiosk: index.html not found.</h2>")
 
-@app.get("/assets/{asset_name}")
-def serve_assets(asset_name: str):
-    candidate_dirs = [
-        Path(__file__).parent.parent / "Frontend" / "assets",
-        Path(__file__).parent / "Frontend" / "assets",
-        Path(__file__).parent / "assets",
-        Path("Frontend/assets"),
-        Path("assets")
+@app.get("/images/{image_name}")
+def serve_image(image_name: str):
+    search_paths = [
+        Path(__file__).parent.parent / "Frontend" / image_name,
+        Path(__file__).parent / "Frontend" / image_name,
+        Path(__file__).parent / image_name,
+        Path(__file__).parent.parent / image_name,
+        Path("Frontend") / image_name,
+        Path(image_name)
     ]
-    for d in candidate_dirs:
-        f = d / asset_name
-        if f.exists():
-            return FileResponse(f)
-    raise HTTPException(status_code=404, detail="Asset not found")
+    for p in search_paths:
+        if p.exists():
+            return FileResponse(p)
+    raise HTTPException(status_code=404, detail="Image not found")
 
 
 # ── 4. DATA MODELS ────────────────────────────────────────────────────────────
@@ -197,10 +197,9 @@ def doctor_login(req: DoctorLoginRequest):
     if doc_id in STRICT_DOCTORS and STRICT_DOCTORS[doc_id] == pin:
         return {
             "success": True,
-            "doctor_name": "Dr. Ananya Sharma",
-            "qualification": "BAMS (Ayurveda), MD (Kayachikitsa)",
+            "doctor_name": "Dr. Mallard, MD (Ayu)",
             "role": "Senior Consultant",
-            "department": "Ayurveda OPD Room 2"
+            "department": "Kayachikitsa & Panchakarma OPD Room 2"
         }
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
@@ -241,32 +240,22 @@ def get_session_status(session_id: str):
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
-    # Calculate live queue metrics
-    all_waiting = [s for s in sessions.values() if s.get("status") in ("intake", "ready")]
-    people_ahead = 0
-    next_in_queue = []
-    found_self = False
+    # Calculate live queue position & wait time
+    patients_ahead = 0
+    this_created = session.get("created_at", "")
+    for s in sessions.values():
+        if s["session_id"] != session_id and s.get("status") in ("intake", "ready"):
+            if s.get("created_at", "") < this_created:
+                patients_ahead += 1
     
-    for s in all_waiting:
-        if s.get("session_id") == session_id:
-            found_self = True
-        elif not found_self:
-            people_ahead += 1
-            next_in_queue.append({
-                "token": s.get("token", "B-00"),
-                "visit_type": "General Consultation" if people_ahead % 2 == 1 else "Follow-up Visit"
-            })
-
+    est_wait = max(4, patients_ahead * 6)
     return {
         "status": session.get("status", "intake"),
         "token": session.get("token"),
         "room": "OPD Consultation Room 2",
-        "doctor_name": "Dr. Ananya Sharma",
-        "doctor_title": "BAMS (Ayurveda)",
-        "department": "General Consultation",
-        "people_ahead": max(0, people_ahead),
-        "estimated_wait_mins": max(5, people_ahead * 5),
-        "next_queue": next_in_queue[:4]
+        "doctor_name": "Dr. Mallard, MD (Ayu)",
+        "patients_ahead": patients_ahead,
+        "estimated_wait_mins": est_wait
     }
 
 
