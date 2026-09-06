@@ -1,6 +1,6 @@
 """
-MediKiosk — Full Backend with Homepage, Image Serving & Live Queue Estimator
-Ministry of AYUSH / AIIA Hackathon
+MediKiosk — Advanced Multilingual OPD Triage Server
+Ministry of AYUSH / AIIA Hackathon Prototype
 """
 
 import os
@@ -128,7 +128,7 @@ def db_delete(session_id: str):
             json.dump(all_data, f, ensure_ascii=False, indent=2)
 
 
-# ── 3. SERVE FRONTEND & IMAGES ────────────────────────────────────────────────
+# ── 3. SERVE FRONTEND AT http://localhost:8000 ───────────────────────────────
 @app.get("/", response_class=HTMLResponse)
 def serve_home():
     candidate_paths = [
@@ -142,21 +142,6 @@ def serve_home():
         if p.exists():
             return FileResponse(p)
     return HTMLResponse("<h2>MediKiosk: index.html not found.</h2>")
-
-@app.get("/images/{image_name}")
-def serve_image(image_name: str):
-    search_paths = [
-        Path(__file__).parent.parent / "Frontend" / image_name,
-        Path(__file__).parent / "Frontend" / image_name,
-        Path(__file__).parent / image_name,
-        Path(__file__).parent.parent / image_name,
-        Path("Frontend") / image_name,
-        Path(image_name)
-    ]
-    for p in search_paths:
-        if p.exists():
-            return FileResponse(p)
-    raise HTTPException(status_code=404, detail="Image not found")
 
 
 # ── 4. DATA MODELS ────────────────────────────────────────────────────────────
@@ -183,7 +168,7 @@ class UpdateSummaryRequest(BaseModel):
     clinical_summary: dict
 
 
-# ── 5. STRICT CASE-SENSITIVE DOCTOR AUTHENTICATION ────────────────────────────
+# ── 5. STRICT DOCTOR AUTHENTICATION ───────────────────────────────────────────
 STRICT_DOCTORS = {
     "DOC1": "Present",
     "DOC-101": "1234"
@@ -197,14 +182,14 @@ def doctor_login(req: DoctorLoginRequest):
     if doc_id in STRICT_DOCTORS and STRICT_DOCTORS[doc_id] == pin:
         return {
             "success": True,
-            "doctor_name": "Dr. Mallard, MD (Ayu)",
+            "doctor_name": "Dr. Rameshwar Sharma, MD (Ayu)",
             "role": "Senior Consultant",
-            "department": "Kayachikitsa & Panchakarma OPD Room 2"
+            "department": "Kayachikitsa (Internal Medicine) OPD Room 2"
         }
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
-# ── 6. PATIENT KIOSK ROUTES (6 REGIONAL LANGUAGES) ───────────────────────────
+# ── 6. PATIENT KIOSK & QUEUE ANALYTICS ROUTES ─────────────────────────────────
 LANG_NAMES = {
     "en": "English",
     "hi": "Hindi",
@@ -241,21 +226,30 @@ def get_session_status(session_id: str):
         raise HTTPException(status_code=404, detail="Session not found")
     
     # Calculate live queue position & wait time
-    patients_ahead = 0
-    this_created = session.get("created_at", "")
-    for s in sessions.values():
-        if s["session_id"] != session_id and s.get("status") in ("intake", "ready"):
-            if s.get("created_at", "") < this_created:
-                patients_ahead += 1
+    active_sessions = [
+        s for s in sessions.values()
+        if s.get("status") in ("ready", "in_consultation")
+    ]
+    active_sessions.sort(key=lambda x: x.get("created_at", ""))
     
-    est_wait = max(4, patients_ahead * 6)
+    in_room = next((s for s in active_sessions if s.get("status") == "in_consultation"), None)
+    current_token = in_room["token"] if in_room else "None in consultation"
+    
+    my_created = session.get("created_at", "")
+    patients_ahead = sum(
+        1 for s in active_sessions 
+        if s.get("status") == "ready" and s.get("created_at", "") < my_created
+    )
+    
+    est_wait = max(patients_ahead * 6, 2) if session.get("status") != "in_consultation" else 0
+    
     return {
         "status": session.get("status", "intake"),
         "token": session.get("token"),
         "room": "OPD Consultation Room 2",
-        "doctor_name": "Dr. Mallard, MD (Ayu)",
+        "current_token_in_room": current_token,
         "patients_ahead": patients_ahead,
-        "estimated_wait_mins": est_wait
+        "est_wait_minutes": est_wait
     }
 
 
@@ -275,34 +269,42 @@ def chat_next(req: ChatRequest):
     transcript = "\n".join([
         f"{'Assistant' if m['role']=='bot' else 'Patient'}: {m['text']}"
         for m in session["messages"]
-    ]) or "(Patient has arrived at kiosk.)"
+    ]) or "(Patient just arrived at kiosk.)"
 
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    prompt = f"""You are MediKiosk, an outpatient triage assistant at an Indian hospital OPD.
-Ask ONE short, empathetic medical question (under 18 words) in {target_lang} to build a doctor-ready case history.
-Do NOT repeat topics the patient already mentioned.
-After 3 to 4 patient answers, return done: true and an empty question.
+    prompt = f"""You are MediKiosk, an expert clinical triage assistant at an Indian outpatient hospital (Ministry of AYUSH).
+Your role is pre-consultation intake. Ask ONE short, warm question (under 16 words) in {target_lang}.
 
-JSON format:
-{{"question": "<question string or empty if done>", "done": <true or false>}}
+Clinical Protocol (SOCRATES):
+1. Inquire about symptom characteristics (onset, severity, radiation, aggravating factors).
+2. Ask about relevant red flags or systemic signs (swelling, fever, numbness, incontinence).
+3. Inquire about current medications, drug allergies, or chronic conditions (BP, Diabetes).
 
-Conversation:
+Strict Rules:
+- NEVER repeat a detail the patient has already mentioned.
+- NEVER offer medical diagnoses, prescriptions, or treatments to the patient.
+- Once you have 3 to 4 patient responses (enough for a complete doctor case sheet), set done: true and question to empty string.
+
+JSON Schema:
+{{"question": "<next question string or empty if done>", "done": <true or false>}}
+
+Transcript:
 {transcript}"""
 
     try:
         parsed = query_gemini(prompt)
         question = parsed.get("question", "")
-        done = bool(parsed.get("done", False)) or not question
+        done = bool(parsed.get("done", False)) or not question or msg_count >= 4
     except Exception:
         fallback_welcome = {
             "en": "How can we help you today?",
-            "hi": "नमस्ते, बताइए क्या तकलीफ़ है?",
+            "hi": "नमस्ते, बताइए आज क्या तकलीफ़ है?",
             "ta": "வணக்கம், உங்களுக்கு என்ன உடல்நல பிரச்சனை?",
             "ml": "നമസ്കാരം, എന്താണ് അസുഖം?",
             "gu": "નમસ્તે, તમને શું તકલીફ છે?",
-            "bn": "নমস্কার, আজ কী समस्या নিয়ে এসেছেন?"
+            "bn": "নমস্কার, আজ কী সমস্যা নিয়ে এসেছেন?"
         }
         if msg_count == 0:
             question = fallback_welcome.get(lang_code, "How can we help you today?")
@@ -341,12 +343,15 @@ async def upload_document(session_id: str, file: UploadFile = File(...)):
     elif file.filename.lower().endswith(".png"):
         content_type = "image/png"
 
-    prompt = """Analyze this prescription or report. Extract into JSON:
+    prompt = """You are an expert medical records OCR synthesiser for hospital OPDs.
+Analyze this medical document (prescription, diagnostic report, or discharge summary).
+Extract and structure the clinical data cleanly into JSON:
 {
-  "summary": "1-sentence summary of findings or diagnosis",
-  "medicines": ["List of medicine names, doses, and frequencies"],
-  "tests": ["Key lab test names and values"],
-  "date": "Document date if found, else 'Recent'"
+  "summary": "1-sentence plain clinical summary of document findings",
+  "medicines": ["List of previous medicines: Name, Dose, Frequency"],
+  "tests": ["Key lab values or imaging results: Test Name, Value, Normal/Abnormal flag"],
+  "date": "Document date if found, else 'Recent'",
+  "doctor": "Prescribing physician name and clinic if found"
 }"""
 
     try:
@@ -354,10 +359,11 @@ async def upload_document(session_id: str, file: UploadFile = File(...)):
         extracted = query_gemini([doc_part, prompt])
     except Exception:
         extracted = {
-            "summary": f"{file.filename} logged for consultation.",
+            "summary": f"{file.filename} recorded for doctor's review.",
             "medicines": ["Previous prescription noted"],
-            "tests": ["Report recorded"],
-            "date": "Recent"
+            "tests": ["Diagnostic report attached"],
+            "date": "Recent",
+            "doctor": "External Clinic"
         }
 
     session["upload_summary"] = extracted
@@ -379,14 +385,16 @@ def generate_summary(req: SummaryRequest):
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    prompt = f"""You are a clinical summarizer for hospital OPDs.
-Based on the transcript and document data, produce a structured case note in JSON.
+    prompt = f"""You are MediKiosk's clinical clerk and triage nurse for hospital OPD doctors.
+Synthesize the patient intake conversation and document data into a structured case note.
+
 Rules:
 - Write clinical fields in concise medical English regardless of conversation language.
-- Flag allergies or urgent issues in 'redFlags'.
-- Write 'patientRecap' as exactly 3 short friendly bullets in {target_lang}.
+- Under 'clinicalImpression', formulate a provisional differential impression for the physician's consideration (e.g. 'Probable Osteoarthritis of bilateral knees; rule out ligament involvement').
+- Under 'redFlags', explicitly highlight allergies, cardiac signs, or emergency triggers.
+- Under 'patientRecap', write exactly 3 short, warm, jargon-free bullets in {target_lang} for the patient's confirmation (NO medical claims or self-medication advice).
 
-JSON format:
+JSON Schema:
 {{
   "chiefComplaint": "...",
   "hpi": "...",
@@ -397,13 +405,14 @@ JSON format:
   "reviewOfSystems": "...",
   "redFlags": "...",
   "uploadedDocSummary": "...",
+  "clinicalImpression": "...",
   "patientRecap": ["bullet 1", "bullet 2", "bullet 3"]
 }}
 
 Transcript:
 {transcript}
 
-Document:
+Document Findings:
 {doc_data}"""
 
     try:
@@ -432,10 +441,11 @@ Document:
             "reviewOfSystems": "Normal aside from chief complaint.",
             "redFlags": allergy_flag if allergy_flag != "None reported." else "None flagged.",
             "uploadedDocSummary": upload_data.get("summary", "No document uploaded."),
+            "clinicalImpression": f"Clinical triage note for {cc}. Correlate with physical examination and vitals.",
             "patientRecap": [
                 f"Complaint noted: {cc[:50]}...",
-                "Onset, duration, and stiffness details recorded for doctor.",
-                "Vitals and medications logged for consultation."
+                "Onset, duration, and symptom timeline prepared for doctor.",
+                "Current vitals and medications logged for consultation."
             ]
         }
 
