@@ -61,7 +61,7 @@
   h1.title{font-family:Georgia,serif;font-size:26px;line-height:1.25;margin:0 0 8px;color:var(--teal);}
   p.lede{font-size:14px;color:var(--ink-soft);line-height:1.55;margin:0 0 24px;}
 
-  /* Home Portal Selector Cards */
+  /* Home Portal Cards */
   .portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
   .portal-card{
     border:1.5px solid var(--line);border-radius:16px;padding:24px 18px;text-align:left;
@@ -108,18 +108,11 @@
   .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);margin-top:10px;}
   .btn-ghost:hover{background:var(--paper);}
 
-  .chat-card{max-width:540px;}
+  .chat-card{max-width:520px;}
   .chat-window{min-height:280px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
-  .chat-row{display:flex;gap:8px;align-items:flex-start;}
   .bubble{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14.5px;line-height:1.5;}
   .bubble.bot{background:var(--paper);color:var(--ink);border-bottom-left-radius:4px;}
   .bubble.user{background:var(--teal);color:#fff;border-bottom-right-radius:4px;margin-left:auto;}
-  .tts-btn{
-    width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#fff;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:4px;
-  }
-  .tts-btn:hover{background:var(--paper-dim);}
-  .tts-btn svg{width:15px;height:15px;stroke:var(--teal);}
   .typing{display:flex;gap:4px;align-self:flex-start;padding:12px 15px;}
   .typing span{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);animation:bounce 1.2s infinite ease-in-out;}
   .typing span:nth-child(2){animation-delay:.15s;}
@@ -147,7 +140,7 @@
   .gen-spinner{width:44px;height:44px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--saffron);margin:0 auto 20px;animation:spin 0.9s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
-  /* Live Waiting Room Analytics Card */
+  /* Live Waiting Room Card */
   .eta-card{
     background:linear-gradient(145deg, var(--teal), var(--teal-mid));color:#fff;
     border-radius:16px;padding:20px;margin-bottom:20px;text-align:left;
@@ -264,10 +257,9 @@ var S = {
   loginError: ''
 };
 
-// 6 Regional AYUSH Language Dictionaries
 var STR = {
   en:{ welcomeTitle:"Select Intake Language", welcomeLede:"Choose your preferred language for autonomous OPD triage.",
-       chooseLang:"Choose your language", start:"Continue",
+       start:"Continue",
        detailsTitle:"Patient Details", detailsLede:"Basic information for today's doctor consultation.",
        name:"Full Name", age:"Age", phone:"Phone Number (10 digits)", gender:"Gender", male:"Male", female:"Female", other:"Other",
        consentTitle:"Consent & Privacy", consentLede:"Your data is encrypted and shared only with your treating doctor.",
@@ -283,7 +275,7 @@ var STR = {
        newIntake:"Next Patient Intake"
      },
   hi:{ welcomeTitle:"भाषा चुनें / Select Language", welcomeLede:"परामर्श सहायता के लिए अपनी पसंदीदा भाषा चुनें।",
-       chooseLang:"अपनी भाषा चुनें", start:"आगे बढ़ें",
+       start:"आगे बढ़ें",
        detailsTitle:"मरीज़ की जानकारी", detailsLede:"डॉक्टर के लिए आपकी बुनियादी जानकारी।",
        name:"पूरा नाम", age:"उम्र", phone:"फ़ोन नंबर (10 अंक)", gender:"लिंग", male:"पुरुष", female:"महिला", other:"अन्य",
        consentTitle:"सहमति एवं गोपनीयता", consentLede:"आपकी जानकारी केवल आपके डॉक्टर के साथ साझा होगी।",
@@ -299,7 +291,7 @@ var STR = {
        newIntake:"नया मरीज़ शुरू करें"
      },
   ta:{ welcomeTitle:"மொழியைத் தேர்ந்தெடுக்கவும்", welcomeLede:"OPD ஆலோசனைக்கு உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்.",
-       chooseLang:"உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்", start:"தொடரவும்",
+       start:"தொடரவும்",
        detailsTitle:"நோயாளியின் விவரங்கள்", detailsLede:"இன்றைய ஆலோசனையின் அடிப்படை விவரங்கள்.",
        name:"முழு பெயர்", age:"வயது", phone:"தொலைபேசி எண் (10 இலக்கங்கள்)", gender:"பாலினம்", male:"ஆண்", female:"பெண்", other:"மற்றவை",
        consentTitle:"ஒப்புதல் & தனியுரிமை", consentLede:"உங்கள் தகவல்கள் உங்கள் மருத்துவரிடம் மட்டுமே பகிரப்படும்.",
@@ -315,7 +307,7 @@ var STR = {
        newIntake:"அடுத்த நோயாளி"
      },
   ml:{ welcomeTitle:"ഭാഷ തിരഞ്ഞെടുക്കുക", welcomeLede:"ഒ.പി.ഡി കൺസൾട്ടേഷനായി ഭാഷ തിരഞ്ഞെടുക്കുക.",
-       chooseLang:"ഭാഷ തിരഞ്ഞെടുക്കുക", start:"തുടരുക",
+       start:"തുടരുക",
        detailsTitle:"രോഗിയുടെ വിവരങ്ങൾ", detailsLede:"ഇന്നത്തെ ഒ.പി.ഡി കൺസൾട്ടേഷനായുള്ള പ്രാഥമിക വിവരങ്ങൾ.",
        name:"പൂർണ്ണമായ പേര്", age:"പ്രായം", phone:"ഫോൺ നമ്പർ (10 അക്കങ്ങൾ)", gender:"ലിംഗം", male:"പുരുഷൻ", female:"സ്ത്രീ", other:"മറ്റുള്ളവ",
        consentTitle:"സമ്മതവും സ്വകാര്യതയും", consentLede:"ഈ വിവരങ്ങൾ ചികിത്സിക്കുന്ന ഡോക്ടറുമായി മാത്രമേ പങ്കിടുകയുള്ളൂ.",
@@ -331,7 +323,7 @@ var STR = {
        newIntake:"അടുത്ത രോഗി"
      },
   gu:{ welcomeTitle:"ભાષા પસંદ કરો", welcomeLede:"OPD પરામર્શ સહાય માટે ભાષા પસંદ કરો.",
-       chooseLang:"ભાષા પસંદ કરો", start:"આગળ વધો",
+       start:"આગળ વધો",
        detailsTitle:"દર્દીની માહિતી", detailsLede:"આજના પરામર્શ માટે જરૂરી માહિતી.",
        name:"પૂરું નામ", age:"ઉંમર", phone:"ફોન નંબર (10 અંક)", gender:"જાતિ", male:"પુરુષ", female:"સ્ત્રી", other:"અન્ય",
        consentTitle:"સંમતિ અને ગોપનીયતા", consentLede:"આ માહિતી ફક્ત આપની સારવાર કરતા ડોક્ટર સાથે જ શેર થશે.",
@@ -347,7 +339,7 @@ var STR = {
        newIntake:"નવો દર્દી"
      },
   bn:{ welcomeTitle:"ভাষা নির্বাচন করুন", welcomeLede:"পরামর্শ সহায়তার জন্য ভাষা বেছে নিন।",
-       chooseLang:"ভাষা নির্বাচন করুন", start:"এগিয়ে যান",
+       start:"এগিয়ে যান",
        detailsTitle:"রোগীর বিবরণ", detailsLede:"আজকের ওপিডি পরামর্শের প্রাথমিক তথ্য।",
        name:"পুরো নাম", age:"বয়স", phone:"ফোন নম্বর (১০ সংখ্যা)", gender:"লিঙ্গ", male:"পুরুষ", female:"মহিলা", other:"অন্যান্য",
        consentTitle:"সম্মতি ও গোপনীয়তা", consentLede:"এই তথ্য শুধুমাত্র আপনার চিকিৎসকের সাথেই ভাগ করা হবে।",
@@ -364,24 +356,6 @@ var STR = {
      }
 };
 function t(k){ return (STR[S.lang] && STR[S.lang][k]) || STR['en'][k] || ''; }
-
-/* ── AUDIO SPEECH SYNTHESIS (TTS READ-ALOUD) ── */
-function speakText(text){
-  if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel(); // Stop any previous speech
-  var utt = new SpeechSynthesisUtterance(text);
-  var speechLangMap = {
-    'en': 'en-IN',
-    'hi': 'hi-IN',
-    'ta': 'ta-IN',
-    'ml': 'ml-IN',
-    'gu': 'gu-IN',
-    'bn': 'bn-IN'
-  };
-  utt.lang = speechLangMap[S.lang] || 'en-IN';
-  utt.rate = 0.92; // Slightly measured, warm speed for clinical clarity
-  window.speechSynthesis.speak(utt);
-}
 
 /* ── API CALLS ── */
 async function apiDoctorLogin(docId, pin){
@@ -449,7 +423,7 @@ async function apiUploadFile(file){
     });
     if(res.ok) return (await res.json()).extracted;
   } catch(e){}
-  return { summary: file.name + ' uploaded.', medicines: [], tests: [], date: 'Recent' };
+  return { summary: "Document uploaded. No legible prescription text identified.", medicines: [], tests: [], date: 'Recent' };
 }
 
 async function apiGenerateSummary(){
@@ -474,12 +448,8 @@ async function apiGenerateSummary(){
     clinical_summary: {
       chiefComplaint: cc,
       hpi: S.messages.map(m => (m.role==='bot'?'Dr: ':'Pt: ') + m.text).join('\n'),
-      pastHistory: "None reported.",
       allergies: "None reported.",
       medications: "Reported in intake",
-      familyHistory: "Not contributory.",
-      reviewOfSystems: "Normal",
-      redFlags: "None flagged.",
       clinicalImpression: "Triage note prepared for physician review.",
       uploadedDocSummary: "No document uploaded."
     }
@@ -532,7 +502,6 @@ async function apiDeletePatient(sessionId){
   } catch(e){ return false; }
 }
 
-// Live Queue Analytics Polling
 function startPollingStatus(){
   if(S.statusTimer) clearInterval(S.statusTimer);
   S.statusTimer = setInterval(async function(){
@@ -594,7 +563,6 @@ async function beginChat(){
   var res = await apiChatNext("");
   if(res && res.question){
     S.messages.push({ role:'bot', text: res.question });
-    speakText(res.question);
   }
   S.awaitingReply = false; render();
 }
@@ -609,7 +577,6 @@ async function sendAnswer(text){
     S.chatDone = true;
   } else {
     S.messages.push({ role:'bot', text: res.question });
-    speakText(res.question);
   }
   S.awaitingReply = false; render();
 }
@@ -652,7 +619,7 @@ async function generateSummary(){
   render();
 }
 
-// Multilingual Speech Recognition
+// Microphone Speech to Text (Silent — NO robot voice output)
 function toggleMic(){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast("Microphone not supported in this browser"); return; }
@@ -715,7 +682,7 @@ function renderLandingHome(){
     '<div class="stage"><div class="card" style="max-width:540px;text-align:center;">' +
       '<div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--saffron);font-weight:700;margin-bottom:8px;">Autonomous Outpatient Triage</div>' +
       '<h1 class="title serif" style="font-size:28px;">Welcome to MediKiosk</h1>' +
-      '<p class="lede" style="margin-bottom:20px;">AI-driven clinical case taking and real-time waiting room triage for public healthcare OPDs.</p>' +
+      '<p class="lede" style="margin-bottom:20px;">AI-driven clinical intake and waiting room triage for public healthcare OPDs.</p>' +
       '<div class="portal-grid">' +
         '<div class="portal-card" onclick="startKioskMode()">' +
           '<div><div class="icon-wrap">' + userSvg() + '</div>' +
@@ -726,7 +693,7 @@ function renderLandingHome(){
         '<div class="portal-card" onclick="openDoctorModal()">' +
           '<div><div class="icon-wrap" style="background:var(--teal-mid);">' + stethoscopeSvg() + '</div>' +
           '<h3>Doctor OPD Station</h3>' +
-          '<p>Consulting physician queue, differential impressions, and EMR export.</p></div>' +
+          '<p>Physician waiting queue, clinical impressions, and EMR export.</p></div>' +
           '<div style="font-size:12px;font-weight:bold;color:var(--teal);margin-top:14px;">Sign In (DOC1) →</div>' +
         '</div>' +
       '</div>' +
@@ -742,7 +709,7 @@ function startKioskMode(){
   render();
 }
 
-/* ── 2. PATIENT KIOSK ── */
+/* ── 2. PATIENT KIOSK (NO DOCTOR PORTAL BUTTON IN TOPBAR) ── */
 function progressDots(){
   var order = ['welcome','details','consent','chat','upload'];
   var idx = order.indexOf(S.screen);
@@ -767,7 +734,7 @@ function renderKiosk(){
   return '<div class="topbar">' +
     '<div class="brand" onclick="goHome()" style="cursor:pointer;"><div class="brand-mark">' + logoSvg() + '</div>' +
     '<div><div class="brand-name">MediKiosk</div><div class="brand-sub">OPD Patient Intake Terminal</div></div></div>' +
-    '<div class="portal-btn" onclick="openDoctorModal()">' + lockSvg() + '<span>Doctor Portal (Staff)</span></div>' +
+    '<div class="portal-btn" onclick="goHome()"><span>Exit to Home</span></div>' +
     '</div>' +
     '<div class="stage"><div class="card ' + (S.screen==='chat'?'chat-card':'') + '">' +
     (['welcome','details','consent','chat','upload'].indexOf(S.screen) !== -1 ? progressDots() : '') +
@@ -840,14 +807,7 @@ function screenChat(){
   var bubbles = '';
   for(var i=0; i<S.messages.length; i++){
     var m = S.messages[i];
-    if(m.role === 'bot'){
-      bubbles += '<div class="chat-row">' +
-        '<button class="tts-btn" onclick="speakText(\'' + escapeHtml(m.text).replace(/'/g, "\\'") + '\')" title="Listen / Read aloud">' + speakerSvg() + '</button>' +
-        '<div class="bubble bot">' + escapeHtml(m.text) + '</div>' +
-        '</div>';
-    } else {
-      bubbles += '<div class="chat-row"><div class="bubble user">' + escapeHtml(m.text) + '</div></div>';
-    }
+    bubbles += '<div class="bubble ' + (m.role==='bot'?'bot':'user') + '">' + escapeHtml(m.text) + '</div>';
   }
   var typing = S.awaitingReply ? '<div class="typing"><span></span><span></span><span></span></div>' : '';
 
@@ -873,7 +833,7 @@ function screenUpload(){
     previewHtml = '<div class="preview-row">' +
       (S.uploadIsPdf ? '<div class="pdf-badge">PDF</div>' : '<img src="' + (S.uploadPreview || '') + '"/>') +
       '<div style="flex:1;"><div style="font-weight:600;font-size:13px;">' + escapeHtml(S.uploadFileName) + '</div>' +
-      '<div class="scan-status done">Synthesized for doctor ✓</div></div></div>';
+      '<div class="scan-status done">' + (S.uploadStatus==='scanning' ? 'Scanning with Gemini Vision...' : 'Analyzed by AI ✓') + '</div></div></div>';
   }
 
   return '<h1 class="title serif" style="font-size:21px;">' + t('uploadTitle') + '</h1>' +
@@ -928,7 +888,7 @@ function renderDoctorModal(){
   div.id = 'docModal';
   div.innerHTML = '<div class="modal-card">' +
     '<h2 class="serif" style="font-size:22px;color:var(--teal);margin:0 0 6px;">Doctor OPD Portal</h2>' +
-    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Physician Authentication (DOC1 / Present)</p>' +
+    '<p style="font-size:13px;color:var(--ink-soft);margin:0 0 18px;">Staff Authentication Required</p>' +
     '<div class="field"><label>Doctor ID</label>' +
       '<input id="docIdInput" type="text" placeholder="Enter Doctor ID" value=""/></div>' +
     '<div class="field"><label>Security Password</label>' +
@@ -981,7 +941,7 @@ function doctorLogout(){
   showToast('Logged out of Doctor Portal');
 }
 
-/* ── 4. DOCTOR DASHBOARD ── */
+/* ── 4. DOCTOR DASHBOARD (NO UNNECESSARY FILLER BOXES) ── */
 function renderDashboard(){
   var active = null;
   for(var i=0; i<S.queue.length; i++){
@@ -1002,15 +962,13 @@ function renderDashboard(){
   var c = active ? active.clinical : null;
   var sectionsHtml = '';
   if(c){
+    // ONLY the 5 necessary clinical fields (NO filler Family History / Review of Systems)
     var arr = [
-      ['Chief complaint', 'chiefComplaint', c.chiefComplaint],
-      ['History of present illness', 'hpi', c.hpi],
-      ['Past medical history', 'pastHistory', c.pastHistory],
-      ['Allergies', 'allergies', c.allergies],
-      ['Current medications', 'medications', c.medications],
-      ['Family history', 'familyHistory', c.familyHistory],
-      ['Review of systems', 'reviewOfSystems', c.reviewOfSystems],
-      ['Uploaded document synthesis', 'uploadedDocSummary', c.uploadedDocSummary || 'No document uploaded.']
+      ['Chief Complaint', 'chiefComplaint', c.chiefComplaint],
+      ['History of Present Illness (Timeline)', 'hpi', c.hpi],
+      ['Current Medications', 'medications', c.medications],
+      ['Allergies & Red Flags', 'allergies', c.allergies],
+      ['Uploaded Document & Prescription Findings', 'uploadedDocSummary', c.uploadedDocSummary || 'No document uploaded.']
     ];
     for(var k=0; k<arr.length; k++){
       sectionsHtml += '<div class="clinical-section">' +
@@ -1036,11 +994,11 @@ function renderDashboard(){
         '<div class="dash-header"><div>' +
         '<h1>' + escapeHtml(active.name) + (active.age ? ', ' + active.age : '') + '</h1>' +
         '<div class="dh-meta">' + (active.gender==='F'?'Female':active.gender==='O'?'Other':'Male') + ' · Token: ' + (active.token || '') + '</div></div>' +
-        (c && c.redFlags && c.redFlags!=='None flagged.' && c.redFlags!=='None flagged' ? '<div class="redflag-pill">⚠ ' + escapeHtml(c.redFlags) + '</div>' : '') +
+        (c && c.allergies && c.allergies.toLowerCase().includes('penicillin') ? '<div class="redflag-pill">⚠ PENICILLIN ALLERGY</div>' : '') +
         '</div>' +
         (c && c.clinicalImpression ? (
           '<div class="impression-pill">' +
-            '<div style="font-size:11px;font-weight:bold;letter-spacing:0.5px;color:var(--saffron);margin-bottom:3px;">AI CLINICAL IMPRESSION (TRIAGE NURSE CLERKSHIP)</div>' +
+            '<div style="font-size:11px;font-weight:bold;letter-spacing:0.5px;color:var(--saffron);margin-bottom:3px;">AI CLINICAL IMPRESSION (FOR PHYSICIAN REVIEW)</div>' +
             '<div>' + escapeHtml(c.clinicalImpression) + '</div>' +
           '</div>'
         ) : '') +
@@ -1058,7 +1016,7 @@ function renderDashboard(){
 
 /* ── DOCTOR ACTIONS ── */
 async function saveDoctorEdits(sessionId){
-  var fields = ['chiefComplaint', 'hpi', 'pastHistory', 'allergies', 'medications', 'familyHistory', 'reviewOfSystems', 'uploadedDocSummary'];
+  var fields = ['chiefComplaint', 'hpi', 'allergies', 'medications', 'uploadedDocSummary'];
   var updated = {};
   for(var i=0; i<fields.length; i++){
     var el = document.getElementById('field_' + fields[i]);
@@ -1142,12 +1100,10 @@ function escapeHtml(s){
   });
 }
 
-/* ── SVG ICONS ── */
 function logoSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC" stroke-width="2" stroke-linecap="round"><path d="M6 12h12M12 6v12" stroke="#F1F5EC"/><path d="M8 12a4 4 0 018 0" stroke="#D98F2B" fill="none"/></svg>'; }
 function lockSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'; }
 function userSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'; }
 function stethoscopeSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>'; }
-function speakerSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>'; }
 function micSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v4"/></svg>'; }
 function sendSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>'; }
 function uploadSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>'; }
