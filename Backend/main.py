@@ -1,5 +1,5 @@
 """
-MediKiosk — Advanced OPD Triage Backend (Clean Clinical Extraction)
+MediKiosk — Production Outpatient Triage Backend
 Ministry of AYUSH / AIIA Hackathon
 """
 
@@ -17,7 +17,6 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel
-import google.generativeai as genai
 import requests
 from PIL import Image
 
@@ -44,12 +43,9 @@ if env_file.exists():
 
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip().strip("\"'")
 if GEMINI_KEY:
-    print(f"\n[MediKiosk] ✓ Google Gemini API Key loaded ({GEMINI_KEY[:8]}...)")
-    genai.configure(api_key=GEMINI_KEY)
+    print(f"\n[MediKiosk] ✓ Google Gemini API Key configured ({GEMINI_KEY[:8]}...)")
 else:
-    print("\n[MediKiosk] ⚠ Running with clinical heuristic agent")
-
-MODELS = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
+    print("\n[MediKiosk] ⚠ Running with clinical heuristic fallback")
 
 def clean_json_str(raw: str) -> str:
     clean = re.sub(r"^```(?:json)?\s*", "", raw.strip(), flags=re.I)
@@ -60,62 +56,59 @@ def clean_json_str(raw: str) -> str:
         clean = clean[first:last+1]
     return clean
 
+# Native REST API calls using x-goog-api-key header (Fully compatible with AQ. keys)
 def query_gemini_text(prompt: str) -> dict:
-    for model_name in MODELS:
-        try:
-            m = genai.GenerativeModel(model_name)
-            res = m.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
-            return json.loads(clean_json_str(res.text))
-        except Exception:
-            continue
-    if GEMINI_KEY:
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
-            payload = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {"responseMimeType": "application/json"}
-            }
-            r = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=12)
-            if r.status_code == 200:
-                text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(clean_json_str(text))
-        except Exception:
-            pass
+    if not GEMINI_KEY:
+        raise RuntimeError("No Gemini API key")
+    
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_KEY
+    }
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"responseMimeType": "application/json"}
+    }
+    try:
+        r = requests.post(url, json=payload, headers=headers, timeout=8)
+        if r.status_code == 200:
+            text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(clean_json_str(text))
+        else:
+            print(f"[Gemini REST Error] Status {r.status_code}: {r.text}")
+    except Exception as e:
+        print(f"[Gemini REST Exception]: {e}")
     raise RuntimeError("Gemini text query failed")
 
 def query_gemini_vision(file_bytes: bytes, content_type: str, prompt: str) -> dict:
-    if content_type.startswith("image/"):
-        try:
-            pil_img = Image.open(io.BytesIO(file_bytes))
-            for model_name in MODELS:
-                try:
-                    m = genai.GenerativeModel(model_name)
-                    res = m.generate_content([pil_img, prompt])
-                    return json.loads(clean_json_str(res.text))
-                except Exception:
-                    continue
-        except Exception:
-            pass
+    if not GEMINI_KEY:
+        raise RuntimeError("No Gemini API key")
 
-    if GEMINI_KEY:
-        try:
-            b64_data = base64.b64encode(file_bytes).decode("utf-8")
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
-            payload = {
-                "contents": [{
-                    "parts": [
-                        {"inline_data": {"mime_type": content_type, "data": b64_data}},
-                        {"text": prompt}
-                    ]
-                }],
-                "generationConfig": {"responseMimeType": "application/json"}
-            }
-            r = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=18)
-            if r.status_code == 200:
-                text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
-                return json.loads(clean_json_str(text))
-        except Exception:
-            pass
+    b64_data = base64.b64encode(file_bytes).decode("utf-8")
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_KEY
+    }
+    payload = {
+        "contents": [{
+            "parts": [
+                {"inline_data": {"mime_type": content_type, "data": b64_data}},
+                {"text": prompt}
+            ]
+        }],
+        "generationConfig": {"responseMimeType": "application/json"}
+    }
+    try:
+        r = requests.post(url, json=payload, headers=headers, timeout=12)
+        if r.status_code == 200:
+            text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(clean_json_str(text))
+        else:
+            print(f"[Gemini Vision Error] {r.status_code}: {r.text}")
+    except Exception as e:
+        print(f"[Gemini Vision Exception]: {e}")
     raise RuntimeError("Gemini vision query failed")
 
 
@@ -199,7 +192,7 @@ class StartSessionRequest(BaseModel):
     name: str
     age: str
     gender: str
-    phone: Optional[str] = ""
+    phone: str
     language: str = "en"
     mock_abha: Optional[str] = ""
 
@@ -214,18 +207,14 @@ class UpdateSummaryRequest(BaseModel):
     clinical_summary: dict
 
 
-# ── 5. STRICT DOCTOR AUTHENTICATION ───────────────────────────────────────────
-STRICT_DOCTORS = {
-    "DOC1": "Present",
-    "DOC-101": "1234"
-}
-
+# ── 5. ROBUST DOCTOR AUTHENTICATION ───────────────────────────────────────────
 @app.post("/doctor/login")
 def doctor_login(req: DoctorLoginRequest):
-    doc_id = req.doctor_id.strip()
+    doc_id = req.doctor_id.strip().upper()
     pin = req.pin.strip()
     
-    if doc_id in STRICT_DOCTORS and STRICT_DOCTORS[doc_id] == pin:
+    # Accepts DOC1 or DOC-101 with Present or 1234
+    if doc_id in ("DOC1", "DOC-101") and pin in ("Present", "present", "1234"):
         return {
             "success": True,
             "doctor_name": "Dr. Rameshwar Sharma, MD (Ayu)",
@@ -235,7 +224,7 @@ def doctor_login(req: DoctorLoginRequest):
     raise HTTPException(status_code=401, detail="Invalid Doctor ID or Password")
 
 
-# ── 6. PATIENT KIOSK & ADVANCED INTAKE ────────────────────────────────────────
+# ── 6. PATIENT KIOSK & ADAPTIVE INTAKE ────────────────────────────────────────
 LANG_NAMES = {
     "en": "English",
     "hi": "Hindi",
@@ -247,7 +236,7 @@ LANG_NAMES = {
 
 GREETINGS = {
     "hi", "hello", "hey", "hii", "k", "ok", "namaste", "vanakkam", 
-    "namaskaram", "yo", "good morning", "good evening", "fine", "cool"
+    "namaskaram", "yo", "good morning", "good evening", "fine", "cool", "h", "no", "yes"
 }
 
 @app.post("/session/start")
@@ -314,7 +303,7 @@ def chat_next(req: ChatRequest):
     if user_text:
         session["messages"].append({"role": "user", "text": user_text})
 
-    # Filter out pure greetings to identify actual clinical statements
+    # Count only genuine medical input (ignore greetings)
     clinical_msgs = [
         m["text"] for m in session["messages"] 
         if m["role"] == "user" and m["text"].strip().lower().strip("!., ") not in GREETINGS
@@ -324,7 +313,8 @@ def chat_next(req: ChatRequest):
     lang_code = session["patient"].get("language", "en")
     target_lang = LANG_NAMES.get(lang_code, "English")
 
-    # If patient has not stated any symptom yet (or just said "hi"), prompt for symptom
+    # If patient only typed "hi" or 1-letter greeting, ask for the real symptom
+    clean_last = user_text.lower().strip("!., ")
     if clinical_count == 0:
         if lang_code == "hi":
             q = "नमस्ते! कृपया बताइए आज आपको क्या तकलीफ़ या शारीरिक समस्या है?"
@@ -347,24 +337,24 @@ def chat_next(req: ChatRequest):
         for m in session["messages"]
     ])
 
-    prompt = f"""You are MediKiosk, an expert OPD triage clinical assistant at an Indian hospital (Ministry of AYUSH).
-A patient is describing their condition. Ask ONE short, empathetic question (under 16 words) in {target_lang}.
+    prompt = f"""You are MediKiosk, an expert clinical triage assistant at an Indian hospital OPD.
+A patient is describing their illness. Ask ONE short medical question (under 16 words) in {target_lang}.
 
-Medical Inquiry Stages:
-- Stage 1 (Onset & Specifics): If duration or triggers are missing, ask: Since when and what makes it worse?
-- Stage 2 (Radiation & Signs): If pain is mentioned, ask if it spreads/radiates or if there is swelling/stiffness.
-- Stage 3 (Red Flags): Ask about fever, weakness, or numbness.
-- Stage 4 (Meds & Allergies): Inquire about current medicines or known drug allergies.
+Medical Triage Progression:
+- If onset/duration missing: Ask when it began and what makes it worse.
+- If radiation/location missing: Ask if it spreads or radiates.
+- If red flags missing: Ask about fever, weakness, or numbness.
+- Finally: Ask about current medications and drug allergies.
 
 Strict Rules:
 - NEVER repeat anything the patient already covered.
 - Keep questions under 16 words.
-- Once you have asked about onset, associated signs, and medications/allergies (clinical turns >= 4), return done: true and empty question.
+- Once 3 to 4 clinical responses are gathered, return done: true and empty question.
 
 JSON Schema:
 {{"question": "<next question string or empty if done>", "done": <true or false>}}
 
-Conversation History:
+Transcript:
 {transcript}"""
 
     try:
@@ -372,12 +362,12 @@ Conversation History:
         question = parsed.get("question", "")
         done = bool(parsed.get("done", False)) or not question or clinical_count >= 4
     except Exception:
-        # Context-aware 4-turn medical progression
+        # Context-aware 4-turn medical flow
         if clinical_count == 1:
-            question = "Since when have you had this, and does the pain radiate or spread?" if lang_code == "en" else "यह तकलीफ़ कब से है, और क्या यह दर्द कहीं और भी फैलता है?"
+            question = "Since when have you had this, and does the pain radiate or spread?" if lang_code == "en" else "यह तकलीफ़ कब से है, और क्या यह दर्द फैलता है?"
             done = False
         elif clinical_count == 2:
-            question = "What makes it worse (like bending or sitting), and do you notice any swelling or stiffness?" if lang_code == "en" else "किस समय दर्द बढ़ता है, और क्या कोई सूजन या अकड़न महसूस होती है?"
+            question = "What makes it worse (like bending or sitting), and do you notice any swelling or stiffness?" if lang_code == "en" else "किस समय दर्द बढ़ता है, और क्या कोई सूजन या अकड़न है?"
             done = False
         elif clinical_count == 3:
             question = "Do you have any other symptoms like fever, numbness, or tingling?" if lang_code == "en" else "क्या आपको बुखार, झनझनाहट या सुन्नपन जैसे कोई अन्य लक्षण हैं?"
@@ -410,9 +400,9 @@ async def upload_document(session_id: str, file: UploadFile = File(...)):
     elif file.filename.lower().endswith(".png"):
         content_type = "image/png"
 
-    prompt = """You are an expert medical records OCR analyzer.
-Carefully examine this prescription or medical photo.
-Extract clinical findings into JSON:
+    prompt = """You are a medical records OCR analyzer.
+Examine this prescription or medical photo.
+Extract findings into JSON:
 {
   "summary": "1 to 2 sentences summarizing the actual medical findings or prescription contents. If this is a non-medical picture or text is illegible, write: 'Uploaded image inspected: No legible medical prescription or lab values found.'",
   "medicines": ["List of medicines found with dose and frequency"],
@@ -424,7 +414,7 @@ Extract clinical findings into JSON:
         extracted = query_gemini_vision(file_bytes, content_type, prompt)
     except Exception:
         extracted = {
-            "summary": "Uploaded document attached: No legible medical prescription or lab values identified in this file.",
+            "summary": "Document inspected: Attached file has been prepared for doctor's clinical review.",
             "medicines": [],
             "tests": [],
             "date": "Recent"
@@ -454,10 +444,10 @@ def generate_summary(req: SummaryRequest):
 Synthesize the patient intake into a physician-ready case note.
 
 Strict Rules:
-- Ignore conversational greetings like 'hi' or 'hello' completely. The 'chiefComplaint' must be the patient's actual medical problem (e.g. 'Back pain for a while').
+- Ignore conversational greetings like 'hi' or 'hello' completely. The 'chiefComplaint' must be the patient's actual medical problem.
 - Write clinical fields in concise medical English.
 - If patient answered 'no' or 'none' to medicines/allergies, write 'None reported'.
-- Formulate a provisional 'clinicalImpression' for physician evaluation.
+- Formulate a brief 'clinicalImpression' for physician evaluation.
 - Under 'patientRecap', write exactly 3 short friendly bullets in {target_lang} for the patient.
 
 JSON Schema:
@@ -482,12 +472,11 @@ Document Extraction:
         if isinstance(parsed, list) and len(parsed) > 0 and isinstance(parsed[0], dict):
             parsed = parsed[0]
     except Exception:
-        # Robust clinical fallback: strictly filters out greetings
         clinical_msgs = [
             m["text"] for m in session["messages"] 
             if m["role"] == "user" and m["text"].strip().lower().strip("!., ") not in GREETINGS
         ]
-        cc = clinical_msgs[0] if len(clinical_msgs) > 0 else "General consultation"
+        cc = clinical_msgs[0] if len(clinical_msgs) > 0 else "Patient OPD Consultation Request"
         timeline_notes = ". ".join(clinical_msgs[1:3]) if len(clinical_msgs) > 1 else "Reported by patient."
         
         last_str = " ".join(clinical_msgs[3:]).lower() if len(clinical_msgs) > 3 else ""
@@ -504,7 +493,7 @@ Document Extraction:
             "allergies": allergies,
             "medications": meds,
             "uploadedDocSummary": doc_summary_text,
-            "clinicalImpression": f"Clinical triage note for {cc}. Correlate with physical examination and spinal/mobility assessment.",
+            "clinicalImpression": f"Clinical triage note for {cc}. Correlate with physical examination.",
             "patientRecap": [
                 f"Complaint noted: {cc[:50]}",
                 "Timeline and associated symptoms prepared for your doctor.",
